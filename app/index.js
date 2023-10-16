@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { SafeAreaView } from 'react-native'
-import { useRouter } from 'expo-router'
+import { useNavigation, useRouter } from 'expo-router'
 
 import { COLORS } from '../constants'
 import Login from '../components/auth/Login/Login'

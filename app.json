@@ -4,7 +4,22 @@
     "web": {
       "bundler": "metro"
     },
-    "name": "Client",
-    "slug": "Client"
+    "name": "IMS",
+    "slug": "IMS",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.example.ims",
+      "config": {
+        "googleMapsApiKey": "YOUR_API_KEY"
+      }
+    },
+    "android": {
+      "package": "com.example.ims",
+      "config": {
+        "googleMaps": {
+          "apiKey": "<android maps key>"
+        }
+      }
+    }
   }
 }

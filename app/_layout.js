@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router'
-import { Provider } from 'react-redux'
+import { Provider, useDispatch, useSelector } from 'react-redux'
 import { ToastProvider } from 'react-native-toast-notifications'
 import { store } from '../store'
 import { StatusBar } from 'expo-status-bar'
@@ -10,6 +10,7 @@ import { useCallback } from 'react'
 import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import Loader from '../components/common/loader/Loader'
+import CustomModal from '../components/common/modal/CustomModal'
 
 SplashScreen.preventAutoHideAsync()
 
@@ -30,6 +31,8 @@ const Layout = () => {
   return (
     <Provider store={store}>
       <Loader />
+
+      <CustomModal />
 
       <ToastProvider
         placement='bottom'
@@ -65,6 +68,14 @@ const Layout = () => {
         >
           <Stack.Screen name='index' />
           <Stack.Screen name='home' />
+          <Stack.Screen
+            name='notification'
+            options={{
+              headerShown: true,
+              headerTitleAlign: 'center',
+              headerTitle: 'Notifications',
+            }}
+          />
         </Stack>
         <StatusBar style='dark' />
       </ToastProvider>

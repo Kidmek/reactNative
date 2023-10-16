@@ -1,11 +1,12 @@
-import { Text, View } from 'react-native'
 import React from 'react'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import ProductWelcome from '../../../components/products/welcome/ProductWelcome'
 
 const product = () => {
   return (
-    <View>
-      <Text>product</Text>
-    </View>
+    <SafeAreaView>
+      <ProductWelcome />
+    </SafeAreaView>
   )
 }
 

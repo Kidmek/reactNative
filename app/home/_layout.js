@@ -2,16 +2,6 @@ import { withLayoutContext } from 'expo-router'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import CustomDrawer from '../../components/customDrawer/CustomDrawer'
 
-// import {
-//   AboutIcon,
-//   LanguageIcon,
-//   LogoutIcon,
-//   PinIcon,
-//   RateIcon,
-//   SocialsIcon,
-//   TermsAndConditionsIcon,
-// } from '../../constants/icons'
-
 const DrawerNavigator = createDrawerNavigator().Navigator
 
 const Drawer = withLayoutContext(DrawerNavigator)
@@ -33,13 +23,38 @@ export default function DrawerLayout() {
         name='(drawer)'
         options={{
           title: 'Home',
-          // drawerItemStyle: { display: 'none' },
+          drawerItemStyle: { display: 'none' },
         }}
       />
       <Drawer.Screen
         name='profile'
         options={{
           title: 'Profile',
+          // drawerLabelStyle: { marginLeft: -25 },
+          //   drawerIcon: () => <PinIcon height={48} />,
+        }}
+      />
+      <Drawer.Screen
+        name='dashboard'
+        options={{
+          headerShown: true,
+          title: 'Dashboard',
+          // drawerLabelStyle: { marginLeft: -25 },
+          //   drawerIcon: () => <PinIcon height={48} />,
+        }}
+      />
+      <Drawer.Screen
+        name='customers'
+        options={{
+          title: 'Customers',
+          // drawerLabelStyle: { marginLeft: -25 },
+          //   drawerIcon: () => <PinIcon height={48} />,
+        }}
+      />
+      <Drawer.Screen
+        name='staffs'
+        options={{
+          title: 'Staffs',
           // drawerLabelStyle: { marginLeft: -25 },
           //   drawerIcon: () => <PinIcon height={48} />,
         }}
@@ -66,21 +81,6 @@ export default function DrawerLayout() {
           title: 'About Us',
           // drawerLabelStyle: { marginLeft: -25 },
           // drawerIcon: () => <AboutIcon height={48} />,
-        }}
-      />
-      <Drawer.Screen
-        name='logout'
-        options={{
-          title: 'Logout',
-          // drawerLabelStyle: { marginLeft: -25 },
-          //   drawerIcon: () => <LogoutIcon height={48} />,
-        }}
-      />
-      <Drawer.Screen
-        name='(logout)'
-        options={{
-          title: 'Redirect',
-          drawerItemStyle: { display: 'none' },
         }}
       />
     </Drawer>

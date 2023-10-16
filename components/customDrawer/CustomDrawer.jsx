@@ -1,12 +1,14 @@
-import { View, Image, Text } from 'react-native'
 import {
   DrawerContentScrollView,
+  DrawerItem,
   DrawerItemList,
 } from '@react-navigation/drawer'
-
-import styles from './customDrawer.style'
+import { store } from '../../store'
+import { show } from '../../features/modal/modalSlice'
 
 export default function CustomDrawer(props) {
+  const dispatch = store.dispatch
+
   return (
     // <View>
     //   <View style={styles.imageContainer}>
@@ -14,6 +16,13 @@ export default function CustomDrawer(props) {
     //   </View>
     <DrawerContentScrollView {...props}>
       <DrawerItemList {...props} />
+
+      <DrawerItem
+        label={'Logout'}
+        onPress={() => {
+          dispatch(show())
+        }}
+      />
     </DrawerContentScrollView>
     // </View>
   )

@@ -6,6 +6,8 @@ const COLORS = {
   gray: '#83829A',
   gray2: '#C1C0C8',
 
+  green: '#008000',
+
   white: '#F3F4F8',
   lightWhite: '#FAFAFC',
 
@@ -19,12 +21,16 @@ const FONT = {
 }
 
 const SIZES = {
+  xxSmall: 6,
   xSmall: 10,
   small: 12,
   medium: 16,
   large: 20,
   xLarge: 24,
   xxLarge: 32,
+  smallPicture: 80,
+  mediumPicture: 100,
+  largePicture: 120,
 }
 
 const SHADOWS = {

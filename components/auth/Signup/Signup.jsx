@@ -37,18 +37,6 @@ const SignUp = (props) => {
   const confirmPasswordInputRef = createRef()
   const toast = useToast()
 
-  useEffect(() => {
-    if (userPassword && userConfirmPassword) {
-      if (userConfirmPassword != userPassword) {
-        setErrortext("Password's Dont Match")
-      } else {
-        setErrortext()
-      }
-    } else {
-      setErrortext()
-    }
-  }, [userConfirmPassword, userPassword])
-
   const handleSubmitButton = () => {
     setErrortext('')
     if (!userFirstName) {
@@ -141,6 +129,8 @@ const SignUp = (props) => {
       })
   }
 
+  //
+
   useEffect(() => {
     if (userEmail) {
       if (!userEmail.match(emailRegEx)) {
@@ -152,6 +142,18 @@ const SignUp = (props) => {
       setErrortext()
     }
   }, [userEmail])
+
+  useEffect(() => {
+    if (userPassword && userConfirmPassword) {
+      if (userConfirmPassword != userPassword) {
+        setErrortext("Password's Dont Match")
+      } else {
+        setErrortext()
+      }
+    } else {
+      setErrortext()
+    }
+  }, [userConfirmPassword, userPassword])
 
   return (
     <View style={styles.mainBody}>

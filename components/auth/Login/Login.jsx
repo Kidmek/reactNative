@@ -11,14 +11,14 @@ import {
 } from 'react-native'
 import { useToast } from 'react-native-toast-notifications'
 
-import AsyncStorage from '@react-native-community/async-storage'
-import Loader from '../../common/loader/Loader'
 import styles from '../auth.style'
 import { API, emailRegEx } from '../../../constants/strings'
 import axios from 'axios'
 import { store } from '../../../store'
-import { setLoading } from '../../../features/data/dataSlice'
+import { setLoading, setUser } from '../../../features/data/dataSlice'
 import { useNavigation } from 'expo-router'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { isLoggedIn } from '../../../api/apiConfig'
 
 const Login = ({ setIsLogin }) => {
   const dispatch = store.dispatch
@@ -30,6 +30,14 @@ const Login = ({ setIsLogin }) => {
   const emailInputRef = createRef()
   const passwordInputRef = createRef()
   const toast = useToast()
+
+  // useEffect(() => {
+  //   isLoggedIn().then((res) => {
+  //     if (res) {
+  //       navigation.navigate('home')
+  //     }
+  //   })
+  // }, [])
 
   const handleSubmitPress = () => {
     toast.hideAll()
@@ -58,32 +66,38 @@ const Login = ({ setIsLogin }) => {
     }
 
     axios
-      .post(API + '/login', {
+      .post(API + '/api-token-auth', {
         ...dataToSend,
       })
       .then((responseJson) => {
         //Hide Loader
         dispatch(setLoading(false))
-        console.log(responseJson)
         // If server response message same as Data Matched
         if (responseJson?.data?.token) {
           toast.show('Successfully Logged In', {
             type: 'success',
           })
-          AsyncStorage.setItem('user_id', responseJson?.data?.email)
-          AsyncStorage.setItem('token', responseJson?.data?.token)
-          // console.log(responseJson?.data?.email)
-          // navigation.replace('home/warehouses')
+          if (responseJson?.data?.user) {
+            dispatch(setUser(responseJson?.data?.user))
+            AsyncStorage.setItem(
+              'user_id',
+              JSON.stringify(responseJson?.data?.user)
+            )
+          }
+          if (responseJson?.data?.token)
+            AsyncStorage.setItem('token', responseJson?.data?.token)
+          navigation.navigate('home')
         } else {
-          setErrortext(responseJson?.msg)
-          console.log('Please check your email id or password')
+          setErrortext('Please check your email or password')
         }
       })
       .catch((error) => {
         //Hide Loader
+        console.log(error)
         dispatch(setLoading(false))
         let msg = 'Network Error'
         if (error?.response?.data?.message) {
+          console.log(error?.response?.data?.message)
           msg = 'Email Not Registered'
         } else if (error?.response?.data?.error) {
           msg = 'Invalid Password'
@@ -91,9 +105,10 @@ const Login = ({ setIsLogin }) => {
         toast.show(msg, {
           type: 'danger',
         })
-        console.log(error)
       })
   }
+
+  //
 
   useEffect(() => {
     if (userEmail) {
@@ -109,7 +124,6 @@ const Login = ({ setIsLogin }) => {
 
   return (
     <View style={styles.mainBody}>
-      <Loader />
       <ScrollView
         keyboardShouldPersistTaps='handled'
         contentContainerStyle={{

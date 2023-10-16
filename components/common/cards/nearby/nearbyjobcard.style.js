@@ -1,16 +1,16 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native'
 
-import { COLORS, SHADOWS, SIZES } from "../../../../constants";
+import { COLORS, SHADOWS, SIZES } from '../../../../constants'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "space-between",
-    alignItems: "center",
-    flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
     padding: SIZES.medium,
     borderRadius: SIZES.small,
-    backgroundColor: "#FFF",
+    backgroundColor: '#FFF',
     ...SHADOWS.medium,
     shadowColor: COLORS.white,
   },
@@ -19,29 +19,29 @@ const styles = StyleSheet.create({
     height: 50,
     backgroundColor: COLORS.white,
     borderRadius: SIZES.medium,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   logImage: {
-    width: "70%",
-    height: "70%",
+    width: '70%',
+    height: '70%',
   },
   textContainer: {
     flex: 1,
     marginHorizontal: SIZES.medium,
   },
-  jobName: {
+  name: {
     fontSize: SIZES.medium,
-    fontFamily: "DMBold",
+    fontFamily: 'DMBold',
     color: COLORS.primary,
   },
-  jobType: {
+  type: {
     fontSize: SIZES.small + 2,
-    fontFamily: "DMRegular",
+    fontFamily: 'DMRegular',
     color: COLORS.gray,
     marginTop: 3,
-    textTransform: "capitalize",
+    textTransform: 'capitalize',
   },
-});
+})
 
-export default styles;
+export default styles

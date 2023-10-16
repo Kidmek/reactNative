@@ -1,9 +1,20 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome'
-import { AntDesign } from '@expo/vector-icons'
-import { Link, Tabs, useNavigation } from 'expo-router'
-import { Pressable, useColorScheme } from 'react-native'
+import {
+  AntDesign,
+  FontAwesome5,
+  MaterialCommunityIcons,
+} from '@expo/vector-icons'
+import { Tabs, useNavigation } from 'expo-router'
+import { TouchableOpacity, View, useColorScheme } from 'react-native'
 import { COLORS, icons, images } from '../../../constants'
 import ScreenHeader from '../../../components/common/header/ScreenHeader'
+import { useState } from 'react'
+import {
+  selectView,
+  show,
+  toggleModal,
+} from '../../../features/modal/modalSlice'
+import { store } from '../../../store'
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -13,8 +24,9 @@ function TabBarIcon(props) {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme()
   const navigation = useNavigation()
+  const [notification, setNotification] = useState(1)
+  const dispatch = store.dispatch
 
   return (
     <Tabs
@@ -35,8 +47,10 @@ export default function TabLayout() {
           headerShown: true,
           tabBarHideOnKeyboard: true,
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name='home'
+            <FontAwesome5
+              name='warehouse'
+              size={20}
+              style={{ marginBottom: -3 }}
               color={focused ? 'white' : COLORS.secondary}
             />
           ),
@@ -49,7 +63,28 @@ export default function TabLayout() {
             />
           ),
           headerRight: () => (
-            <ScreenHeader iconUrl={images.profile} dimension={'100%'} />
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('notification')
+                }}
+              >
+                {notification ? (
+                  <MaterialCommunityIcons
+                    name='bell-badge-outline'
+                    size={24}
+                    color={COLORS.primary}
+                  />
+                ) : (
+                  <MaterialCommunityIcons
+                    name='bell-outline'
+                    size={24}
+                    color={COLORS.primary}
+                  />
+                )}
+              </TouchableOpacity>
+              <ScreenHeader iconUrl={images.profile} dimension={'100%'} />
+            </View>
           ),
         }}
       />
@@ -113,6 +148,12 @@ export default function TabLayout() {
             />
           ),
         }}
+        listeners={() => ({
+          tabPress: (e) => {
+            dispatch(show())
+            e.preventDefault()
+          },
+        })}
       />
     </Tabs>
   )

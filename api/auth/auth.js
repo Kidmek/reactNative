@@ -1,26 +1,37 @@
-export const login = () => {
+import axios from 'axios'
+import { API } from '../../constants/strings'
+
+export const loginApi = (
+  dataToSend,
+  dispatchFalse,
+  toast,
+  setErrortext,
+  navigation
+) => {
   axios
     .post(API + '/login', {
       ...dataToSend,
     })
-    .then((response) => response.json())
     .then((responseJson) => {
       //Hide Loader
-      setLoading(false)
-      console.log(responseJson)
+      dispatchFalse()
       // If server response message same as Data Matched
-      if (responseJson?.status === 'success') {
+      if (responseJson?.data?.token) {
+        toast.show('Successfully Logged In', {
+          type: 'success',
+        })
         AsyncStorage.setItem('user_id', responseJson?.data?.email)
-        console.log(responseJson?.data?.email)
-        navigation.replace('home/warehouses')
+        AsyncStorage.setItem('token', responseJson?.data?.token)
+        // console.log(responseJson?.data?.email)
+        navigation.navigate('home')
       } else {
-        setErrortext(responseJson?.msg)
-        console.log('Please check your email id or password')
+        setErrortext('Please check your email or password')
       }
     })
     .catch((error) => {
       //Hide Loader
-      setLoading(false)
+      console.log(error)
+      dispatchFalse()
       let msg = 'Network Error'
       if (error?.response?.data?.message) {
         msg = 'Email Not Registered'
@@ -30,8 +41,38 @@ export const login = () => {
       toast.show(msg, {
         type: 'danger',
       })
-      console.error(error)
     })
 }
 
-export const signUp = () => {}
+export const signUpApi = (
+  dataToSend,
+  dispatchFalse,
+  toast,
+  setErrortext,
+  setIsLogin
+) => {
+  axios
+    .post(API + '/register', {
+      ...dataToSend,
+    })
+    .then((responseJson) => {
+      //Hide Loader
+      dispatchFalse()
+      // If server response message same as Data Matched
+      if (responseJson?.data?.token) {
+        setIsLogin()
+        toast.show('Successfully Registered', {
+          type: 'success',
+        })
+      } else {
+        setErrortext(responseJson.msg)
+      }
+    })
+    .catch((error) => {
+      //Hide Loader
+      dispatchFalse()
+      toast.show(error.message, {
+        type: 'danger',
+      })
+    })
+}

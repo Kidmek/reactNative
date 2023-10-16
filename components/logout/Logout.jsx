@@ -10,10 +10,8 @@ import { useState } from 'react'
 import { Dimensions } from 'react-native'
 import { showConfirm } from '../../features/modal/modalSlice'
 
-const Logout = () => {
+const Logout = ({ showLogout, setShowLogout }) => {
   const dispatch = useDispatch()
-
-  const [showLogout, setShowLogout] = useState(showConfirm)
 
   const { width, height } = Dimensions.get('screen')
   const toggleModal = () => {
