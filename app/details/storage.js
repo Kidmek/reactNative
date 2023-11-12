@@ -16,6 +16,8 @@ import { getStorageDetail } from '../../api/storage/storage'
 import { selectIsFetching } from '../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import Detail from '../../components/common/detail/Detail'
+import { mSQUARE } from '../../constants/strings'
+import Footer from '../../components/common/footer/Footer'
 
 const storage = () => {
   const params = useLocalSearchParams()
@@ -49,10 +51,7 @@ const storage = () => {
           />
           <Detail label={'Storage Space'} value={storage.data?.space} />
           {/* <Detail label={'Storage Height'}  value={storage.data} /> */}
-          <Detail
-            label={'Price / ' + 'm\u00B2'}
-            value={storage.data?.price_m2}
-          />
+          <Detail label={'Price / ' + mSQUARE} value={storage.data?.price_m2} />
           <Detail
             label={'Total Price'}
             s
@@ -163,20 +162,7 @@ const storage = () => {
               </View>
             </View>
           )}
-          <View style={styles.footer}>
-            <Button
-              title='Cancel'
-              style={styles.btn}
-              color={COLORS.gray}
-              onPress={() => {}}
-            />
-            <Button
-              title='Save'
-              style={styles.btn}
-              color={COLORS.primary}
-              onPress={() => {}}
-            />
-          </View>
+          <Footer onCancel={() => {}} onSave={() => {}} />
         </View>
       )}
     </ScrollView>

@@ -3,7 +3,8 @@ import React, { useState } from 'react'
 import Input from '../../components/common/input/Input'
 import { COLORS } from '../../constants'
 import styles from './styles/warehouse.style'
-import { MULTI, NUMBER } from '../../constants/strings'
+import { MULTI, NUMBER, mSQUARE } from '../../constants/strings'
+import Footer from '../../components/common/footer/Footer'
 
 const shelve_type = () => {
   const [name, setName] = useState()
@@ -17,7 +18,7 @@ const shelve_type = () => {
       <View style={styles.inputContainer}>
         <Input label={'Shelve Type Name'} state={name} setState={setName} />
         <Input
-          label={'Shelve Type Price /' + 'm\u00B2'}
+          label={'Shelve Type Price /' + mSQUARE}
           state={price}
           setState={setPrice}
           type={NUMBER}
@@ -29,20 +30,7 @@ const shelve_type = () => {
           type={MULTI}
         />
       </View>
-      <View style={styles.footer}>
-        <Button
-          title='Cancel'
-          style={styles.btn}
-          color={COLORS.gray}
-          onPress={() => {}}
-        />
-        <Button
-          title='Save'
-          style={styles.btn}
-          color={COLORS.primary}
-          onPress={() => {}}
-        />
-      </View>
+      <Footer onCancel={() => {}} onSave={() => {}} />
     </ScrollView>
   )
 }

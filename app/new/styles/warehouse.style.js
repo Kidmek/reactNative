@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: SIZES.largePicture,
+    height: SIZES.xLargePicture,
   },
   imageInputWrapper: {
     justifyContent: 'space-around',

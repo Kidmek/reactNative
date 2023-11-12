@@ -1,0 +1,51 @@
+import React, { useState } from 'react'
+import { View, Text, ScrollView } from 'react-native'
+import styles from '../../common/styles/common.style'
+import { AntDesign } from '@expo/vector-icons'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import { useSelector } from 'react-redux'
+import { selectIsFetching } from '../../../features/data/dataSlice'
+
+import { useNavigation } from 'expo-router'
+import Search from '../../common/search/Search'
+import All from '../All/All'
+import Header from '../../common/header/Header'
+
+const InsuranceWelcome = () => {
+  const [searchQuery, setSearchQuery] = useState()
+  const navigation = useNavigation()
+
+  const fetching = useSelector(selectIsFetching)
+
+  return (
+    <ScrollView>
+      <View style={styles.welcomeContainer}>
+        <Header name={'Adrian'} text={'Insurance'} />
+
+        <View style={styles.shipmentHeader}>
+          <TouchableOpacity
+            style={styles.shipmentHeaderWrapper}
+            onPress={() => {
+              navigation.navigate('details', {
+                screen: 'insurance_options',
+              })
+            }}
+          >
+            <AntDesign size={25} name='setting' />
+            <View>
+              <Text style={styles.name}>Insurance Options</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+        <Search
+          onSearch={() => {}}
+          setSearchQuery={setSearchQuery}
+          searchQuery={searchQuery}
+        />
+      </View>
+      <All fetching={fetching} />
+    </ScrollView>
+  )
+}
+
+export default InsuranceWelcome

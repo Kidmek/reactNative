@@ -35,7 +35,7 @@ export const postSkeleton = (
           // If server response message same as Data Matched
           if (responseJson?.data) {
             setData()
-            toast.show('Successfully Registered', {
+            toast?.show('Successfully Registered', {
               type: 'success',
             })
           }
@@ -43,15 +43,17 @@ export const postSkeleton = (
         .catch((error) => {
           //Hide Loader
           dispatchFalse(setLoading(false))
-          toast.show(error.message, {
-            type: 'danger',
-          })
+          if (toast.show)
+            toast?.show(error.message, {
+              type: 'danger',
+            })
         })
     })
     .catch(() => {
-      toast.show('Unauthorized', {
-        type: 'danger',
-      })
+      if (toast.show)
+        toast?.show('Unauthorized', {
+          type: 'danger',
+        })
     })
 }
 
@@ -85,15 +87,17 @@ export const getSkeleton = (
           //Hide Loader
           console.log(error)
           dispatchFalse(setLoading(false))
-          toast.show(error?.request?.statusText || error.message, {
-            type: 'danger',
-          })
+          if (toast.show)
+            toast?.show(error?.request?.statusText || error.message, {
+              type: 'danger',
+            })
         })
     })
     .catch(() => {
-      toast.show('Unauthorized', {
-        type: 'danger',
-      })
+      if (toast.show)
+        toast?.show('Unauthorized', {
+          type: 'danger',
+        })
     })
 }
 

@@ -1,21 +1,29 @@
-import { View, Text, ActivityIndicator } from 'react-native'
+import { View, ActivityIndicator } from 'react-native'
 import React from 'react'
-import styles from './started.style'
-import { TouchableOpacity } from 'react-native'
-import { AntDesign } from '@expo/vector-icons'
+import styles from '../../common/styles/common.style'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
-import { useNavigation } from 'expo-router'
 import { COLORS } from '../../../constants'
 import { getShipments } from '../../../api/shipment/shipment'
+import CardDetail from '../../common/detail/CardDetail'
+import AddNew from '../../common/header/AddNew'
+import SingleCard from '../../common/cards/single/SingleCard'
 
 const Started = ({ fetching, type }) => {
-  const navigation = useNavigation()
   const dispatch = store.dispatch
   const toast = useToast()
   const [shipments, setShipments] = useState()
+
+  const getProductQty = (shipments, productId) => {
+    const product = shipments?.filter((ship) => ship.product == productId)
+    if (product.length) {
+      return product[0].productqty
+    } else {
+      return ''
+    }
+  }
 
   useEffect(() => {
     getShipments(type, dispatch, setShipments, toast)
@@ -25,50 +33,55 @@ const Started = ({ fetching, type }) => {
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('new', {
-            screen: 'product',
-          })
+      <AddNew
+        title={'New Shipment'}
+        page={{
+          name: 'details',
+          screen: 'shipment_type',
+          params: { choose: true },
         }}
-        style={styles.headerBtn}
-      >
-        <AntDesign name='plus' size={20} color={'white'} />
-        <Text style={styles.headerTitle}>New Shipment</Text>
-      </TouchableOpacity>
+      />
 
-      {shipments?.data?.map((item, index) => {
+      {shipments?.results?.map((item, index) => {
         return (
-          <TouchableOpacity
+          <SingleCard
             key={index}
-            style={styles.warehouseContainer}
-            onPress={() => {
-              navigation.navigate('details', {
-                screen: 'warehouse',
-                params: { type: 'Unmanaged', id: item.id },
-              })
+            page={{
+              name: 'details',
+              screen: 'warehouse',
+              params: { type: 'Unmanaged', id: item.id },
             }}
           >
             <View style={styles.textContainer}>
-              <Text style={styles.name} numberOfLines={1}>
-                Shipment Method : {item?.shipmentMethod?.name}
-              </Text>
-              <Text style={styles.jobName}>
-                Customer : {item?.shipmentCustomer?.first_name}
-              </Text>
-              <Text style={styles.jobName}>
-                Transportation : {item?.transportation?.transportation_name}
-              </Text>
-              <Text style={styles.jobName}>
-                Product : {item?.shippingProduct?.product_name}
-              </Text>
-              <Text style={styles.jobName}>
-                Product Quantity : {item?.productQty}
-              </Text>
-              <Text style={styles.type}>Status : {item?.status}</Text>
-              <Text style={styles.type}>Created At : {item?.created_at}</Text>
+              <CardDetail
+                label={'Shipment Method'}
+                value={
+                  item?.TransportationDetail?.TransportationTypeDetail?.name
+                }
+              />
+              <CardDetail
+                label={'Customer'}
+                value={item?.productdetail?.userdetail?.first_name}
+              />
+              <CardDetail
+                label={'Transportation'}
+                value={item?.TransportationDetail?.transportation_name}
+              />
+              <CardDetail
+                label={'Product'}
+                value={item?.productdetail?.product_name}
+              />
+              <CardDetail
+                label={'Product Qty'}
+                value={getProductQty(
+                  item?.productdetail?.shippedproducts,
+                  item?.productdetail.id
+                )}
+              />
+              <CardDetail label={'Status'} value={item?.status} />
+              <CardDetail label={'Created At'} value={Date(item?.created_at)} />
             </View>
-          </TouchableOpacity>
+          </SingleCard>
         )
       })}
     </View>

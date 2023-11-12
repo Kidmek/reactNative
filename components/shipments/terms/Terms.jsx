@@ -1,15 +1,7 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-} from 'react-native'
+import { View, Text, ScrollView, ActivityIndicator } from 'react-native'
 import React from 'react'
-import styles from '../started/started.style'
-import { useNavigation } from 'expo-router'
+import styles from '../../common/styles/common.style'
 import { useState } from 'react'
-import { AntDesign } from '@expo/vector-icons'
 import Search from '../../common/search/Search'
 import { store } from '../../../store'
 import { useToast } from 'react-native-toast-notifications'
@@ -18,9 +10,10 @@ import { getShipmentTerms } from '../../../api/shipment/shipment'
 import { selectIsFetching } from '../../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import { COLORS } from '../../../constants'
+import AddNew from '../../common/header/AddNew'
+import SingleCard from '../../common/cards/single/SingleCard'
 const Terms = () => {
   const [searchQuery, setSearchQuery] = useState()
-  const navigation = useNavigation()
   const dispatch = store.dispatch
   const toast = useToast()
   const [terms, setTerms] = useState()
@@ -37,32 +30,25 @@ const Terms = () => {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
       />
-      <View style={styles.cardsContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('new', {
-              screen: 'warehouse',
-            })
-          }}
-          style={styles.headerBtn}
-        >
-          <AntDesign name='plus' size={20} color={'white'} />
-          <Text style={styles.headerTitle}>New Shipment Term</Text>
-        </TouchableOpacity>
-      </View>
+      <AddNew
+        title={'New Shipment Term'}
+        page={{
+          name: 'new',
+          screen: 'warehouse',
+        }}
+      />
+
       {fetching ? (
         <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
       ) : (
         terms?.data?.map((item, index) => {
           return (
-            <TouchableOpacity
+            <SingleCard
               key={index}
-              style={styles.warehouseContainer}
-              onPress={() => {
-                navigation.navigate('details', {
-                  screen: 'warehouse',
-                  params: { type: 'Unmanaged', id: item.id },
-                })
+              page={{
+                name: 'details',
+                screen: 'warehouse',
+                params: { type: 'Unmanaged', id: item.id },
               }}
             >
               <View style={styles.textContainer}>
@@ -71,9 +57,9 @@ const Terms = () => {
                 </Text>
                 <Text style={styles.jobName}>{item?.term_meta}</Text>
 
-                <Text style={styles.type}>{item?.created_at}</Text>
+                <Text style={styles.type}>{Date(item?.created_at)}</Text>
               </View>
-            </TouchableOpacity>
+            </SingleCard>
           )
         })
       )}

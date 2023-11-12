@@ -32,25 +32,21 @@ const shelve_type = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('new', {
-              screen: 'shelve_type',
-            })
+        <AddNew
+          title={'New Shelve Type'}
+          page={{
+            name: 'new',
+            screen: 'shelve_type',
           }}
-          style={styles.headerBtn}
-        >
-          <AntDesign name='plus' size={20} color={'white'} />
-          <Text style={styles.btnText}>New Shelve Type</Text>
-        </TouchableOpacity>
+        />
       </View>
       {fetching ? (
         <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
       ) : (
         <View style={storageStyles.listContainer}>
           {shelves &&
-            shelves.data &&
-            shelves.data.map((shelve, index) => (
+            shelves.results &&
+            shelves.results.map((shelve, index) => (
               <View key={index} style={storageStyles.singleItem}>
                 <Text style={styles.name}>{shelve.name}</Text>
                 <Text style={styles.subName}>

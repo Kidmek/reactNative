@@ -7,6 +7,7 @@ import * as ImagePicker from 'expo-image-picker'
 import { TouchableOpacity } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 import { NUMBER } from '../../constants/strings'
+import Footer from '../../components/common/footer/Footer'
 
 const equipments = () => {
   const [name, setName] = useState()
@@ -71,20 +72,7 @@ const equipments = () => {
           onPress={pickImage}
         />
       </View>
-      <View style={styles.footer}>
-        <Button
-          title='Cancel'
-          style={styles.btn}
-          color={COLORS.gray}
-          onPress={() => {}}
-        />
-        <Button
-          title='Save'
-          style={styles.btn}
-          color={COLORS.primary}
-          onPress={() => {}}
-        />
-      </View>
+      <Footer onCancel={() => {}} onSave={() => {}} />
     </ScrollView>
   )
 }

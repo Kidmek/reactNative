@@ -1,25 +1,17 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ScrollView,
-  ActivityIndicator,
-} from 'react-native'
+import { View, Text, ScrollView, ActivityIndicator } from 'react-native'
 import React from 'react'
-import styles from '../../shipments/started/started.style'
-import { useNavigation } from 'expo-router'
+import styles from '../../common/styles/common.style'
 import { useState } from 'react'
-import { AntDesign } from '@expo/vector-icons'
 import { store } from '../../../store'
 import { useToast } from 'react-native-toast-notifications'
 import { useEffect } from 'react'
-
 import { selectIsFetching } from '../../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import { COLORS } from '../../../constants'
 import { getOrderTypes } from '../../../api/order/order'
-const OrderTypes = () => {
-  const navigation = useNavigation()
+import AddNew from '../../common/header/AddNew'
+import SingleCard from '../../common/cards/single/SingleCard'
+const OrderTypes = ({ params }) => {
   const dispatch = store.dispatch
   const toast = useToast()
   const fetching = useSelector(selectIsFetching)
@@ -30,41 +22,41 @@ const OrderTypes = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <View style={styles.cardsContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('new', {
-              screen: 'warehouse',
-            })
-          }}
-          style={styles.headerBtn}
-        >
-          <AntDesign name='plus' size={20} color={'white'} />
-          <Text style={styles.headerTitle}>New Order Type</Text>
-        </TouchableOpacity>
-      </View>
+      {!params?.choose && (
+        <View style={styles.cardsContainer}>
+          <AddNew
+            title={'New Order Type'}
+            page={{
+              name: 'new',
+              screen: 'order_type',
+            }}
+          />
+        </View>
+      )}
       {fetching ? (
         <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
       ) : (
-        orderTypes?.data?.map((item, index) => {
+        orderTypes?.results?.map((item, index) => {
           return (
-            <TouchableOpacity
+            <SingleCard
               key={index}
-              style={styles.warehouseContainer}
-              onPress={() => {
-                navigation.navigate('details', {
-                  screen: 'warehouse',
-                  params: { type: 'Unmanaged', id: item.id },
-                })
-              }}
+              page={
+                params.choose
+                  ? {
+                      name: 'new',
+                      screen: 'choose_for_order',
+                      params: { type: item?.ordertype_name },
+                    }
+                  : {}
+              }
             >
               <View style={styles.textContainer}>
                 <Text style={styles.name} numberOfLines={1}>
                   {item?.ordertype_name}
                 </Text>
-                <Text style={styles.jobName}>{item?.meta}</Text>
+                <Text style={styles.type}>{item?.meta}</Text>
               </View>
-            </TouchableOpacity>
+            </SingleCard>
           )
         })
       )}

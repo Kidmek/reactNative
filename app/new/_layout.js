@@ -11,12 +11,26 @@ const _layout = () => {
           headerTitle: 'Add Warehouse',
         }}
       />
+      {/* Order */}
       <Stack.Screen
         name='order'
         options={{
           headerTitle: 'Add Order',
         }}
       />
+      <Stack.Screen
+        name='choose_for_order'
+        options={{
+          headerTitle: 'Choose',
+        }}
+      />
+      <Stack.Screen
+        name='order_type'
+        options={{
+          headerTitle: 'Add Order Type',
+        }}
+      />
+      {/*  */}
       <Stack.Screen
         name='customer'
         options={{
@@ -30,11 +44,55 @@ const _layout = () => {
         }}
       />
       <Stack.Screen
+        name='insurance_option'
+        options={{
+          headerTitle: 'Add Insurance Option',
+        }}
+      />
+      <Stack.Screen
+        name='insurance'
+        options={{
+          headerTitle: 'Add Insurance',
+        }}
+      />
+      {/* Shipment */}
+      <Stack.Screen
         name='shipment'
         options={{
           headerTitle: 'Add Shipment',
         }}
       />
+      <Stack.Screen
+        name='transportation'
+        options={{
+          headerTitle: 'Add Transportation',
+        }}
+      />
+      <Stack.Screen
+        name='shipment_method'
+        options={{
+          headerTitle: 'Add Transportation Method',
+        }}
+      />
+      <Stack.Screen
+        name='shipment_type'
+        options={{
+          headerTitle: 'Add Shipment Type',
+        }}
+      />
+      <Stack.Screen
+        name='port'
+        options={{
+          headerTitle: 'Add Port',
+        }}
+      />
+      <Stack.Screen
+        name='transit'
+        options={{
+          headerTitle: 'Add Transit',
+        }}
+      />
+      {/*  */}
       <Stack.Screen
         name='office'
         options={{

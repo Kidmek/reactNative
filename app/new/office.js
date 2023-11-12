@@ -4,6 +4,7 @@ import Input from '../../components/common/input/Input'
 import { COLORS } from '../../constants'
 import styles from './styles/warehouse.style'
 import { NUMBER } from '../../constants/strings'
+import Footer from '../../components/common/footer/Footer'
 
 const office = () => {
   const [name, setName] = useState()
@@ -27,20 +28,7 @@ const office = () => {
           type={NUMBER}
         />
       </View>
-      <View style={styles.footer}>
-        <Button
-          title='Cancel'
-          style={styles.btn}
-          color={COLORS.gray}
-          onPress={() => {}}
-        />
-        <Button
-          title='Save'
-          style={styles.btn}
-          color={COLORS.primary}
-          onPress={() => {}}
-        />
-      </View>
+      <Footer onCancel={() => {}} onSave={() => {}} />
     </ScrollView>
   )
 }

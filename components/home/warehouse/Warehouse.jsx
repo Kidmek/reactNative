@@ -1,18 +1,17 @@
 import { View, Text, Image, ActivityIndicator } from 'react-native'
 import React from 'react'
-import styles from './warehouse.style'
-import { TouchableOpacity } from 'react-native'
-import { AntDesign } from '@expo/vector-icons'
+import styles from '../../common/styles/common.style'
 import { useState } from 'react'
 import { getWarehouses } from '../../../api/warehouse/warehouse'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
-import { useNavigation } from 'expo-router'
 import { COLORS } from '../../../constants'
+import { WAREHOUSE, mSQUARE } from '../../../constants/strings'
+import AddNew from '../../common/header/AddNew'
+import SingleCard from '../../common/cards/single/SingleCard'
 
-const Warehouse = ({ fetching }) => {
-  const navigation = useNavigation()
+const Warehouse = ({ fetching, choose }) => {
   const dispatch = store.dispatch
   const toast = useToast()
 
@@ -25,30 +24,34 @@ const Warehouse = ({ fetching }) => {
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('new', {
+      {!choose && (
+        <AddNew
+          title={'New Warehouse'}
+          page={{
+            name: 'new',
             screen: 'warehouse',
             params: { type: 'Unmanaged' },
-          })
-        }}
-        style={styles.headerBtn}
-      >
-        <AntDesign name='plus' size={20} color={'white'} />
-        <Text style={styles.headerTitle}>New Warehouse</Text>
-      </TouchableOpacity>
+          }}
+        />
+      )}
 
       {warehouses?.results?.map((item, index) => {
         return (
-          <TouchableOpacity
+          <SingleCard
             key={index}
-            style={styles.warehouseContainer}
-            onPress={() => {
-              navigation.navigate('details', {
-                screen: 'warehouse',
-                params: { type: 'Unmanaged', id: item.id },
-              })
-            }}
+            page={
+              !choose
+                ? {
+                    name: 'details',
+                    screen: 'warehouse',
+                    params: { type: 'Unmanaged', id: item.id },
+                  }
+                : {
+                    name: 'new',
+                    screen: 'order',
+                    params: { type: WAREHOUSE, id: item.id },
+                  }
+            }
           >
             <Image
               style={styles.image}
@@ -62,10 +65,10 @@ const Warehouse = ({ fetching }) => {
               <Text style={styles.jobName}>{item?.region}</Text>
               <Text style={styles.type}>{item?.city}</Text>
               <Text style={styles.type}>{item?.sub_city}</Text>
-              <Text style={styles.type}>{item?.space + ' m\u00B2'} </Text>
+              <Text style={styles.type}>{item?.space + ' ' + mSQUARE} </Text>
               <Text style={styles.type}>${item?.full_price}</Text>
             </View>
-          </TouchableOpacity>
+          </SingleCard>
         )
       })}
     </View>

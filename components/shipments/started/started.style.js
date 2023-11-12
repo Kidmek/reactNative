@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
     width: 'fit-content',
     alignSelf: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   cardsContainer: {
     marginTop: SIZES.medium,
@@ -66,6 +67,13 @@ const styles = StyleSheet.create({
     fontFamily: 'DMRegular',
     color: COLORS.gray,
     marginTop: 3,
+    textTransform: 'capitalize',
+  },
+  date: {
+    fontSize: SIZES.small + 1,
+    marginTop: 3,
+    fontFamily: FONT.bold,
+    color: COLORS.gray2,
     textTransform: 'capitalize',
   },
 })

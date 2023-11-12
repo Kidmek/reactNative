@@ -14,6 +14,7 @@ import { getAllProducts } from '../../api/product/product'
 import { getAllUser } from '../../api/users'
 import CustomDropdown from '../../components/common/dropdown/CustomDropdown'
 import { getStorages } from '../../api/storage/storage'
+import Footer from '../../components/common/footer/Footer'
 
 const damaged_product = () => {
   const dispatch = store.dispatch
@@ -80,20 +81,7 @@ const damaged_product = () => {
           type={MULTI}
         />
       </View>
-      <View style={styles.footer}>
-        <Button
-          title='Cancel'
-          style={styles.btn}
-          color={COLORS.gray}
-          onPress={() => {}}
-        />
-        <Button
-          title='Save'
-          style={styles.btn}
-          color={COLORS.primary}
-          onPress={() => {}}
-        />
-      </View>
+      <Footer onCancel={() => {}} onSave={() => {}} />
     </ScrollView>
   )
 }

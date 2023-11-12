@@ -1,18 +1,16 @@
 import { View, Text, Image, ActivityIndicator } from 'react-native'
 import React from 'react'
-import styles from './types.style'
-import { TouchableOpacity } from 'react-native'
-import { AntDesign } from '@expo/vector-icons'
+import styles from '../../common/styles/common.style'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
-import { useNavigation } from 'expo-router'
 import { COLORS } from '../../../constants'
 import { getProductTypes } from '../../../api/product/product'
+import AddNew from '../../common/header/AddNew'
+import SingleCard from '../../common/cards/single/SingleCard'
 
 const Types = ({ fetching }) => {
-  const navigation = useNavigation()
   const dispatch = store.dispatch
   const toast = useToast()
 
@@ -25,29 +23,23 @@ const Types = ({ fetching }) => {
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('new', {
-            screen: 'product_type',
-          })
+      <AddNew
+        title={'New Product Type'}
+        page={{
+          name: 'new',
+          screen: 'product_type',
         }}
-        style={styles.headerBtn}
-      >
-        <AntDesign name='plus' size={20} color={'white'} />
-        <Text style={styles.headerTitle}>New Product Type</Text>
-      </TouchableOpacity>
+      />
 
       <View style={styles.listContainer}>
-        {productTypes?.data?.map((item, index) => {
+        {productTypes?.results?.map((item, index) => {
           return (
-            <TouchableOpacity
+            <SingleCard
               key={index}
-              style={styles.storageTypeContainer}
-              onPress={() => {
-                navigation.navigate('details', {
-                  screen: 'product_type',
-                  params: { name: item?.storage_name, id: item?.id },
-                })
+              page={{
+                name: 'details',
+                screen: 'product_type',
+                params: { name: item?.storage_name, id: item?.id },
               }}
             >
               {/* <AntDesign name='storage' size={40} color={'black'} /> */}
@@ -57,10 +49,10 @@ const Types = ({ fetching }) => {
                 </Text>
                 <Text style={styles.type}>
                   <Text style={styles.label}>Created At: </Text>
-                  {item?.created_at}
+                  {Date(item?.created_at)}
                 </Text>
               </View>
-            </TouchableOpacity>
+            </SingleCard>
           )
         })}
       </View>

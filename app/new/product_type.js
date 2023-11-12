@@ -6,6 +6,7 @@ import { ScrollView } from 'react-native'
 import { COLORS } from '../../constants'
 
 import Input from '../../components/common/input/Input'
+import Footer from '../../components/common/footer/Footer'
 
 const product_type = () => {
   const [name, setName] = useState()
@@ -21,20 +22,7 @@ const product_type = () => {
       <View style={styles.inputContainer}>
         <Input label={'Product Type Name'} state={name} setState={setName} />
       </View>
-      <View style={styles.footer}>
-        <Button
-          title='Cancel'
-          style={styles.btn}
-          color={COLORS.gray}
-          onPress={() => {}}
-        />
-        <Button
-          title='Save'
-          style={styles.btn}
-          color={COLORS.primary}
-          onPress={() => {}}
-        />
-      </View>
+      <Footer onCancel={() => {}} onSave={() => {}} />
     </ScrollView>
   )
 }

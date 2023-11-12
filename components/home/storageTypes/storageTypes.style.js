@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     gap: SIZES.small,
     flexDirection: 'column',
   },
-  storageTypeContainer: {
+  warehouseContainer: {
     flex: 1,
     justifyContent: 'space-between',
     alignItems: 'center',

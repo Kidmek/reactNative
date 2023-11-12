@@ -13,7 +13,8 @@ import { Button } from 'react-native'
 import styles from './styles/warehouse.style'
 import { COLORS } from '../../constants'
 import Input from '../../components/common/input/Input'
-import { NUMBER } from '../../constants/strings'
+import { NUMBER, mSQUARE } from '../../constants/strings'
+import Footer from '../../components/common/footer/Footer'
 
 const storage = () => {
   const params = useLocalSearchParams()
@@ -65,7 +66,7 @@ const storage = () => {
           type={NUMBER}
         />
         <Input
-          label={'Price / ' + 'm\u00B2'}
+          label={'Price / ' + mSQUARE}
           state={pricePer}
           setState={setPricePer}
           type={NUMBER}
@@ -116,20 +117,7 @@ const storage = () => {
           />
         </View>
       </View>
-      <View style={styles.footer}>
-        <Button
-          title='Cancel'
-          style={styles.btn}
-          color={COLORS.gray}
-          onPress={() => {}}
-        />
-        <Button
-          title='Save'
-          style={styles.btn}
-          color={COLORS.primary}
-          onPress={() => {}}
-        />
-      </View>
+      <Footer onCancel={() => {}} onSave={() => {}} />
     </ScrollView>
   )
 }

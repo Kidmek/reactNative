@@ -1,12 +1,7 @@
 import React, { useState } from 'react'
-import { View, Text, FlatList, ScrollView } from 'react-native'
-
-import styles from './welcome.style'
-import { TextInput } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import { Image } from 'react-native'
-import { SIZES, icons } from '../../../constants'
-import { productTypes, warehouseTypes } from '../../../constants/strings'
+import { View, ScrollView } from 'react-native'
+import styles from '../../common/styles/common.style'
+import { productTypes } from '../../../constants/strings'
 import { useSelector } from 'react-redux'
 import { selectIsFetching } from '../../../features/data/dataSlice'
 import All from '../all/All'
@@ -15,6 +10,8 @@ import Damaged from '../damaged/Damaged'
 import Categories from '../categories/Categories'
 import Types from '../types/Types'
 import Search from '../../common/search/Search'
+import Header from '../../common/header/Header'
+import CustomTabs from '../../common/header/CustomTabs'
 
 const ProductWelcome = () => {
   const [searchQuery, setSearchQuery] = useState()
@@ -38,34 +35,17 @@ const ProductWelcome = () => {
   return (
     <ScrollView>
       <View style={styles.welcomeContainer}>
-        <View>
-          <Text style={styles.userName}>Hello Adrian</Text>
-          <Text style={styles.welcomeMessage}>Find Your Perfect Product</Text>
-        </View>
+        <Header name={'Adrian'} text={'Product'} />
         <Search
           onSearch={() => {}}
           setSearchQuery={setSearchQuery}
           searchQuery={searchQuery}
         />
-        <View style={styles.tabsContainer}>
-          <FlatList
-            showsHorizontalScrollIndicator={false}
-            data={productTypes}
-            horizontal
-            keyExtractor={(item) => item}
-            contentContainerStyle={{ columnGap: SIZES.small }}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.tab(activeType, item)}
-                onPress={() => {
-                  setActiveType(item)
-                }}
-              >
-                <Text style={styles.tabText}>{item}</Text>
-              </TouchableOpacity>
-            )}
-          />
-        </View>
+        <CustomTabs
+          data={productTypes}
+          setActiveType={setActiveType}
+          activeType={activeType}
+        />
       </View>
       {body()}
     </ScrollView>

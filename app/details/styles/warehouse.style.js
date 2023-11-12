@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native'
 import { SHADOWS, COLORS, FONT, SIZES } from '../../../constants'
-import { Colors } from 'react-native/Libraries/NewAppScreen'
 
 const styles = StyleSheet.create({
   container: {
@@ -66,7 +65,8 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: SIZES.largePicture,
+    height: SIZES.xLargePicture,
+    marginBottom: SIZES.medium,
   },
 
   officeContainer: {
@@ -104,7 +104,6 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
 
-  storageContainer: {},
   resourcesHeader: {
     flexDirection: 'row',
     marginTop: SIZES.large,
@@ -147,6 +146,26 @@ const styles = StyleSheet.create({
   headerBtnTxt: {
     fontFamily: FONT.medium,
     color: COLORS.white,
+  },
+  detailsTextBtn: {
+    color: COLORS.primary,
+    fontFamily: FONT.regular,
+  },
+  removeTextBtn: {
+    color: COLORS.tertiary,
+    fontFamily: FONT.regular,
+  },
+  actionBtns: {
+    alignItems: 'flex-end',
+    gap: SIZES.xSmall,
+  },
+  tableBoldCell: {
+    fontFamily: FONT.bold,
+  },
+  tableNormalCells: {
+    fontSize: SIZES.small,
+    fontFamily: FONT.regular,
+    flexWrap: 'wrap-reverse',
   },
 })
 

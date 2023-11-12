@@ -11,10 +11,8 @@ const CustomDropdown = ({
   setState,
   labelField,
   valueField,
+  setOtherState,
 }) => {
-  options?.array?.forEach((element) => {
-    console.log(element[''])
-  })
   return (
     <View style={styles.inputWrapper}>
       <Text style={styles.inputLabel}>{label}</Text>
@@ -26,7 +24,12 @@ const CustomDropdown = ({
         labelField={labelField}
         valueField={valueField}
         onChange={(item) => {
-          setState(item[valueField])
+          if (setState) {
+            setState(item[valueField])
+          }
+          if (setOtherState) {
+            setOtherState(item)
+          }
         }}
         renderItem={(item) => {
           labelField?.split('.')?.forEach((field) => {

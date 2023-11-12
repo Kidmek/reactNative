@@ -1,0 +1,55 @@
+import { View, Text, ActivityIndicator } from 'react-native'
+import React from 'react'
+import styles from '../../common/styles/common.style'
+import { COLORS } from '../../../constants'
+import { store } from '../../../store'
+import { FontAwesome5 } from '@expo/vector-icons'
+import { useToast } from 'react-native-toast-notifications'
+import { useState } from 'react'
+import { useEffect } from 'react'
+import { getAllGroups } from '../../../api/users'
+import AddNew from '../../common/header/AddNew'
+import SingleCard from '../../common/cards/single/SingleCard'
+
+const All = ({ fetching }) => {
+  const dispatch = store.dispatch
+  const toast = useToast()
+  const [groups, setGroups] = useState()
+
+  useEffect(() => {
+    getAllGroups(null, dispatch, setGroups, toast)
+  }, [])
+  return fetching ? (
+    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+  ) : (
+    <View style={styles.container}>
+      <AddNew
+        title={'New Group'}
+        page={{
+          name: 'new',
+          screen: 'transit',
+        }}
+      />
+
+      {groups?.results?.map((item, index) => {
+        return (
+          <SingleCard
+            key={index}
+            page={{
+              name: 'details',
+              screen: 'group',
+              params: { id: item.id, name: item?.name },
+            }}
+          >
+            <FontAwesome5 name='users' size={20} color={'black'} />
+            <View style={styles.textContainer}>
+              <Text style={styles.name}>{item?.name}</Text>
+            </View>
+          </SingleCard>
+        )
+      })}
+    </View>
+  )
+}
+
+export default All

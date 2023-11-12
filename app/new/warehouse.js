@@ -8,7 +8,7 @@ import { TouchableOpacity } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 import { COLORS } from '../../constants'
 import { Dropdown } from 'react-native-element-dropdown'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, useNavigation } from 'expo-router'
 import { useEffect } from 'react'
 import { getWarehouses } from '../../api/warehouse/warehouse'
 import { store } from '../../store'
@@ -16,11 +16,13 @@ import { useToast } from 'react-native-toast-notifications'
 import { getStorages } from '../../api/storage/storage'
 import MapView from 'react-native-maps'
 import Input from '../../components/common/input/Input'
-import { MULTI, NUMBER } from '../../constants/strings'
+import { MULTI, NUMBER, mSQUARE } from '../../constants/strings'
+import Footer from '../../components/common/footer/Footer'
 
 const warehouse = () => {
   const params = useLocalSearchParams()
   const dispatch = store.dispatch
+  const navigate = useNavigation()
   const toast = useToast()
   const [warehouses, setWarehouses] = useState()
   const [storage, setStorage] = useState()
@@ -38,6 +40,7 @@ const warehouse = () => {
   const [description, setDescription] = useState()
   const [images, setImages] = useState([])
 
+  const saveWarehouse = async () => {}
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -88,7 +91,7 @@ const warehouse = () => {
               setState={setSpace}
             />
             <Input
-              label={'Warehouse Price / ' + 'm\u00B2'}
+              label={'Warehouse Price / ' + mSQUARE}
               state={pricePer}
               type={NUMBER}
               setState={setPricePer}
@@ -188,20 +191,7 @@ const warehouse = () => {
           />
         </View>
       </View>
-      <View style={styles.footer}>
-        <Button
-          title='Cancel'
-          style={styles.btn}
-          color={COLORS.gray}
-          onPress={() => {}}
-        />
-        <Button
-          title='Save'
-          style={styles.btn}
-          color={COLORS.primary}
-          onPress={() => {}}
-        />
-      </View>
+      <Footer onCancel={() => {}} onSave={() => {}} />
     </ScrollView>
   )
 }

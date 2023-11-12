@@ -11,12 +11,18 @@ const styles = StyleSheet.create({
     fontFamily: FONT.bold,
   },
   input: {
-    fontSize: SIZES.large,
+    fontSize: SIZES.medium,
     fontFamily: FONT.medium,
     backgroundColor: COLORS.gray2,
     borderRadius: SIZES.small,
     padding: SIZES.small,
     marginBottom: SIZES.medium,
+    textAlignVertical: 'top',
+  },
+  dateIcon: {
+    position: 'absolute',
+    right: '3.5%',
+    top: '12%',
   },
 })
 

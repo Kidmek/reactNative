@@ -1,9 +1,12 @@
-import { View, Text } from 'react-native'
 import React from 'react'
-import Methods from '../../components/shipments/transportations/methods/Methods'
+import { View } from 'react-native'
 
 const transportation_methods = () => {
-  return <Methods />
+  return (
+    <View>
+      <Text>Method Details</Text>
+    </View>
+  )
 }
 
 export default transportation_methods

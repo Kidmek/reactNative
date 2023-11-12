@@ -93,7 +93,7 @@ const Login = ({ setIsLogin }) => {
       })
       .catch((error) => {
         //Hide Loader
-        console.log(error)
+        console.log(error.toString())
         dispatch(setLoading(false))
         let msg = 'Network Error'
         if (error?.response?.data?.message) {

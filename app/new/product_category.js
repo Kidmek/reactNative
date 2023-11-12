@@ -6,6 +6,8 @@ import { ScrollView } from 'react-native'
 import { COLORS } from '../../constants'
 
 import Input from '../../components/common/input/Input'
+import { MULTI } from '../../constants/strings'
+import Footer from '../../components/common/footer/Footer'
 
 const product_category = () => {
   const [name, setName] = useState()
@@ -22,25 +24,13 @@ const product_category = () => {
       <View style={styles.inputContainer}>
         <Input label={'Category Name'} state={name} setState={setName} />
         <Input
+          type={MULTI}
           label={'Category Description'}
           state={description}
           setState={setDescription}
         />
       </View>
-      <View style={styles.footer}>
-        <Button
-          title='Cancel'
-          style={styles.btn}
-          color={COLORS.gray}
-          onPress={() => {}}
-        />
-        <Button
-          title='Save'
-          style={styles.btn}
-          color={COLORS.primary}
-          onPress={() => {}}
-        />
-      </View>
+      <Footer onCancel={() => {}} onSave={() => {}} />
     </ScrollView>
   )
 }

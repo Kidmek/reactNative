@@ -11,7 +11,7 @@ import { store } from '../../store'
 import { useToast } from 'react-native-toast-notifications'
 import { FontAwesome5 } from '@expo/vector-icons'
 import Input from '../../components/common/input/Input'
-import { MULTI, NUMBER } from '../../constants/strings'
+import { DATE, MULTI, NUMBER } from '../../constants/strings'
 import {
   getProductCategories,
   getProductTypes,
@@ -20,6 +20,7 @@ import { getAllUser } from '../../api/users'
 import CustomDropdown from '../../components/common/dropdown/CustomDropdown'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import { TextInput } from 'react-native-gesture-handler'
+import Footer from '../../components/common/footer/Footer'
 
 const product = () => {
   const dispatch = store.dispatch
@@ -162,53 +163,23 @@ const product = () => {
           </View>
         </View>
 
-        <View style={{ ...styles.inputWrapper, position: 'relative' }}>
-          <Text style={styles.inputLabel}>Expire Date</Text>
-          <View>
-            <TextInput
-              style={styles.input}
-              value={expireDate}
-              editable={false}
-              placeholder='Select An Expire Date'
-            />
-            <TouchableOpacity
-              style={styles.dateIcon}
-              onPress={() => {
-                setWhichToShow('ex')
-              }}
-            >
-              <FontAwesome5
-                name='calendar-alt'
-                size={30}
-                color={COLORS.primary}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <Input
+          type={DATE}
+          label={'Expire Date'}
+          placeholder={'Select An Expire Date'}
+          setWhichToShow={setWhichToShow}
+          id={'ex'}
+          state={expireDate}
+        />
+        <Input
+          type={DATE}
+          label={'Arriving Date'}
+          placeholder={'Select An Arrival Date'}
+          setWhichToShow={setWhichToShow}
+          id={'ar'}
+          state={arrivingDate}
+        />
 
-        <View style={{ ...styles.inputWrapper, position: 'relative' }}>
-          <Text style={styles.inputLabel}>Arriving Date</Text>
-          <View>
-            <TextInput
-              style={styles.input}
-              value={arrivingDate}
-              editable={false}
-              placeholder='Select An Arrival Date'
-            />
-            <TouchableOpacity
-              style={styles.dateIcon}
-              onPress={() => {
-                setWhichToShow('ex')
-              }}
-            >
-              <FontAwesome5
-                name='calendar-alt'
-                size={30}
-                color={COLORS.primary}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
         {(whichToShow === 'ex' || whichToShow === 'ar') && (
           <DateTimePicker
             value={new Date()}
@@ -223,20 +194,7 @@ const product = () => {
           />
         )}
       </View>
-      <View style={styles.footer}>
-        <Button
-          title='Cancel'
-          style={styles.btn}
-          color={COLORS.gray}
-          onPress={() => {}}
-        />
-        <Button
-          title='Save'
-          style={styles.btn}
-          color={COLORS.primary}
-          onPress={() => {}}
-        />
-      </View>
+      <Footer onCancel={() => {}} onSave={() => {}} />
     </ScrollView>
   )
 }

@@ -36,22 +36,18 @@ const office = () => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Office Information</Text>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('new', {
-              screen: 'resource',
-              params: {
-                id: params?.id,
-                name: params?.name,
-                type: OFFICE,
-              },
-            })
+        <AddNew
+          title={'New Office Resource'}
+          page={{
+            name: 'new',
+            screen: 'resource',
+            params: {
+              id: params?.id,
+              name: params?.name,
+              type: OFFICE,
+            },
           }}
-          style={styles.headerBtn}
-        >
-          <AntDesign name='plus' size={20} color={'white'} />
-          <Text style={styles.btnText}>New Office Resource</Text>
-        </TouchableOpacity>
+        />
       </View>
       {office && office.resource && (
         <View style={styles.resourcesContainer}>

@@ -10,12 +10,7 @@ const _layout = () => {
           headerTitle: 'Warehouse',
         }}
       />
-      <Stack.Screen
-        name='order'
-        options={{
-          headerTitle: 'Order',
-        }}
-      />
+
       <Stack.Screen
         name='customer'
         options={{
@@ -47,6 +42,14 @@ const _layout = () => {
         }}
       />
       <Stack.Screen
+        name='shelve_type'
+        options={{
+          headerTitle: 'Shelve Type',
+        }}
+      />
+
+      {/* Shipment */}
+      <Stack.Screen
         name='transportations'
         options={{
           headerTitle: 'Transportations',
@@ -59,21 +62,45 @@ const _layout = () => {
         }}
       />
       <Stack.Screen
+        name='shipment_type'
+        options={{
+          headerTitle: 'Shipment Types',
+        }}
+      />
+      <Stack.Screen
         name='shipment_terms'
         options={{
           headerTitle: 'Shipment Terms',
         }}
       />
-      <Stack.Screen
-        name='shelve_type'
-        options={{
-          headerTitle: 'Shelve Type',
-        }}
-      />
+
+      {/*  */}
+
+      {/* Order */}
       <Stack.Screen
         name='order_type'
         options={{
           headerTitle: 'Order Type',
+        }}
+      />
+      <Stack.Screen
+        name='order'
+        options={{
+          headerTitle: 'Order',
+        }}
+      />
+      {/*  */}
+
+      <Stack.Screen
+        name='insurance_options'
+        options={{
+          headerTitle: 'Insurance Options',
+        }}
+      />
+      <Stack.Screen
+        name='group'
+        options={{
+          headerTitle: 'User Group',
         }}
       />
     </Stack>

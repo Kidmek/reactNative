@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { View, Text, ScrollView } from 'react-native'
 
-import styles from './welcome.style'
-import allStyles from '../../shipments/started/started.style'
-import { FontAwesome5, Feather } from '@expo/vector-icons'
+import styles from '../../common/styles/common.style'
+import { FontAwesome5 } from '@expo/vector-icons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useSelector } from 'react-redux'
 import { selectIsFetching } from '../../../features/data/dataSlice'
@@ -11,6 +10,7 @@ import { selectIsFetching } from '../../../features/data/dataSlice'
 import { useNavigation } from 'expo-router'
 import Search from '../../common/search/Search'
 import All from '../All/All'
+import Header from '../../common/header/Header'
 
 const OrderWelcome = () => {
   const [searchQuery, setSearchQuery] = useState()
@@ -21,10 +21,7 @@ const OrderWelcome = () => {
   return (
     <ScrollView>
       <View style={styles.welcomeContainer}>
-        <View>
-          <Text style={styles.userName}>Hello Adrian</Text>
-          <Text style={styles.welcomeMessage}>Find Your Order</Text>
-        </View>
+        <Header name={'Adrian'} text={'Order'} />
 
         <View style={styles.shipmentHeader}>
           <TouchableOpacity
@@ -35,9 +32,9 @@ const OrderWelcome = () => {
               })
             }}
           >
-            <FontAwesome5 size={30} name='shopping-basket' />
-            <View style={allStyles.textContainer}>
-              <Text style={allStyles.name}>Order Type</Text>
+            <FontAwesome5 size={25} name='shopping-basket' />
+            <View>
+              <Text style={styles.name}>Order Types</Text>
             </View>
           </TouchableOpacity>
         </View>

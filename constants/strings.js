@@ -5,7 +5,6 @@ export const BASE_API = 'https://viaeducational.com/'
 export const emailRegEx = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
 export const warehouseTypes = [
   'All',
-  'Managed',
   'Office',
   'Office Equipments',
   'Storage Types',
@@ -18,12 +17,18 @@ export const productTypes = [
   'Product Types',
 ]
 export const shipmentTypes = [
-  'Started',
-  'Completed',
-  'In Progress',
-  'Canceled',
-  'Returned',
+  'Shipments',
+  'Transportations',
+  'Shipment Type',
+  'Shipment Method',
 ]
 export const NUMBER = 'number'
+export const DATE = 'date'
 export const MULTI = 'multi'
 export const OFFICE = 'office'
+export const WAREHOUSE = 'warehouse'
+export const PRODUCT = 'product'
+export const MANAGED = 'managed'
+export const UNMANAGED = 'unmanaged'
+export const STORAGE = 'storage'
+export const mSQUARE = 'M\u00B2'

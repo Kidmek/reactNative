@@ -67,6 +67,10 @@ const styles = StyleSheet.create({
     color: COLORS.gray,
     marginTop: 3,
     textTransform: 'capitalize',
+    flexWrap: 'wrap-reverse',
+  },
+  label: {
+    fontFamily: FONT.bold,
   },
 })
 

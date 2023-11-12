@@ -1,18 +1,17 @@
-import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native'
+import { View, ActivityIndicator } from 'react-native'
 import React from 'react'
-import styles from '../../shipments/started/started.style'
 import { COLORS } from '../../../constants'
-import { useNavigation } from 'expo-router'
 import { store } from '../../../store'
-import { AntDesign } from '@expo/vector-icons'
-
 import { useToast } from 'react-native-toast-notifications'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { getOrders } from '../../../api/order/order'
+import CardDetail from '../../common/detail/CardDetail'
+import AddNew from '../../common/header/AddNew'
+import SingleCard from '../../common/cards/single/SingleCard'
+import styles from '../../common/styles/common.style'
 
 const All = ({ fetching }) => {
-  const navigation = useNavigation()
   const dispatch = store.dispatch
   const toast = useToast()
 
@@ -25,55 +24,56 @@ const All = ({ fetching }) => {
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('new', {
-            screen: 'product',
-          })
+      <AddNew
+        title={'New Order'}
+        page={{
+          name: 'details',
+          screen: 'order_type',
         }}
-        style={styles.headerBtn}
-      >
-        <AntDesign name='plus' size={20} color={'white'} />
-        <Text style={styles.headerTitle}>New Order</Text>
-      </TouchableOpacity>
+      />
 
-      {orders?.data?.map((item, index) => {
+      {orders?.results?.map((item, index) => {
         return (
-          <TouchableOpacity
+          <SingleCard
             key={index}
-            style={styles.warehouseContainer}
-            onPress={() => {
-              navigation.navigate('details', {
-                screen: 'warehouse',
-                params: { type: 'Unmanaged', id: item.id },
-              })
+            page={{
+              name: 'details',
+              screen: 'warehouse',
+              params: { type: 'Unmanaged', id: item.id },
             }}
           >
             <View style={styles.textContainer}>
-              <Text style={styles.name} numberOfLines={1}>
-                Order Type : {item?.orderType?.ordertype_name}
-              </Text>
-              <Text style={styles.jobName}>
-                Ordered :{' '}
-                {item?.orderType?.ordertype_name == 'Storage'
-                  ? item?.orderStorage?.storage_name
-                  : item?.orderWarehouse?.warehouse_name}
-              </Text>
-              <Text style={styles.jobName}>
-                Start Date : {item?.starting_date}
-              </Text>
-              <Text style={styles.jobName}>End Date : {item?.end_date}</Text>
-              <Text style={styles.jobName}>
-                Remaining Date : {item?.remaining_date}
-              </Text>
-              <Text style={styles.jobName}>
-                Customer : {item?.customer?.first_name}
-              </Text>
-              <Text style={styles.jobName}>Price : {item?.price} Birr</Text>
-              <Text style={styles.type}>Status : {item?.status}</Text>
-              <Text style={styles.type}>Created At : {item?.created_at}</Text>
+              <CardDetail
+                label={'Order Type'}
+                value={item?.OrderTypeDetail?.ordertype_name}
+              />
+              <CardDetail
+                label={'Ordered'}
+                value={
+                  item?.OrderTypeDetail?.ordertype_name == 'Storage'
+                    ? item?.orderStorage?.storage_name
+                    : item?.warehousedetail?.warehouse_name
+                }
+              />
+              <CardDetail label={'Start Date'} value={item?.starting_date} />
+              <CardDetail label={'End Date'} value={item?.end_date} />
+              <CardDetail
+                label={'Date Difference'}
+                value={item?.OrderTypeDetail?.ordertype_name}
+              />
+              <CardDetail
+                label={'Customer'}
+                value={item?.UserDetail?.first_name}
+              />
+              <CardDetail label={'Price'} value={item?.price} isPrice={true} />
+              <CardDetail label={'Status'} value={item?.status} />
+              <CardDetail
+                label={'Created At'}
+                value={item?.created_at}
+                isDate={true}
+              />
             </View>
-          </TouchableOpacity>
+          </SingleCard>
         )
       })}
     </View>

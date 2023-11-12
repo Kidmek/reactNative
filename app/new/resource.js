@@ -14,6 +14,7 @@ import { NUMBER, OFFICE } from '../../constants/strings'
 import { store } from '../../store'
 import { selectIsFetching } from '../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
+import Footer from '../../components/common/footer/Footer'
 
 const reource = () => {
   const params = useLocalSearchParams()
@@ -128,20 +129,7 @@ const reource = () => {
           />
         </View>
       )}
-      <View style={styles.footer}>
-        <Button
-          title='Cancel'
-          style={styles.btn}
-          color={COLORS.gray}
-          onPress={() => {}}
-        />
-        <Button
-          title='Save'
-          style={styles.btn}
-          color={COLORS.primary}
-          onPress={() => {}}
-        />
-      </View>
+      <Footer onCancel={() => {}} onSave={() => {}} />
     </ScrollView>
   )
 }

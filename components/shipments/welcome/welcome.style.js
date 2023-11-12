@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     color: activeJobType === item ? COLORS.secondary : COLORS.gray2,
   }),
   shipmentHeader: {
-    marginTop: SIZES.small,
+    marginVertical: SIZES.small,
     gap: SIZES.medium,
     width: '100%',
   },

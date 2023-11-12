@@ -1,11 +1,6 @@
 import React, { useState } from 'react'
-import { View, Text, FlatList, ScrollView } from 'react-native'
-
-import styles from './welcome.style'
-import { TextInput } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import { Image } from 'react-native'
-import { SIZES, icons } from '../../../constants'
+import { View, ScrollView } from 'react-native'
+import styles from '../../common/styles/common.style'
 import { warehouseTypes } from '../../../constants/strings'
 import Warehouse from '../warehouse/Warehouse'
 import Managed from '../managed/Managed'
@@ -15,6 +10,8 @@ import StorageType from '../storageTypes/StorageTypes'
 import { useSelector } from 'react-redux'
 import { selectIsFetching } from '../../../features/data/dataSlice'
 import Search from '../../common/search/Search'
+import Header from '../../common/header/Header'
+import CustomTabs from '../../common/header/CustomTabs'
 
 const Welcome = () => {
   const [searchQuery, setSearchQuery] = useState()
@@ -26,46 +23,27 @@ const Welcome = () => {
       case warehouseTypes[0]:
         return <Warehouse fetching={fetching} />
       case warehouseTypes[1]:
-        return <Managed fetching={fetching} />
-      case warehouseTypes[2]:
         return <Office fetching={fetching} />
-      case warehouseTypes[3]:
+      case warehouseTypes[2]:
         return <OfficeEquipments fetching={fetching} />
-      case warehouseTypes[4]:
+      case warehouseTypes[3]:
         return <StorageType fetching={fetching} />
     }
   }
   return (
     <ScrollView>
       <View style={styles.welcomeContainer}>
-        <View>
-          <Text style={styles.userName}>Hello Adrian</Text>
-          <Text style={styles.welcomeMessage}>Find Your Perfect Warehouse</Text>
-        </View>
+        <Header name={'Adrian'} text={'Warehouse'} />
         <Search
           onSearch={() => {}}
           setSearchQuery={setSearchQuery}
           searchQuery={searchQuery}
         />
-        <View style={styles.tabsContainer}>
-          <FlatList
-            showsHorizontalScrollIndicator={false}
-            data={warehouseTypes}
-            horizontal
-            keyExtractor={(item) => item}
-            contentContainerStyle={{ columnGap: SIZES.small }}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={styles.tab(activeType, item)}
-                onPress={() => {
-                  setActiveType(item)
-                }}
-              >
-                <Text style={styles.tabText}>{item}</Text>
-              </TouchableOpacity>
-            )}
-          />
-        </View>
+        <CustomTabs
+          data={warehouseTypes}
+          setActiveType={setActiveType}
+          activeType={activeType}
+        />
       </View>
       {body()}
     </ScrollView>

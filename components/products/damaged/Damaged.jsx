@@ -1,18 +1,16 @@
 import { View, Text, Image, ActivityIndicator } from 'react-native'
 import React from 'react'
-import styles from '../returned/returned.style'
-import { TouchableOpacity } from 'react-native'
-import { AntDesign } from '@expo/vector-icons'
+import styles from '../../common/styles/common.style'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
 import { COLORS } from '../../../constants'
-import { useNavigation } from 'expo-router'
 import { getDamagedProducts } from '../../../api/product/product'
+import AddNew from '../../common/header/AddNew'
+import SingleCard from '../../common/cards/single/SingleCard'
 
 const Damaged = ({ fetching }) => {
-  const navigation = useNavigation()
   const dispatch = store.dispatch
   const toast = useToast()
 
@@ -25,31 +23,23 @@ const Damaged = ({ fetching }) => {
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('new', {
-            screen: 'damaged_product',
-          })
+      <AddNew
+        title={'New Damaged Product'}
+        page={{
+          name: 'new',
+          screen: 'damaged_product',
         }}
-        style={styles.headerBtn}
-      >
-        <AntDesign name='plus' size={20} color={'white'} />
-        <Text style={styles.headerTitle}>New Damaged Product</Text>
-      </TouchableOpacity>
+      />
+
       <View style={styles.listContainer}>
         {damaged?.data?.map((item, index) => {
           return (
-            <TouchableOpacity
+            <SingleCard
               key={index}
-              style={styles.warehouseContainer}
-              onPress={() => {
-                navigation.navigate('details', {
-                  screen: 'damaged_product',
-                  params: {
-                    id: item.id,
-                    name: item.name,
-                  },
-                })
+              page={{
+                name: 'details',
+                screen: 'damaged_product',
+                params: { id: item.id, name: item.name },
               }}
             >
               <Image
@@ -70,9 +60,9 @@ const Damaged = ({ fetching }) => {
                   {item?.damageStorage?.storage_name}
                 </Text>
                 <Text style={styles.type}>{item?.damage_cause}</Text>
-                <Text style={styles.type}>{item?.created_at}</Text>
+                <Text style={styles.type}>{Date(item?.created_at)}</Text>
               </View>
-            </TouchableOpacity>
+            </SingleCard>
           )
         })}
       </View>

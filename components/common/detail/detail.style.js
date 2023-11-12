@@ -20,6 +20,24 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.small,
     marginBottom: SIZES.xSmall,
   },
+
+  cardDetailWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: SIZES.xSmall,
+  },
+  cardDetailLabel: {
+    fontSize: SIZES.medium,
+    fontFamily: FONT.bold,
+  },
+  cardDetailValue: {
+    fontSize: SIZES.medium,
+    fontFamily: FONT.regular,
+    flex: 1,
+    color: COLORS.gray,
+    textAlign: 'right',
+    textTransform: 'capitalize',
+  },
 })
 
 export default styles

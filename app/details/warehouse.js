@@ -1,4 +1,4 @@
-import { View, Text, Button, Image, ActivityIndicator } from 'react-native'
+import { View, Text, Image, ActivityIndicator } from 'react-native'
 import React, { useState } from 'react'
 
 import styles from './styles/warehouse.style'
@@ -14,12 +14,13 @@ import {
 } from '../../api/warehouse/warehouse'
 import { store } from '../../store'
 import { useToast } from 'react-native-toast-notifications'
-import MapView from 'react-native-maps'
+import MapView, { Marker } from 'react-native-maps'
 import { selectIsFetching, setFetching } from '../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import Detail from '../../components/common/detail/Detail'
 import Search from '../../components/common/search/Search'
 import { DataTable } from 'react-native-paper'
+import { WAREHOUSE, mSQUARE } from '../../constants/strings'
 
 const warehouse = () => {
   const navigation = useNavigation()
@@ -99,7 +100,18 @@ const warehouse = () => {
                   paddingBottom: SIZES.medium,
                 }}
               >
-                <TouchableOpacity style={styles.orderBtn}>
+                <TouchableOpacity
+                  style={styles.orderBtn}
+                  onPress={() => {
+                    navigation.navigate('new', {
+                      screen: 'order',
+                      params: {
+                        type: WAREHOUSE,
+                        id: warehouse?.id,
+                      },
+                    })
+                  }}
+                >
                   <FontAwesome5 name='shopping-cart' size={30} color='white' />
                   <View>
                     <Text style={styles.headerBtnTxt}>Order</Text>
@@ -119,8 +131,16 @@ const warehouse = () => {
               <Detail label={'Sub City'} value={warehouse.sub_city} />
               <Detail label={'Zone'} value={warehouse.zone} />
               <Detail label={'Wereda'} value={warehouse.wereda} />
-              <Detail label={'Warehouse Space'} value={warehouse.space} />
-              <Detail label={'Warehouse Price '} value={warehouse.full_price} />
+              <Detail
+                label={'Warehouse Space'}
+                value={warehouse.space}
+                isSpace={true}
+              />
+              <Detail
+                label={'Warehouse Price '}
+                value={warehouse.full_price}
+                isPrice={true}
+              />
               <Detail
                 label={'Warehouse Description'}
                 value={warehouse.warehouse_meta}
@@ -168,7 +188,7 @@ const warehouse = () => {
 
               {/*  */}
 
-              {/* Storage Types */}
+              {/* Offices */}
               <View style={{ width: 'max-content' }}>
                 <View
                   style={{
@@ -190,56 +210,165 @@ const warehouse = () => {
                 <View style={{ width: '90%', alignSelf: 'center' }}>
                   <Search inner={true} />
                 </View>
+                <DataTable>
+                  <DataTable.Header>
+                    <DataTable.Title>Name</DataTable.Title>
+                    <DataTable.Title numeric>Space</DataTable.Title>
+                    <DataTable.Title numeric>Price</DataTable.Title>
+                    <DataTable.Title numeric>Action</DataTable.Title>
+                  </DataTable.Header>
+
+                  {warehouse?.warehouseRecources?.map((warehouse, index) => {
+                    const office = warehouse?.officeDetail
+                    return (
+                      <DataTable.Row key={index}>
+                        <DataTable.Cell>
+                          <Text style={styles.tableBoldCell}>
+                            {office.name}
+                          </Text>
+                        </DataTable.Cell>
+                        <DataTable.Cell numeric>
+                          <Text style={styles.tableNormalCells}>
+                            {office.space + ' ' + mSQUARE}
+                          </Text>
+                        </DataTable.Cell>
+                        <DataTable.Cell numeric>
+                          <Text style={styles.tableNormalCells}>
+                            {office.price + ' Birr'}
+                          </Text>
+                        </DataTable.Cell>
+                        <DataTable.Cell numeric>
+                          <View style={styles.actionBtns}>
+                            <TouchableOpacity>
+                              <Text style={styles.detailsTextBtn}>Details</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                              <Text style={styles.detailsTextBtn}>Edit</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                              <Text style={styles.removeTextBtn}>Remove</Text>
+                            </TouchableOpacity>
+                          </View>
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                    )
+                  })}
+
+                  <DataTable.Pagination
+                    page={1}
+                    numberOfPages={3}
+                    onPageChange={(page) => {
+                      console.log(page)
+                    }}
+                    label='1-2 of 6'
+                  />
+                </DataTable>
               </View>
 
               {/*  */}
 
-              {warehouse.resource && (
-                <View style={styles.resourcesContainer}>
-                  <View style={styles.resourcesHeader}>
-                    <Text style={styles.headerTitle}>Office</Text>
-                    <Text style={styles.headerTitle}>Reception</Text>
-                  </View>
-                  {warehouse.resource?.map((resource, index) => {
+              {/* HR */}
+              <View style={{ width: 'max-content' }}>
+                <View
+                  style={{
+                    ...styles.header,
+                    marginBottom: 0,
+                    alignSelf: 'center',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Text style={styles.headerTitle}>
+                    {warehouse?.warehouse_name}
+                  </Text>
+                  <Text style={styles.detailLabel}>Human Resources</Text>
+                </View>
+                <TouchableOpacity style={{ ...styles.headerBtn, width: '80%' }}>
+                  <AntDesign name='plus' size={25} color={'white'} />
+                  <Text style={styles.headerBtnTxt}>Add Human Resources</Text>
+                </TouchableOpacity>
+                <View style={{ width: '90%', alignSelf: 'center' }}>
+                  <Search inner={true} />
+                </View>
+                <DataTable>
+                  <DataTable.Header>
+                    <DataTable.Title>Name</DataTable.Title>
+                    <DataTable.Title>Email</DataTable.Title>
+                    <DataTable.Title>Phone Number</DataTable.Title>
+                    <DataTable.Title>Salary</DataTable.Title>
+                    <DataTable.Title numeric>Action</DataTable.Title>
+                  </DataTable.Header>
+
+                  {warehouse?.HumanResources?.map((resource, index) => {
+                    const user = resource?.UserDetail
                     return (
-                      <View key={index} style={styles.resContainer}>
-                        {/* Office */}
-                        <TouchableOpacity style={styles.officeContainer}>
-                          <View style={styles.textContainer}>
-                            <Text style={styles.name}>
-                              {resource.wareOffice?.name}
-                            </Text>
-                            <Text style={styles.subName}>
-                              {resource.wareOffice?.space + ' m\u00B2'}{' '}
-                            </Text>
-                            <Text style={styles.type}>
-                              {resource.wareOffice?.price} Birr
-                            </Text>
-                            <Text style={styles.type}>
-                              {resource.total_price} Birr
-                            </Text>
+                      <DataTable.Row key={index}>
+                        <DataTable.Cell>
+                          <Text style={styles.tableBoldCell}>
+                            {user.first_name}
+                          </Text>
+                        </DataTable.Cell>
+                        <DataTable.Cell>
+                          <Text style={styles.tableNormalCells}>
+                            {user.email}
+                          </Text>
+                        </DataTable.Cell>
+                        <DataTable.Cell>
+                          <Text style={styles.tableNormalCells}>
+                            {user.phone}
+                          </Text>
+                        </DataTable.Cell>
+                        <DataTable.Cell>
+                          <Text style={styles.tableNormalCells}>
+                            {user.salary + ' Birr'}
+                          </Text>
+                        </DataTable.Cell>
+                        <DataTable.Cell numeric>
+                          <View style={styles.actionBtns}>
+                            <TouchableOpacity>
+                              <Text style={styles.detailsTextBtn}>Details</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                              <Text style={styles.detailsTextBtn}>Edit</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                              <Text style={styles.removeTextBtn}>Remove</Text>
+                            </TouchableOpacity>
                           </View>
-                        </TouchableOpacity>
-                        {/* Reception */}
-                        <TouchableOpacity style={styles.officeContainer}>
-                          <View style={styles.textContainer}>
-                            <Text style={styles.name}>
-                              {resource.reception?.first_name}
-                            </Text>
-                            <Text style={styles.subName}>
-                              {resource.reception?.email}
-                            </Text>
-                            <Text style={styles.type}>
-                              {resource.reception?.price + ' Birr'}{' '}
-                            </Text>
-                          </View>
-                        </TouchableOpacity>
-                      </View>
+                        </DataTable.Cell>
+                      </DataTable.Row>
                     )
                   })}
-                </View>
-              )}
-              <MapView style={styles.map} />
+
+                  <DataTable.Pagination
+                    page={1}
+                    numberOfPages={3}
+                    onPageChange={(page) => {
+                      console.log(page)
+                    }}
+                    label='1-2 of 6'
+                  />
+                </DataTable>
+              </View>
+
+              {/*  */}
+
+              <MapView
+                style={styles.map}
+                initialRegion={{
+                  latitude: warehouse?.lat,
+                  longitude: warehouse?.lng,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+              >
+                <Marker
+                  pinColor='red'
+                  coordinate={{
+                    latitude: warehouse?.lat,
+                    longitude: warehouse?.lng,
+                  }}
+                />
+              </MapView>
             </>
           ) : (
             params?.type == 'Managed' && (

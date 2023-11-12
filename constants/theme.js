@@ -1,5 +1,5 @@
 const COLORS = {
-  primary: '#312651',
+  primary: '#1d4ed8',
   secondary: '#444262',
   tertiary: '#FF7754',
 
@@ -10,6 +10,10 @@ const COLORS = {
 
   white: '#F3F4F8',
   lightWhite: '#FAFAFC',
+
+  blue: '#0096FF',
+  lightBlue: '#ADD8E6',
+  azure: '#F0FFFF',
 
   red: '#EF4444',
 }
@@ -31,6 +35,8 @@ const SIZES = {
   smallPicture: 80,
   mediumPicture: 100,
   largePicture: 120,
+  xLargePicture: 150,
+  xxLargePicture: 170,
 }
 
 const SHADOWS = {

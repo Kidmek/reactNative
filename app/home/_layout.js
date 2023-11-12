@@ -23,7 +23,6 @@ export default function DrawerLayout() {
         name='(drawer)'
         options={{
           title: 'Home',
-          drawerItemStyle: { display: 'none' },
         }}
       />
       <Drawer.Screen
@@ -54,7 +53,39 @@ export default function DrawerLayout() {
       <Drawer.Screen
         name='staffs'
         options={{
-          title: 'Staffs',
+          title: 'User Groups',
+          // drawerLabelStyle: { marginLeft: -25 },
+          //   drawerIcon: () => <PinIcon height={48} />,
+        }}
+      />
+      <Drawer.Screen
+        name='transits'
+        options={{
+          title: 'Customes Transits',
+          // drawerLabelStyle: { marginLeft: -25 },
+          //   drawerIcon: () => <PinIcon height={48} />,
+        }}
+      />
+      <Drawer.Screen
+        name='ports'
+        options={{
+          title: 'Ports',
+          // drawerLabelStyle: { marginLeft: -25 },
+          //   drawerIcon: () => <PinIcon height={48} />,
+        }}
+      />
+      <Drawer.Screen
+        name='payments'
+        options={{
+          title: 'Payments',
+          // drawerLabelStyle: { marginLeft: -25 },
+          //   drawerIcon: () => <PinIcon height={48} />,
+        }}
+      />
+      <Drawer.Screen
+        name='insurances'
+        options={{
+          title: 'Insurances',
           // drawerLabelStyle: { marginLeft: -25 },
           //   drawerIcon: () => <PinIcon height={48} />,
         }}

@@ -1,19 +1,16 @@
 import { View, Text, Image, ActivityIndicator } from 'react-native'
 import React from 'react'
-import styles from './all.style'
-import { TouchableOpacity } from 'react-native'
-import { AntDesign } from '@expo/vector-icons'
+import styles from '../../common/styles/common.style'
 import { useState } from 'react'
-import { getWarehouses } from '../../../api/warehouse/warehouse'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
-import { useNavigation } from 'expo-router'
 import { COLORS } from '../../../constants'
 import { getAllProducts } from '../../../api/product/product'
+import AddNew from '../../common/header/AddNew'
+import SingleCard from '../../common/cards/single/SingleCard'
 
 const All = ({ fetching }) => {
-  const navigation = useNavigation()
   const dispatch = store.dispatch
   const toast = useToast()
 
@@ -26,28 +23,22 @@ const All = ({ fetching }) => {
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <View style={styles.container}>
-      <TouchableOpacity
-        onPress={() => {
-          navigation.navigate('new', {
-            screen: 'product',
-          })
+      <AddNew
+        title={'New Product'}
+        page={{
+          name: 'new',
+          screen: 'product',
         }}
-        style={styles.headerBtn}
-      >
-        <AntDesign name='plus' size={20} color={'white'} />
-        <Text style={styles.headerTitle}>New Product</Text>
-      </TouchableOpacity>
+      />
 
-      {products?.data?.map((item, index) => {
+      {products?.results?.map((item, index) => {
         return (
-          <TouchableOpacity
+          <SingleCard
             key={index}
-            style={styles.warehouseContainer}
-            onPress={() => {
-              navigation.navigate('details', {
-                screen: 'product',
-                params: { type: 'Unmanaged', id: item.id },
-              })
+            page={{
+              name: 'details',
+              screen: 'product',
+              params: { type: 'Unmanaged', id: item.id },
             }}
           >
             <Image style={styles.image} source={{ uri: item?.clerance }} />
@@ -57,14 +48,16 @@ const All = ({ fetching }) => {
                 {item?.product_name}
               </Text>
               <Text style={styles.jobName}>
-                {item?.types?.product_type_name}
+                {item?.ProductTypeDetail?.product_type_name}
               </Text>
-              <Text style={styles.type}>{item?.category?.category_name}</Text>
+              <Text style={styles.type}>
+                {item?.catagorydetail?.category_name}
+              </Text>
               <Text style={styles.type}>{item?.quantity}</Text>
-              <Text style={styles.type}>{item?.customer?.first_name}</Text>
+              <Text style={styles.type}>{item?.userdetail?.first_name}</Text>
               <Text style={styles.type}>${item?.price}</Text>
             </View>
-          </TouchableOpacity>
+          </SingleCard>
         )
       })}
     </View>
