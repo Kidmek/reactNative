@@ -1,4 +1,4 @@
-import { View, ActivityIndicator } from 'react-native'
+import { View, ActivityIndicator, Text } from 'react-native'
 import React from 'react'
 import { COLORS } from '../../../constants'
 import { store } from '../../../store'
@@ -10,9 +10,17 @@ import CardDetail from '../../common/detail/CardDetail'
 import { getPorts } from '../../../api/shipment/shipment'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
+import { useSelector } from 'react-redux'
+import { selectIsFetching } from '../../../features/data/dataSlice'
+import PortSVG from '../../../assets/icons/ports'
+import Checkbox from 'expo-checkbox'
 
-const All = ({ fetching }) => {
+const All = ({ wizard, checked, setChecked }) => {
+  const iconSize = 30
+
   const dispatch = store.dispatch
+  const fetching = useSelector(selectIsFetching)
+
   const toast = useToast()
 
   const [ports, setPorts] = useState()
@@ -21,32 +29,63 @@ const All = ({ fetching }) => {
     getPorts(null, dispatch, setPorts, toast)
   }, [])
   return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+    <ActivityIndicator
+      style={styles.activityIndicator}
+      size={'xxLarge'}
+      color={COLORS.primary}
+    />
   ) : (
     <View style={styles.container}>
-      <AddNew
-        title={'New Port'}
-        page={{
-          name: 'new',
-          screen: 'port',
-        }}
-      />
+      {wizard ? (
+        <Text style={styles.wizTitle}>Choose Port To Transit</Text>
+      ) : (
+        <AddNew
+          title={'New Port'}
+          page={{
+            name: 'new',
+            screen: 'port',
+          }}
+        />
+      )}
 
       {ports?.results?.map((item, index) => {
         return (
           <SingleCard
             key={index}
-            page={{
-              name: 'details',
-              screen: 'warehouse',
-              params: { type: 'Unmanaged', id: item.id },
+            navigate={!wizard}
+            isOnlyText={true}
+            onClick={() => {
+              if (setChecked) setChecked(item.id)
             }}
           >
-            <View style={styles.textContainer}>
-              <CardDetail label={'Country'} value={item?.country} />
+            <View style={{ ...styles.onlyTextContainer, borderWidth: 0 }}>
+              {wizard && (
+                <View style={styles.wizCheckerHeader}>
+                  <View>
+                    <PortSVG color={COLORS.primary} size={iconSize} />
+                    <Text style={styles.name}>{'Port ' + item?.country}</Text>
+                  </View>
+                  <Checkbox
+                    color={COLORS.primary}
+                    value={checked === item.id}
+                    onValueChange={(value) => {
+                      if (value) {
+                        setChecked(item.id)
+                      }
+                    }}
+                  />
+                </View>
+              )}
+
+              {!wizard && (
+                <CardDetail label={'Country'} value={item?.country} />
+              )}
+
               <CardDetail label={'City'} value={item?.city} />
               <CardDetail label={'Port Name'} value={item?.name} />
-              <CardDetail label={'Description'} value={item?.discription} />
+              {!wizard && (
+                <CardDetail label={'Description'} value={item?.discription} />
+              )}
             </View>
           </SingleCard>
         )

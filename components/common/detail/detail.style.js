@@ -38,6 +38,11 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     textTransform: 'capitalize',
   },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: COLORS.grey,
+    marginVertical: 16,
+  },
 })
 
 export default styles

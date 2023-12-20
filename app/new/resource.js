@@ -44,9 +44,6 @@ const reource = () => {
         <Text style={styles.headerTitle}>
           {params.name} Resource Information
         </Text>
-        <Text style={styles.headerMsg}>
-          Use a permanent address where you can receive mail.
-        </Text>
       </View>
       {fetching ? (
         <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
@@ -129,7 +126,7 @@ const reource = () => {
           />
         </View>
       )}
-      <Footer onCancel={() => {}} onSave={() => {}} />
+      <Footer onSave={() => {}} />
     </ScrollView>
   )
 }

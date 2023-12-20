@@ -3,6 +3,8 @@ import React from 'react'
 import { AntDesign } from '@expo/vector-icons'
 import styles from './info.style'
 import { COLORS } from '../../../../constants'
+import Checkbox from 'expo-checkbox'
+import InfoSVG from '../../../../assets/icons/info'
 
 const Info = ({
   text,
@@ -12,8 +14,24 @@ const Info = ({
   setState,
   state,
   switchTitle,
+  success,
 }) => {
-  return (
+  return success ? (
+    <View style={styles.infoContainer(false, success)}>
+      <View style={styles.header}>
+        <InfoSVG size={25} color={COLORS.green} />
+        <Text style={styles.typeTitle(true, success)}>{title}</Text>
+      </View>
+      <Text style={styles.typeDesc(true, success)}>{text}</Text>
+      <View style={styles.header}>
+        <Checkbox />
+        <Text style={styles.termsContainer}>
+          I Agree With The{' '}
+          <Text style={styles.terms}>Terms and Conditions.</Text>
+        </Text>
+      </View>
+    </View>
+  ) : (
     <View style={styles.infoContainer(!hasSwitch)}>
       {!withoutIcon && (
         <AntDesign name='infocirlceo' size={15} color={COLORS.blue} />

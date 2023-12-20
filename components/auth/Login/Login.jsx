@@ -15,10 +15,15 @@ import styles from '../auth.style'
 import { API, emailRegEx } from '../../../constants/strings'
 import axios from 'axios'
 import { store } from '../../../store'
-import { setLoading, setUser } from '../../../features/data/dataSlice'
+import {
+  selectUser,
+  setLoading,
+  setUser,
+} from '../../../features/data/dataSlice'
 import { useNavigation } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { isLoggedIn } from '../../../api/apiConfig'
+import { getUser, isLoggedIn } from '../../../api/apiConfig'
+import { useSelector } from 'react-redux'
 
 const Login = ({ setIsLogin }) => {
   const dispatch = store.dispatch
@@ -26,18 +31,21 @@ const Login = ({ setIsLogin }) => {
   const [userEmail, setUserEmail] = useState('')
   const [userPassword, setUserPassword] = useState('')
   const [errortext, setErrortext] = useState('')
-
+  const user = useSelector(selectUser)
   const emailInputRef = createRef()
   const passwordInputRef = createRef()
   const toast = useToast()
 
-  // useEffect(() => {
-  //   isLoggedIn().then((res) => {
-  //     if (res) {
-  //       navigation.navigate('home')
-  //     }
-  //   })
-  // }, [])
+  useEffect(() => {
+    isLoggedIn().then((res) => {
+      if (res) {
+        getUser().then((user) => {
+          dispatch(setUser(user))
+        })
+        navigation.navigate('home')
+      }
+    })
+  }, [])
 
   const handleSubmitPress = () => {
     toast.hideAll()
@@ -93,14 +101,11 @@ const Login = ({ setIsLogin }) => {
       })
       .catch((error) => {
         //Hide Loader
-        console.log(error.toString())
+        console.log(error)
         dispatch(setLoading(false))
         let msg = 'Network Error'
-        if (error?.response?.data?.message) {
-          console.log(error?.response?.data?.message)
-          msg = 'Email Not Registered'
-        } else if (error?.response?.data?.error) {
-          msg = 'Invalid Password'
+        if (error.response.status === 422) {
+          msg = 'Invalid Credentials'
         }
         toast.show(msg, {
           type: 'danger',

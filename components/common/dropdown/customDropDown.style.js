@@ -12,7 +12,8 @@ const styles = StyleSheet.create({
   input: {
     fontSize: SIZES.large,
     fontFamily: FONT.medium,
-    backgroundColor: COLORS.gray2,
+    borderColor: COLORS.gray2,
+    borderWidth: 1,
     borderRadius: SIZES.small,
     padding: SIZES.small,
     marginBottom: SIZES.medium,

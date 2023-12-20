@@ -10,6 +10,7 @@ import CardDetail from '../../common/detail/CardDetail'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 import styles from '../../common/styles/common.style'
+import { currencyFormat } from '../../common/utils'
 
 const All = ({ fetching }) => {
   const dispatch = store.dispatch
@@ -29,20 +30,16 @@ const All = ({ fetching }) => {
         page={{
           name: 'details',
           screen: 'order_type',
+          params: {
+            choose: true,
+          },
         }}
       />
 
       {orders?.results?.map((item, index) => {
         return (
-          <SingleCard
-            key={index}
-            page={{
-              name: 'details',
-              screen: 'warehouse',
-              params: { type: 'Unmanaged', id: item.id },
-            }}
-          >
-            <View style={styles.textContainer}>
+          <SingleCard key={index} isOnlyText={true}>
+            <View style={{ ...styles.onlyTextContainer, borderWidth: 0 }}>
               <CardDetail
                 label={'Order Type'}
                 value={item?.OrderTypeDetail?.ordertype_name}
@@ -65,7 +62,11 @@ const All = ({ fetching }) => {
                 label={'Customer'}
                 value={item?.UserDetail?.first_name}
               />
-              <CardDetail label={'Price'} value={item?.price} isPrice={true} />
+              <CardDetail
+                label={'Price'}
+                value={currencyFormat(item?.price ?? '0')}
+                isPrice={true}
+              />
               <CardDetail label={'Status'} value={item?.status} />
               <CardDetail
                 label={'Created At'}

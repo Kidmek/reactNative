@@ -1,5 +1,5 @@
-import { setFetching } from '../../features/data/dataSlice'
-import { getSkeleton } from '../apiConfig'
+import { setFetching, setLoading } from '../../features/data/dataSlice'
+import { getSkeleton, postSkeleton } from '../apiConfig'
 
 export const getWarehouses = (params, dispatchFalse, setData, toast) => {
   getSkeleton(
@@ -8,6 +8,18 @@ export const getWarehouses = (params, dispatchFalse, setData, toast) => {
     dispatchFalse,
     setFetching,
     setData,
+    toast
+  )
+}
+
+export const addWarehouse = (data, dispatchFalse, toast, onSuccess) => {
+  postSkeleton(
+    '/warehouse/',
+    data,
+    null,
+    dispatchFalse,
+    setLoading,
+    onSuccess,
     toast
   )
 }

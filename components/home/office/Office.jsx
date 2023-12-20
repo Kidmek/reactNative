@@ -41,6 +41,7 @@ const Office = ({ fetching }) => {
               screen: 'office',
               params: { id: item.id, name: item.name },
             }}
+            isOnlyText={true}
           >
             <View style={styles.textContainer}>
               <Text style={styles.name} numberOfLines={1}>

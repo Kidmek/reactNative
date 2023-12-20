@@ -1,14 +1,23 @@
 import React from 'react'
-import { Stack } from 'expo-router'
-import { AntDesign } from '@expo/vector-icons'
+import { TouchableOpacity } from 'react-native'
+import { Stack, useRouter } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
+import { COLORS } from '../../constants'
 
 const _layout = () => {
+  const router = useRouter()
   return (
     <Stack>
       <Stack.Screen
         name='warehouse'
         options={{
           headerTitle: 'Add Warehouse',
+        }}
+      />
+      <Stack.Screen
+        name='storage_type'
+        options={{
+          headerTitle: 'Add Storage Type',
         }}
       />
       {/* Order */}
@@ -153,6 +162,39 @@ const _layout = () => {
       />
 
       {/*  */}
+
+      <Stack.Screen
+        name='group'
+        options={{
+          headerTitle: 'Add Group',
+        }}
+      />
+
+      {/* Wizard */}
+      <Stack.Screen
+        name='steps'
+        options={{
+          presentation: 'transparentModal',
+          animation: 'slide_from_bottom',
+          headerShown: true,
+          headerTitle: 'Wizard',
+          headerTitleAlign: 'center',
+          headerLeft: () => (
+            <TouchableOpacity
+              onPress={() => router.back()}
+              style={{
+                backgroundColor: '#fff',
+                borderColor: COLORS.grey,
+                borderRadius: 20,
+                borderWidth: 1,
+                padding: 4,
+              }}
+            >
+              <Ionicons name='close-outline' size={22} />
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </Stack>
   )
 }

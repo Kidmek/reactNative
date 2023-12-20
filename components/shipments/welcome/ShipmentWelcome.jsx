@@ -3,14 +3,16 @@ import { View, ScrollView } from 'react-native'
 
 import styles from '../../common/styles/common.style'
 import { useSelector } from 'react-redux'
-import { selectIsFetching } from '../../../features/data/dataSlice'
+import {
+  selectIsAdmin,
+  selectIsFetching,
+} from '../../../features/data/dataSlice'
 import { shipmentTypes } from '../../../constants/strings'
 import Started from '../started/Started'
 import Search from '../../common/search/Search'
 import Transportations from '../transportations/Transportations'
 import ShipmentType from '../type/ShipmentType'
 import Methods from '../methods/Methods'
-import Header from '../../common/header/Header'
 import CustomTabs from '../../common/header/CustomTabs'
 
 const ShipmentWelcome = () => {
@@ -18,6 +20,7 @@ const ShipmentWelcome = () => {
 
   const [activeType, setActiveType] = useState(shipmentTypes[0])
   const fetching = useSelector(selectIsFetching)
+  const isAdmin = useSelector(selectIsAdmin)
 
   const body = () => {
     switch (activeType) {
@@ -32,19 +35,20 @@ const ShipmentWelcome = () => {
     }
   }
   return (
-    <ScrollView>
-      <View style={styles.welcomeContainer}>
-        <Header name={'Adrian'} text={'Shipment'} />
+    <ScrollView style={styles.welcomeContainer}>
+      <View>
         <Search
           onSearch={() => {}}
           setSearchQuery={setSearchQuery}
           searchQuery={searchQuery}
         />
-        <CustomTabs
-          data={shipmentTypes}
-          setActiveType={setActiveType}
-          activeType={activeType}
-        />
+        {isAdmin && (
+          <CustomTabs
+            data={shipmentTypes}
+            setActiveType={setActiveType}
+            activeType={activeType}
+          />
+        )}
       </View>
       {body()}
     </ScrollView>

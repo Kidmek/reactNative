@@ -44,20 +44,11 @@ const Started = ({ fetching, type }) => {
 
       {shipments?.results?.map((item, index) => {
         return (
-          <SingleCard
-            key={index}
-            page={{
-              name: 'details',
-              screen: 'warehouse',
-              params: { type: 'Unmanaged', id: item.id },
-            }}
-          >
-            <View style={styles.textContainer}>
+          <SingleCard key={index} isOnlyText={true}>
+            <View style={{ ...styles.onlyTextContainer, borderWidth: 0 }}>
               <CardDetail
                 label={'Shipment Method'}
-                value={
-                  item?.TransportationDetail?.TransportationTypeDetail?.name
-                }
+                value={item?.shipmenttypedetail?.name}
               />
               <CardDetail
                 label={'Customer'}
@@ -65,7 +56,7 @@ const Started = ({ fetching, type }) => {
               />
               <CardDetail
                 label={'Transportation'}
-                value={item?.TransportationDetail?.transportation_name}
+                value={item?.companydetail?.companyname}
               />
               <CardDetail
                 label={'Product'}

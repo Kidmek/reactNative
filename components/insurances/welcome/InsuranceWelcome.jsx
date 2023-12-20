@@ -4,7 +4,10 @@ import styles from '../../common/styles/common.style'
 import { AntDesign } from '@expo/vector-icons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useSelector } from 'react-redux'
-import { selectIsFetching } from '../../../features/data/dataSlice'
+import {
+  selectIsAdmin,
+  selectIsFetching,
+} from '../../../features/data/dataSlice'
 
 import { useNavigation } from 'expo-router'
 import Search from '../../common/search/Search'
@@ -16,32 +19,33 @@ const InsuranceWelcome = () => {
   const navigation = useNavigation()
 
   const fetching = useSelector(selectIsFetching)
+  const isAdmin = useSelector(selectIsAdmin)
 
   return (
-    <ScrollView>
-      <View style={styles.welcomeContainer}>
-        <Header name={'Adrian'} text={'Insurance'} />
-
-        <View style={styles.shipmentHeader}>
-          <TouchableOpacity
-            style={styles.shipmentHeaderWrapper}
-            onPress={() => {
-              navigation.navigate('details', {
-                screen: 'insurance_options',
-              })
-            }}
-          >
-            <AntDesign size={25} name='setting' />
-            <View>
-              <Text style={styles.name}>Insurance Options</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
+    <ScrollView style={styles.welcomeContainer}>
+      <View>
         <Search
           onSearch={() => {}}
           setSearchQuery={setSearchQuery}
           searchQuery={searchQuery}
         />
+        {isAdmin && (
+          <View style={styles.shipmentHeader}>
+            <TouchableOpacity
+              style={styles.shipmentHeaderWrapper}
+              onPress={() => {
+                navigation.navigate('details', {
+                  screen: 'insurance_options',
+                })
+              }}
+            >
+              <AntDesign size={25} name='setting' />
+              <View>
+                <Text style={styles.name}>Insurance Options</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       <All fetching={fetching} />
     </ScrollView>

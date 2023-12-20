@@ -26,6 +26,7 @@ const storageStyles = StyleSheet.create({
   singleBtnContainer: {
     flexDirection: 'row',
     gap: SIZES.small,
+    marginTop: SIZES.small,
   },
   btn(isAdd) {
     return {

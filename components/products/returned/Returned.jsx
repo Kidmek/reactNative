@@ -10,7 +10,7 @@ import { getReturnedProducts } from '../../../api/product/product'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 
-const Returned = ({ fetching }) => {
+const Returned = ({ fetching, isAdmin }) => {
   const dispatch = store.dispatch
   const toast = useToast()
 
@@ -23,14 +23,15 @@ const Returned = ({ fetching }) => {
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <View style={styles.container}>
-      <AddNew
-        title={'New Returned Product'}
-        page={{
-          name: 'new',
-          screen: 'returned_product',
-        }}
-      />
-
+      {isAdmin && (
+        <AddNew
+          title={'New Returned Product'}
+          page={{
+            name: 'new',
+            screen: 'returned_product',
+          }}
+        />
+      )}
       {returned?.results?.map((item, index) => {
         return (
           <SingleCard
@@ -40,6 +41,7 @@ const Returned = ({ fetching }) => {
               screen: 'returned_product',
               params: { type: 'Managed', id: item.id },
             }}
+            isOnlyText={true}
           >
             <Image
               style={styles.image}
@@ -48,13 +50,11 @@ const Returned = ({ fetching }) => {
 
             <View style={styles.textContainer}>
               <Text style={styles.name} numberOfLines={1}>
-                {item?.returnedProduct?.product_name}
+                {item?.productdetail?.product_name}
               </Text>
-              <Text style={styles.jobName}>
-                {item?.returnedCustomer?.first_name}
-              </Text>
-              <Text style={styles.type}>{item?.productQty}</Text>
-              <Text style={styles.type}>${item?.returnedProduct?.price}</Text>
+              <Text style={styles.jobName}>{item?.userdetail?.first_name}</Text>
+              <Text style={styles.type}>{item?.productqty}</Text>
+              <Text style={styles.type}>{item.price + ' ETB'}</Text>
               <Text style={styles.type}>{item?.returned_reason}</Text>
             </View>
           </SingleCard>

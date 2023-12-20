@@ -88,12 +88,12 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: SIZES.medium,
-    fontFamily: 'DMBold',
+    fontFamily: FONT.bold,
     color: COLORS.primary,
   },
   subName: {
     fontSize: SIZES.small,
-    fontFamily: 'DMBold',
+    fontFamily: FONT.bold,
     color: COLORS.primary,
   },
   type: {
@@ -166,6 +166,12 @@ const styles = StyleSheet.create({
     fontSize: SIZES.small,
     fontFamily: FONT.regular,
     flexWrap: 'wrap-reverse',
+  },
+  activityIndicator: {
+    flex: 1,
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 })
 

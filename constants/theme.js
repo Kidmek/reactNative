@@ -2,13 +2,16 @@ const COLORS = {
   primary: '#1d4ed8',
   secondary: '#444262',
   tertiary: '#FF7754',
-
+  grey: '#5E5D5E',
+  lightGrey: '#c2c2c2',
+  dark: '#1A1A1A',
   gray: '#83829A',
   gray2: '#C1C0C8',
-
+  black: '#000000',
   green: '#008000',
 
   white: '#F3F4F8',
+  pureWhite: '#FFFFFF',
   lightWhite: '#FAFAFC',
 
   blue: '#0096FF',
@@ -37,6 +40,8 @@ const SIZES = {
   largePicture: 120,
   xLargePicture: 150,
   xxLargePicture: 170,
+  tabIcons: 25,
+  welcomeTabIcons: 28,
 }
 
 const SHADOWS = {

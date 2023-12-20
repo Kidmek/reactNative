@@ -9,44 +9,71 @@ import { COLORS } from '../../../constants'
 import { getAllProducts } from '../../../api/product/product'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
+import { currencyFormat } from '../../common/utils'
+import Checkbox from 'expo-checkbox'
 
-const All = ({ fetching }) => {
+const All = ({ fetching, wizard, checked, setChecked, data }) => {
   const dispatch = store.dispatch
   const toast = useToast()
 
   const [products, setProducts] = useState()
   useEffect(() => {
-    getAllProducts(null, dispatch, setProducts, toast)
+    if (!wizard) {
+      getAllProducts(null, dispatch, setProducts, toast)
+    }
   }, [])
 
-  return fetching ? (
+  useEffect(() => {
+    if (data && wizard) {
+      setProducts(data)
+    }
+  }, [data])
+
+  return fetching || !products ? (
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <View style={styles.container}>
-      <AddNew
-        title={'New Product'}
-        page={{
-          name: 'new',
-          screen: 'product',
-        }}
-      />
+      {!wizard && (
+        <AddNew
+          title={'New Product'}
+          page={{
+            name: 'new',
+            screen: 'product',
+          }}
+        />
+      )}
 
       {products?.results?.map((item, index) => {
         return (
           <SingleCard
             key={index}
-            page={{
-              name: 'details',
-              screen: 'product',
-              params: { type: 'Unmanaged', id: item.id },
+            navigate={!wizard}
+            isOnlyText={true}
+            onClick={() => {
+              if (setChecked) {
+                setChecked(item?.id)
+              }
             }}
           >
-            <Image style={styles.image} source={{ uri: item?.clerance }} />
-
             <View style={styles.textContainer}>
-              <Text style={styles.name} numberOfLines={1}>
-                {item?.product_name}
-              </Text>
+              <View style={styles.wizCheckerHeader}>
+                <Text style={styles.name} numberOfLines={1}>
+                  {item?.product_name}
+                </Text>
+                {wizard && (
+                  <Checkbox
+                    color={COLORS.primary}
+                    value={checked === item.id}
+                    onValueChange={(value) => {
+                      if (value) {
+                        if (setChecked) {
+                          setChecked(item?.id)
+                        }
+                      }
+                    }}
+                  />
+                )}
+              </View>
               <Text style={styles.jobName}>
                 {item?.ProductTypeDetail?.product_type_name}
               </Text>
@@ -55,7 +82,9 @@ const All = ({ fetching }) => {
               </Text>
               <Text style={styles.type}>{item?.quantity}</Text>
               <Text style={styles.type}>{item?.userdetail?.first_name}</Text>
-              <Text style={styles.type}>${item?.price}</Text>
+              <Text style={styles.type}>
+                {currencyFormat(item?.price ?? '0') + ' ETB'}
+              </Text>
             </View>
           </SingleCard>
         )

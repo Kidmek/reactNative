@@ -10,7 +10,13 @@ const styles = StyleSheet.create({
     gap: SIZES.small,
   },
   btn: {
-    borderRadius: SIZES.large,
+    borderRadius: SIZES.small,
+    paddingVertical: SIZES.small,
+    paddingHorizontal: SIZES.medium,
+  },
+  text: {
+    fontFamily: FONT.medium,
+    textTransform: 'uppercase',
   },
 })
 

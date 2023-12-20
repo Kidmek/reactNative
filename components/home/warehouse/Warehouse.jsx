@@ -1,4 +1,4 @@
-import { View, Text, Image, ActivityIndicator } from 'react-native'
+import { View, Text, Image, ActivityIndicator, Dimensions } from 'react-native'
 import React from 'react'
 import styles from '../../common/styles/common.style'
 import { useState } from 'react'
@@ -10,21 +10,40 @@ import { COLORS } from '../../../constants'
 import { WAREHOUSE, mSQUARE } from '../../../constants/strings'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
+import Carousel from 'react-native-reanimated-carousel'
+import { currencyFormat } from '../../common/utils'
+import Checkbox from 'expo-checkbox'
 
-const Warehouse = ({ fetching, choose }) => {
+const Warehouse = ({
+  fetching,
+  choose,
+  wizard,
+  checked,
+  setChecked,
+  data,
+  params,
+}) => {
+  const width = Dimensions.get('window').width
   const dispatch = store.dispatch
   const toast = useToast()
 
   const [warehouses, setWarehouses] = useState()
   useEffect(() => {
-    getWarehouses(null, dispatch, setWarehouses, toast)
+    if (!warehouses && !wizard) {
+      getWarehouses(null, dispatch, setWarehouses, toast)
+    }
   }, [])
+  useEffect(() => {
+    if (data && wizard) {
+      setWarehouses(data)
+    }
+  }, [data])
 
   return fetching ? (
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <View style={styles.container}>
-      {!choose && (
+      {!choose && !wizard && (
         <AddNew
           title={'New Warehouse'}
           page={{
@@ -34,11 +53,13 @@ const Warehouse = ({ fetching, choose }) => {
           }}
         />
       )}
+      {wizard && <Text style={styles.wizTitle}>Choose Warehouse</Text>}
 
       {warehouses?.results?.map((item, index) => {
         return (
           <SingleCard
             key={index}
+            navigate={!wizard}
             page={
               !choose
                 ? {
@@ -49,24 +70,61 @@ const Warehouse = ({ fetching, choose }) => {
                 : {
                     name: 'new',
                     screen: 'order',
-                    params: { type: WAREHOUSE, id: item.id },
+                    params: { type: WAREHOUSE, id: item.id, params },
                   }
             }
+            onClick={() => {
+              if (setChecked) {
+                setChecked(item.id)
+              }
+            }}
           >
-            <Image
-              style={styles.image}
-              source={{ uri: item?.warehouse_images[0]?.images }}
+            <Carousel
+              loop={false}
+              height={width / 2}
+              width={width}
+              pagingEnabled={true}
+              data={item?.warehouse_images}
+              onSnapToItem={(index) => {}}
+              scrollAnimationDuration={1000}
+              renderItem={({ item: image }) => (
+                <Image
+                  style={{ ...styles.image, alignSelf: 'center' }}
+                  source={{ uri: image?.images }}
+                />
+              )}
+              panGestureHandlerProps={{
+                activeOffsetX: [-10, 10],
+              }}
             />
 
-            <View style={styles.textContainer}>
-              <Text style={styles.name} numberOfLines={1}>
-                {item?.warehouse_name}
-              </Text>
-              <Text style={styles.jobName}>{item?.region}</Text>
-              <Text style={styles.type}>{item?.city}</Text>
-              <Text style={styles.type}>{item?.sub_city}</Text>
-              <Text style={styles.type}>{item?.space + ' ' + mSQUARE} </Text>
-              <Text style={styles.type}>${item?.full_price}</Text>
+            <View style={styles.wizCheckerHeader}>
+              <View style={styles.textContainer}>
+                <Text style={styles.name}>{item?.warehouse_name}</Text>
+
+                <Text>
+                  <Text style={styles.jobName}>{item?.region} , </Text>
+                  <Text style={styles.type}>{item?.city} , </Text>
+                  <Text style={styles.type}>{item?.sub_city}</Text>
+                </Text>
+                <Text style={styles.type}>{item?.space + ' ' + mSQUARE} </Text>
+                <Text style={styles.type}>
+                  {currencyFormat(item?.full_price)} Birr
+                </Text>
+              </View>
+              {wizard && (
+                <Checkbox
+                  color={COLORS.primary}
+                  value={checked === item.id}
+                  onValueChange={(value) => {
+                    if (value) {
+                      if (setChecked) {
+                        setChecked(item?.id)
+                      }
+                    }
+                  }}
+                />
+              )}
             </View>
           </SingleCard>
         )

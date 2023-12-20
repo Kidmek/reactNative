@@ -25,8 +25,8 @@ const SingleGroup = ({ id, name }) => {
     getAllFromGroup(id, dispatch, setStaffs, toast)
   }, [])
   return (
-    <ScrollView>
-      <View style={styles.welcomeContainer}>
+    <ScrollView style={styles.welcomeContainer}>
+      <View>
         <Search
           onSearch={() => {}}
           setSearchQuery={setSearchQuery}
@@ -38,24 +38,21 @@ const SingleGroup = ({ id, name }) => {
       ) : (
         <View style={styles.container}>
           <AddNew
-            title={'New ' + { name }}
+            title={'New ' + name}
             page={{
               name: 'new',
               screen: 'group',
+              params: {
+                name,
+                id,
+              },
             }}
           />
 
           {staffs?.userslist?.map((item, index) => {
             return (
-              <SingleCard
-                key={index}
-                page={{
-                  name: 'details',
-                  screen: 'warehouse',
-                  params: { type: 'Unmanaged', id: item.id },
-                }}
-              >
-                <View style={styles.textContainer}>
+              <SingleCard key={index} isOnlyText={true}>
+                <View style={{ ...styles.onlyTextContainer, borderWidth: 0 }}>
                   <CardDetail label={'User Name'} value={item?.first_name} />
                   <CardDetail label={'Email'} value={item?.email} />
                   <CardDetail label={'Phone'} value={item?.phone} />

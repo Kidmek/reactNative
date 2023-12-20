@@ -38,15 +38,8 @@ const Transportations = () => {
       ) : (
         transportations?.results?.map((item, index) => {
           return (
-            <SingleCard
-              key={index}
-              page={{
-                name: 'details',
-                screen: 'warehouse',
-                params: { type: 'Unmanaged', id: item.id },
-              }}
-            >
-              <View style={styles.textContainer}>
+            <SingleCard key={index} isOnlyText={true}>
+              <View style={styles.onlyTextContainer}>
                 <CardDetail label={'Name'} value={item?.transportation_name} />
                 <CardDetail
                   label={'Transportation Type'}

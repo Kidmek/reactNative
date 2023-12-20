@@ -1,5 +1,5 @@
-import { setFetching } from '../../features/data/dataSlice'
-import { getSkeleton } from '../apiConfig'
+import { setFetching, setLoading } from '../../features/data/dataSlice'
+import { getSkeleton, postSkeleton } from '../apiConfig'
 
 export const getStorages = (params, dispatchFalse, setData, toast) => {
   getSkeleton(
@@ -21,6 +21,21 @@ export const getMappedStorages = (params, dispatchFalse, setData, toast) => {
     toast
   )
 }
+
+export const addStorageType = (data, dispatchFalse, toast, onSuccess) => {
+  postSkeleton(
+    '/storagetype/',
+    data,
+    null,
+    dispatchFalse,
+    setLoading,
+    onSuccess,
+    toast,
+    null,
+    'Successfully Created.',
+    {}
+  )
+}
 export const getMappedStorageDetails = (
   params,
   dispatchFalse,
@@ -39,6 +54,21 @@ export const getMappedStorageDetails = (
 
 export const getShelves = (params, dispatchFalse, setData, toast) => {
   getSkeleton('/shelve', params, dispatchFalse, setFetching, setData, toast)
+}
+
+export const addShelveType = (data, dispatchFalse, toast, onSuccess) => {
+  postSkeleton(
+    '/shelve/',
+    data,
+    null,
+    dispatchFalse,
+    setLoading,
+    onSuccess,
+    toast,
+    null,
+    'Successfully Created.',
+    {}
+  )
 }
 
 export const getStorageDetail = (params, dispatchFalse, setData, toast) => {

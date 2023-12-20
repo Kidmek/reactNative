@@ -10,19 +10,27 @@ const styles = StyleSheet.create({
     fontSize: SIZES.medium,
     fontFamily: FONT.bold,
   },
-  input: {
-    fontSize: SIZES.medium,
-    fontFamily: FONT.medium,
-    backgroundColor: COLORS.gray2,
-    borderRadius: SIZES.small,
-    padding: SIZES.small,
-    marginBottom: SIZES.medium,
-    textAlignVertical: 'top',
+  input: (error) => {
+    return {
+      borderWidth: 1,
+      borderRadius: SIZES.medium,
+      borderColor: !error ? COLORS.gray2 : COLORS.red,
+      fontFamily: FONT.medium,
+      paddingVertical: SIZES.small,
+      paddingHorizontal: SIZES.medium,
+      marginBottom: SIZES.medium,
+      textAlignVertical: 'top',
+    }
   },
   dateIcon: {
     position: 'absolute',
     right: '3.5%',
     top: '12%',
+  },
+  dimensionsInput: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: SIZES.small,
   },
 })
 

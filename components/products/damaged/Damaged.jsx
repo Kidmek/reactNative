@@ -10,7 +10,7 @@ import { getDamagedProducts } from '../../../api/product/product'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 
-const Damaged = ({ fetching }) => {
+const Damaged = ({ fetching, isAdmin }) => {
   const dispatch = store.dispatch
   const toast = useToast()
 
@@ -23,25 +23,19 @@ const Damaged = ({ fetching }) => {
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <View style={styles.container}>
-      <AddNew
-        title={'New Damaged Product'}
-        page={{
-          name: 'new',
-          screen: 'damaged_product',
-        }}
-      />
-
+      {isAdmin && (
+        <AddNew
+          title={'New Damaged Product'}
+          page={{
+            name: 'new',
+            screen: 'damaged_product',
+          }}
+        />
+      )}
       <View style={styles.listContainer}>
         {damaged?.data?.map((item, index) => {
           return (
-            <SingleCard
-              key={index}
-              page={{
-                name: 'details',
-                screen: 'damaged_product',
-                params: { id: item.id, name: item.name },
-              }}
-            >
+            <SingleCard key={index} isOnlyText={true}>
               <Image
                 style={styles.image}
                 source={{ uri: item?.damageProducts?.clerance }}

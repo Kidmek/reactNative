@@ -4,6 +4,7 @@ import styles from './customModal.style'
 import { selectView, toggleModal } from '../../../features/modal/modalSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigation } from 'expo-router'
+import { logOut } from '../../../features/data/dataSlice'
 
 const CustomModal = () => {
   const navigate = useNavigation()
@@ -31,6 +32,7 @@ const CustomModal = () => {
             <TouchableOpacity
               onPress={() => {
                 navigate.goBack()
+                dispatch(logOut())
                 dispatch(toggleModal())
               }}
               style={[styles.acceptBtn, styles.btn]}

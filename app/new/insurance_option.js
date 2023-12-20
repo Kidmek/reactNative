@@ -16,9 +16,6 @@ const insurance_option = () => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Insurance Option Information</Text>
-        <Text style={styles.headerMsg}>
-          Use a permanent address where you can receive mail.
-        </Text>
       </View>
       <View style={styles.inputContainer}>
         <Input label={'Name'} state={name} setState={setName} />
@@ -29,7 +26,7 @@ const insurance_option = () => {
           setState={setDescription}
         />
       </View>
-      <Footer onCancel={() => {}} onSave={() => {}} />
+      <Footer onSave={() => {}} />
     </ScrollView>
   )
 }

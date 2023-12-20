@@ -36,18 +36,9 @@ const Methods = () => {
 
       {methods?.results?.map((item, index) => {
         return (
-          <SingleCard
-            key={index}
-            page={{
-              name: 'details',
-              screen: 'warehouse',
-              params: { type: 'Unmanaged', id: item.id },
-            }}
-          >
-            <View style={styles.textContainer}>
-              <Text style={styles.name} numberOfLines={1}>
-                {item?.name}
-              </Text>
+          <SingleCard key={index} isOnlyText={true}>
+            <View style={{ ...styles.onlyTextContainer, borderWidth: 0 }}>
+              <Text style={styles.name}>{item?.name}</Text>
               <Text style={styles.type}>{item?.description}</Text>
               <Text style={styles.date}>{Date(item?.created_at)}</Text>
             </View>

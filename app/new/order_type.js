@@ -16,9 +16,6 @@ const order_type = () => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Order Type Information</Text>
-        <Text style={styles.headerMsg}>
-          Use a permanent address where you can receive mail.
-        </Text>
       </View>
       <View style={styles.inputContainer}>
         <Input label={'Order Type Name'} state={name} setState={setName} />
@@ -29,7 +26,7 @@ const order_type = () => {
           setState={setDescription}
         />
       </View>
-      <Footer onCancel={() => {}} onSave={() => {}} />
+      <Footer onSave={() => {}} />
     </ScrollView>
   )
 }

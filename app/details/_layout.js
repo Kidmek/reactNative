@@ -44,7 +44,7 @@ const _layout = () => {
       <Stack.Screen
         name='shelve_type'
         options={{
-          headerTitle: 'Shelve Type',
+          headerTitle: 'Storage Type',
         }}
       />
 

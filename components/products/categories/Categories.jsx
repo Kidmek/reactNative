@@ -9,6 +9,7 @@ import { store } from '../../../store'
 import { COLORS } from '../../../constants'
 import { getProductCategories } from '../../../api/product/product'
 import AddNew from '../../common/header/AddNew'
+import SingleCard from '../../common/cards/single/SingleCard'
 
 const Categories = ({ fetching }) => {
   const dispatch = store.dispatch
@@ -33,20 +34,15 @@ const Categories = ({ fetching }) => {
 
       {productCategory?.results?.map((item, index) => {
         return (
-          <TouchableOpacity key={index} style={styles.warehouseContainer}>
+          <SingleCard key={index} isOnlyText={true}>
             <View style={styles.textContainer}>
               <Text style={styles.name} numberOfLines={1}>
                 {item?.category_name}
               </Text>
-              <Text style={styles.name} numberOfLines={1}>
-                Description: {item?.category_meta}
-              </Text>
-              <Text style={styles.type}>
-                <Text style={styles.label}>Created At: </Text>
-                {Date(item?.created_at)}
-              </Text>
+              <Text>{item?.category_meta}</Text>
+              <Text style={styles.type}>{Date(item?.created_at)}</Text>
             </View>
-          </TouchableOpacity>
+          </SingleCard>
         )
       })}
     </View>

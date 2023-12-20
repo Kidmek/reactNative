@@ -15,10 +15,8 @@ const TransitWelcome = () => {
   const fetching = useSelector(selectIsFetching)
 
   return (
-    <ScrollView>
-      <View style={styles.welcomeContainer}>
-        <Header name={'Adrian'} text={'Transit'} />
-
+    <ScrollView style={styles.welcomeContainer}>
+      <View>
         <Search
           onSearch={() => {}}
           setSearchQuery={setSearchQuery}

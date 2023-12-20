@@ -17,9 +17,6 @@ import { NUMBER, mSQUARE } from '../../constants/strings'
 import Footer from '../../components/common/footer/Footer'
 
 const storage = () => {
-  const params = useLocalSearchParams()
-  const dispatch = store.dispatch
-  const toast = useToast()
   const [name, setName] = useState()
   const [height, setHeight] = useState()
   const [terminal, setTerminal] = useState()
@@ -47,9 +44,6 @@ const storage = () => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Warehouse Storage Type</Text>
-        <Text style={styles.headerMsg}>
-          Use a permanent address where you can receive mail.
-        </Text>
       </View>
       <View style={styles.inputContainer}>
         <Input label={'Storage Type Name'} state={name} setState={setName} />
@@ -117,7 +111,7 @@ const storage = () => {
           />
         </View>
       </View>
-      <Footer onCancel={() => {}} onSave={() => {}} />
+      <Footer onSave={() => {}} />
     </ScrollView>
   )
 }

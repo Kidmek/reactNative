@@ -48,18 +48,44 @@ const styles = StyleSheet.create({
   tabsContainer: {
     width: '100%',
     marginTop: SIZES.medium,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   tab: (activeJobType, item) => ({
     paddingVertical: SIZES.small / 2,
     paddingHorizontal: SIZES.small,
-    borderRadius: SIZES.medium,
-    borderWidth: 1,
-    borderColor: activeJobType === item ? COLORS.secondary : COLORS.gray2,
+    borderBottomWidth: 2,
+    borderBottomColor:
+      activeJobType === item ? COLORS.secondary : 'transparent',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: SIZES.xxSmall,
+    paddingVertical: SIZES.xSmall,
   }),
   tabText: (activeJobType, item) => ({
-    fontFamily: FONT.medium,
-    color: activeJobType === item ? COLORS.secondary : COLORS.gray2,
+    fontFamily: activeJobType === item ? FONT.bold : FONT.medium,
+    color: activeJobType === item ? COLORS.secondary : COLORS.gray,
   }),
+  categoryText(isActive) {
+    return {
+      fontSize: 14,
+      fontFamily: FONT.regular,
+      color: isActive ? COLORS.black : COLORS.grey,
+      textAlign: 'center',
+    }
+  },
+
+  categoriesBtn(isActive) {
+    return {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingBottom: 8,
+      borderBottomWidth: isActive ? 2 : 0,
+      borderBottomColor: '#000',
+    }
+  },
 })
 
 export default styles

@@ -10,14 +10,16 @@ import { COLORS } from '../../constants'
 import { Dropdown } from 'react-native-element-dropdown'
 import { useLocalSearchParams, useNavigation } from 'expo-router'
 import { useEffect } from 'react'
-import { getWarehouses } from '../../api/warehouse/warehouse'
+import { addWarehouse, getWarehouses } from '../../api/warehouse/warehouse'
 import { store } from '../../store'
 import { useToast } from 'react-native-toast-notifications'
 import { getStorages } from '../../api/storage/storage'
-import MapView from 'react-native-maps'
+import MapView, { Marker } from 'react-native-maps'
 import Input from '../../components/common/input/Input'
 import { MULTI, NUMBER, mSQUARE } from '../../constants/strings'
 import Footer from '../../components/common/footer/Footer'
+import * as Location from 'expo-location'
+import * as FileSystem from 'expo-file-system'
 
 const warehouse = () => {
   const params = useLocalSearchParams()
@@ -39,8 +41,69 @@ const warehouse = () => {
   const [price, setPrice] = useState()
   const [description, setDescription] = useState()
   const [images, setImages] = useState([])
+  const [location, setLocation] = useState(null)
+  const [pickedLoction, setPickedLoction] = useState()
 
-  const saveWarehouse = async () => {}
+  const onAdd = async () => {
+    // Validation
+    if (images && images.length) {
+      const pictures = images.map(async (image) => {
+        let filename = image.split('/').pop()
+
+        let match = /\.(\w+)$/.exec(filename)
+        let type = match ? `image/${match[1]}` : `image`
+        const base64 = await FileSystem.readAsStringAsync(images[0], {
+          encoding: 'base64',
+        })
+        return 'data:' + type + ';base64,' + base64
+      })
+      const resolved = await Promise.all(pictures)
+      console.log({
+        lat: pickedLoction?.latitude,
+        lng: pickedLoction?.longitude,
+        price_m2: pricePer,
+        region,
+        sub_city: subCity,
+        warehouse_name: name,
+        warehouse_meta: description,
+        wereda,
+        zone,
+        space,
+        region,
+        storage_space: space,
+        available_space: space,
+        city,
+        full_price: price,
+        resolved: resolved[0].slice(0, 10),
+      })
+      addWarehouse(
+        {
+          lat: parseFloat(pickedLoction?.latitude),
+          lng: parseFloat(pickedLoction?.longitude),
+          price_m2: pricePer,
+          region,
+          sub_city: subCity,
+          warehouse_name: name,
+          warehouse_meta: description,
+          wereda,
+          zone,
+          space,
+          region,
+          storage_space: space,
+          available_space: space,
+          city,
+          full_price: parseFloat(price),
+          images_url: resolved,
+          image: [resolved[0]],
+        },
+        dispatch,
+        toast,
+        () => {
+          navigate.goBack()
+        }
+      )
+    }
+  }
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -55,7 +118,19 @@ const warehouse = () => {
     }
   }
 
+  const fetchCurrentLocation = async () => {
+    let { status } = await Location.requestForegroundPermissionsAsync()
+    if (status !== 'granted') {
+      toast.show('Permission to access location was denied')
+      return
+    }
+
+    let location = await Location.getLastKnownPositionAsync({})
+    setLocation(location)
+  }
+
   useEffect(() => {
+    fetchCurrentLocation()
     if (params?.type == 'Managed') {
       getWarehouses(null, dispatch, setWarehouses, toast)
       getStorages(null, dispatch, setStorages, toast)
@@ -70,14 +145,32 @@ const warehouse = () => {
             ? 'Manage Warehouse'
             : 'Warehouse Information'}
         </Text>
-        <Text style={styles.headerMsg}>
-          Use a permanent address where you can receive mail.
-        </Text>
       </View>
       <View style={styles.inputContainer}>
         {params?.type == 'Unmanaged' ? (
           <>
-            <MapView style={styles.map} />
+            {location && (
+              <MapView
+                style={styles.map}
+                onPress={(e) => setPickedLoction(e.nativeEvent.coordinate)}
+                initialRegion={{
+                  latitude: location.coords?.latitude,
+                  longitude: location.coords?.longitude,
+                  latitudeDelta: 0.0922,
+                  longitudeDelta: 0.0421,
+                }}
+              >
+                {pickedLoction && (
+                  <Marker
+                    pinColor='red'
+                    coordinate={{
+                      latitude: pickedLoction?.latitude,
+                      longitude: pickedLoction?.longitude,
+                    }}
+                  />
+                )}
+              </MapView>
+            )}
             <Input label={'Warehouse Name'} state={name} setState={setName} />
             <Input label={'Region'} state={region} setState={setRegion} />
             <Input label={'City'} state={city} setState={setCity} />
@@ -191,7 +284,7 @@ const warehouse = () => {
           />
         </View>
       </View>
-      <Footer onCancel={() => {}} onSave={() => {}} />
+      <Footer onSave={onAdd} />
     </ScrollView>
   )
 }

@@ -9,7 +9,7 @@ const CardDetail = ({ label, value, isPrice, isSpace, isDate }) => {
       <Text style={styles.cardDetailLabel}>{label}</Text>
       <Text style={styles.cardDetailValue}>
         {isDate ? Date(value) : value}
-        {isPrice && value ? ' Birr' : isSpace ? ' ' + mSQUARE : ''}{' '}
+        {isPrice && value ? ' Birr' : isSpace ? ' ' + mSQUARE : ''}
       </Text>
     </View>
   )

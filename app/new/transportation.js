@@ -5,9 +5,13 @@ import styles from './styles/warehouse.style'
 import { MULTI } from '../../constants/strings'
 import Footer from '../../components/common/footer/Footer'
 import CustomDropdown from '../../components/common/dropdown/CustomDropdown'
-import { getTransportationMethods } from '../../api/shipment/shipment'
+import {
+  addTransportation,
+  getTransportationMethods,
+} from '../../api/shipment/shipment'
 import { store } from '../../store'
 import { useToast } from 'react-native-toast-notifications'
+import { useNavigation } from 'expo-router'
 
 const shipment_method = () => {
   const dispatch = store.dispatch
@@ -18,7 +22,21 @@ const shipment_method = () => {
   const [weight, setWeight] = useState()
   const [plate, setPlate] = useState()
   const [desc, setDesc] = useState()
-
+  const navigate = useNavigation()
+  const onAdd = () => {
+    addTransportation(
+      {
+        transportation_name: name,
+        transportation_type: type,
+        licence_plate: plate,
+        limited_weight: weight,
+        description: desc,
+      },
+      dispatch,
+      toast,
+      () => navigate.goBack()
+    )
+  }
   useEffect(() => {
     getTransportationMethods(null, dispatch, setMethods, toast)
   }, [])
@@ -27,9 +45,6 @@ const shipment_method = () => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Transportation Information</Text>
-        <Text style={styles.headerMsg}>
-          Use a permanent address where you can receive mail.
-        </Text>
       </View>
       <View style={styles.inputContainer}>
         <Input label={'Transportation Name'} state={name} setState={setName} />
@@ -51,7 +66,7 @@ const shipment_method = () => {
           setState={setDesc}
         />
       </View>
-      <Footer onCancel={() => {}} onSave={() => {}} />
+      <Footer onSave={onAdd} />
     </ScrollView>
   )
 }

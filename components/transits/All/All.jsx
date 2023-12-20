@@ -34,15 +34,8 @@ const All = ({ fetching }) => {
 
       {transits?.results?.map((item, index) => {
         return (
-          <SingleCard
-            key={index}
-            page={{
-              name: 'details',
-              screen: 'warehouse',
-              params: { type: 'Unmanaged', id: item.id },
-            }}
-          >
-            <View style={styles.textContainer}>
+          <SingleCard key={index} isOnlyText={true}>
+            <View style={{ ...styles.onlyTextContainer, borderWidth: 0 }}>
               <CardDetail
                 label={'Customer'}
                 value={item?.productdetail?.userDetail?.first_name}

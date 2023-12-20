@@ -41,6 +41,7 @@ const Types = ({ fetching }) => {
                 screen: 'product_type',
                 params: { name: item?.storage_name, id: item?.id },
               }}
+              isOnlyText={true}
             >
               {/* <AntDesign name='storage' size={40} color={'black'} /> */}
               <View style={styles.textContainer}>

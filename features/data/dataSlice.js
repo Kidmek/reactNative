@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { logout } from '../../api/apiConfig'
 
 const initialState = {
   isLoading: false,
@@ -21,10 +22,14 @@ const dataSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload
     },
+    logOut: (state, action) => {
+      state.user = null
+      logout()
+    },
   },
 })
 
-export const { setLoading, setFetching, setUser } = dataSlice.actions
+export const { setLoading, setFetching, setUser, logOut } = dataSlice.actions
 
 export default dataSlice.reducer
 
@@ -33,3 +38,10 @@ export const selectIsLoading = (state) => state.data.isLoading
 export const selectIsError = (state) => state.data.isError
 export const selectData = (state) => state.data.data
 export const selectUser = (state) => state.data.user
+export const selectIsAdmin = (state) => {
+  if (state.data.user && state.data.user.is_superuser) {
+    return true
+  } else {
+    return false
+  }
+}

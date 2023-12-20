@@ -18,6 +18,7 @@ import { useSelector } from 'react-redux'
 import { selectIsFetching } from '../../features/data/dataSlice'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../store'
+import AddNew from '../../components/common/header/AddNew'
 
 const shelve_type = () => {
   const navigation = useNavigation()
@@ -33,7 +34,7 @@ const shelve_type = () => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <AddNew
-          title={'New Shelve Type'}
+          title={'New Storage Method'}
           page={{
             name: 'new',
             screen: 'shelve_type',
@@ -49,9 +50,7 @@ const shelve_type = () => {
             shelves.results.map((shelve, index) => (
               <View key={index} style={storageStyles.singleItem}>
                 <Text style={styles.name}>{shelve.name}</Text>
-                <Text style={styles.subName}>
-                  Description: {shelve.description}
-                </Text>
+                <Text style={styles.type}>{shelve.description}</Text>
 
                 <View style={storageStyles.singleBtnContainer}>
                   <TouchableOpacity style={storageStyles.btn(false)}>

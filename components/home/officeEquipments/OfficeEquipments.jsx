@@ -1,4 +1,4 @@
-import { View, Text, Image, ActivityIndicator } from 'react-native'
+import { View, Text, Image, ActivityIndicator, Dimensions } from 'react-native'
 import React from 'react'
 import { TouchableOpacity } from 'react-native'
 import { useState } from 'react'
@@ -9,8 +9,12 @@ import styles from '../../common/styles/common.style'
 import { COLORS } from '../../../constants'
 import { getOfficeEquipments } from '../../../api/office/office'
 import AddNew from '../../common/header/AddNew'
+import SingleCard from '../../common/cards/single/SingleCard'
+import Carousel from 'react-native-reanimated-carousel'
 
 const OfficeEquipments = ({ fetching }) => {
+  const width = Dimensions.get('window').width
+
   const dispatch = store.dispatch
   const toast = useToast()
 
@@ -33,8 +37,25 @@ const OfficeEquipments = ({ fetching }) => {
 
       {officeEquipments?.results?.map((item, index) => {
         return (
-          <TouchableOpacity key={index} style={styles.warehouseContainer}>
-            <Image style={styles.image} source={{ uri: item?.image }} />
+          <SingleCard key={index}>
+            <Carousel
+              loop={false}
+              height={width / 2}
+              width={width}
+              pagingEnabled={true}
+              data={[item?.image]}
+              onSnapToItem={(index) => {}}
+              scrollAnimationDuration={1000}
+              renderItem={({ item: image }) => (
+                <Image
+                  style={{ ...styles.image, alignSelf: 'center' }}
+                  source={{ uri: image }}
+                />
+              )}
+              panGestureHandlerProps={{
+                activeOffsetX: [-10, 10],
+              }}
+            />
 
             <View style={styles.textContainer}>
               <Text style={styles.name} numberOfLines={1}>
@@ -43,7 +64,7 @@ const OfficeEquipments = ({ fetching }) => {
               <Text style={styles.type}>{item?.equipment_type}</Text>
               <Text style={styles.type}>${item?.price}</Text>
             </View>
-          </TouchableOpacity>
+          </SingleCard>
         )
       })}
     </View>

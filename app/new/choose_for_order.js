@@ -12,10 +12,10 @@ const choose_for_order = () => {
   const params = useLocalSearchParams()
   return (
     <ScrollView>
-      {params.type === WAREHOUSE ? (
-        <Warehouse fetching={fetching} choose={true} />
+      {params.type.toLowerCase() === WAREHOUSE ? (
+        <Warehouse fetching={fetching} choose={true} params={params} />
       ) : (
-        <StorageType fetching={fetching} choose={true} />
+        <StorageType fetching={fetching} choose={true} params={params} />
       )}
     </ScrollView>
   )

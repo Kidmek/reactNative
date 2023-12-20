@@ -6,7 +6,6 @@ import { selectIsFetching } from '../../../features/data/dataSlice'
 
 import Search from '../../common/search/Search'
 import All from '../All/All'
-import Header from '../../common/header/Header'
 
 const StaffWelcome = () => {
   const [searchQuery, setSearchQuery] = useState()
@@ -14,10 +13,8 @@ const StaffWelcome = () => {
   const fetching = useSelector(selectIsFetching)
 
   return (
-    <ScrollView>
-      <View style={styles.welcomeContainer}>
-        <Header name={'Adrian'} text={'Staff'} />
-
+    <ScrollView style={styles.welcomeContainer}>
+      <View>
         <Search
           onSearch={() => {}}
           setSearchQuery={setSearchQuery}

@@ -45,10 +45,11 @@ const InsuranceOptions = ({ params }) => {
                   ? {
                       name: 'new',
                       screen: 'insurance',
-                      params: { type: item?.name },
+                      params: { type: item?.name, typeId: item?.id },
                     }
                   : {}
               }
+              isOnlyText={true}
             >
               <View style={styles.textContainer}>
                 <Text style={styles.name} numberOfLines={1}>

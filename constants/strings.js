@@ -1,6 +1,6 @@
 // export const API = 'http://85a1-197-156-86-173.ngrok.io' + '/api'
-// export const API = 'http://127.0.0.1:8000/api'
-export const API = 'https://inventorymanagment.pythonanywhere.com/api'
+export const API = 'https://e2ethreepl.com/api'
+// export const API = 'https://inventorymanagment.pythonanywhere.com/api'
 export const BASE_API = 'https://viaeducational.com/'
 export const emailRegEx = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
 export const warehouseTypes = [
@@ -16,6 +16,7 @@ export const productTypes = [
   'Product Categories',
   'Product Types',
 ]
+export const customerProductTypes = ['All', 'Returned', 'Damaged']
 export const shipmentTypes = [
   'Shipments',
   'Transportations',
@@ -23,6 +24,7 @@ export const shipmentTypes = [
   'Shipment Method',
 ]
 export const NUMBER = 'number'
+export const DIMENSION = 'dimension'
 export const DATE = 'date'
 export const MULTI = 'multi'
 export const OFFICE = 'office'
@@ -32,3 +34,7 @@ export const MANAGED = 'managed'
 export const UNMANAGED = 'unmanaged'
 export const STORAGE = 'storage'
 export const mSQUARE = 'M\u00B2'
+export const ALL = 'all'
+export const SPACE = 'space'
+export const SHIPMNET = 'shipment'
+export const CUSTOMS = 'customs'

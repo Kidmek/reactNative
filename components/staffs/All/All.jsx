@@ -27,7 +27,7 @@ const All = ({ fetching }) => {
         title={'New Group'}
         page={{
           name: 'new',
-          screen: 'transit',
+          screen: 'group',
         }}
       />
 
@@ -40,10 +40,19 @@ const All = ({ fetching }) => {
               screen: 'group',
               params: { id: item.id, name: item?.name },
             }}
+            isOnlyText={true}
           >
-            <FontAwesome5 name='users' size={20} color={'black'} />
-            <View style={styles.textContainer}>
-              <Text style={styles.name}>{item?.name}</Text>
+            <View
+              style={{
+                ...styles.onlyTextContainer,
+                borderWidth: 0,
+                flexDirection: 'row',
+              }}
+            >
+              <FontAwesome5 name='users' size={20} color={'black'} />
+              <View style={styles.textContainer}>
+                <Text style={styles.name}>{item?.name}</Text>
+              </View>
             </View>
           </SingleCard>
         )

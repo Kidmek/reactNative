@@ -8,11 +8,17 @@ export const postSkeleton = (
   params,
   dispatchFalse,
   setLoading,
-  setData,
-  toast
+  onSuccess,
+  toast,
+  setPosting,
+  successMsg,
+  headers,
+  errorMsg
 ) => {
   if (dispatchFalse && setLoading) dispatchFalse(setLoading(true))
-
+  if (setPosting) {
+    setPosting(true)
+  }
   AsyncStorage.getItem('token')
     .then((token) => {
       axios
@@ -31,25 +37,40 @@ export const postSkeleton = (
         .then((responseJson) => {
           //Hide Loader
           if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
-
+          if (setPosting) {
+            setPosting(false)
+          }
+          console.log(responseJson)
           // If server response message same as Data Matched
           if (responseJson?.data) {
-            setData()
-            toast?.show('Successfully Registered', {
+            if (onSuccess) {
+              onSuccess()
+            }
+            toast?.show(successMsg ?? 'Successfully Saved', {
               type: 'success',
             })
           }
         })
         .catch((error) => {
+          console.log(error)
+          console.log(error.response)
+          console.log(error.response?.data)
           //Hide Loader
-          dispatchFalse(setLoading(false))
+          if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+          if (setPosting) {
+            setPosting(false)
+          }
           if (toast.show)
-            toast?.show(error.message, {
+            toast?.show(errorMsg ?? 'Unable To Save', {
               type: 'danger',
             })
         })
     })
     .catch(() => {
+      if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+      if (setPosting) {
+        setPosting(false)
+      }
       if (toast.show)
         toast?.show('Unauthorized', {
           type: 'danger',
@@ -63,9 +84,13 @@ export const getSkeleton = (
   dispatchFalse,
   setLoading,
   setData,
-  toast
+  toast,
+  setGetting
 ) => {
   if (dispatchFalse && setLoading) dispatchFalse(setLoading(true))
+  if (setGetting) {
+    setGetting(true)
+  }
   AsyncStorage.getItem('token')
     .then((token) => {
       axios
@@ -78,6 +103,9 @@ export const getSkeleton = (
         .then((responseJson) => {
           //Hide Loader
           if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+          if (setGetting) {
+            setGetting(true)
+          }
           // If server response message same as Data Matched
           if (responseJson?.data) {
             setData(responseJson?.data)
@@ -86,7 +114,10 @@ export const getSkeleton = (
         .catch((error) => {
           //Hide Loader
           console.log(error)
-          dispatchFalse(setLoading(false))
+          if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+          if (setGetting) {
+            setGetting(true)
+          }
           if (toast.show)
             toast?.show(error?.request?.statusText || error.message, {
               type: 'danger',
@@ -94,6 +125,10 @@ export const getSkeleton = (
         })
     })
     .catch(() => {
+      if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+      if (setGetting) {
+        setGetting(true)
+      }
       if (toast.show)
         toast?.show('Unauthorized', {
           type: 'danger',
@@ -113,4 +148,14 @@ export const isLoggedIn = async () => {
       return foundToken
     })
   return foundToken
+}
+
+export const getUser = async () => {
+  const user = await AsyncStorage.getItem('user_id')
+  return JSON.parse(user)
+}
+
+export const logout = async () => {
+  await AsyncStorage.removeItem('user_id')
+  await AsyncStorage.removeItem('token')
 }

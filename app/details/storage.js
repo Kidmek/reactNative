@@ -162,7 +162,7 @@ const storage = () => {
               </View>
             </View>
           )}
-          <Footer onCancel={() => {}} onSave={() => {}} />
+          <Footer onSave={() => {}} />
         </View>
       )}
     </ScrollView>

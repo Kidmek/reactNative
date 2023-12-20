@@ -4,17 +4,32 @@ import Input from '../../components/common/input/Input'
 import styles from './styles/warehouse.style'
 import { MULTI } from '../../constants/strings'
 import Footer from '../../components/common/footer/Footer'
+import { useToast } from 'react-native-toast-notifications'
+import { useNavigation } from 'expo-router'
+import { store } from '../../store'
+import { addShipmentType } from '../../api/shipment/shipment'
 
 const shipment_type = () => {
   const [name, setName] = useState()
   const [desc, setDesc] = useState()
+  const toast = useToast()
+  const navigate = useNavigation()
+  const dispatch = store.dispatch
+  const onAdd = () => {
+    addShipmentType(
+      {
+        name,
+        description: desc,
+      },
+      dispatch,
+      toast,
+      () => navigate.goBack()
+    )
+  }
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Shipment Type Information</Text>
-        <Text style={styles.headerMsg}>
-          Use a permanent address where you can receive mail.
-        </Text>
       </View>
       <View style={styles.inputContainer}>
         <Input label={'Name'} state={name} setState={setName} />
@@ -25,7 +40,7 @@ const shipment_type = () => {
           setState={setDesc}
         />
       </View>
-      <Footer onCancel={() => {}} onSave={() => {}} />
+      <Footer onSave={onAdd} />
     </ScrollView>
   )
 }

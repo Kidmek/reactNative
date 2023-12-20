@@ -36,15 +36,8 @@ const All = ({ fetching }) => {
 
       {insurances?.results?.map((item, index) => {
         return (
-          <SingleCard
-            key={index}
-            page={{
-              name: 'details',
-              screen: 'warehouse',
-              params: { type: 'Unmanaged', id: item.id },
-            }}
-          >
-            <View style={styles.textContainer}>
+          <SingleCard key={index} isOnlyText={true}>
+            <View style={{ ...styles.onlyTextContainer, borderWidth: 0 }}>
               <CardDetail
                 label={'Insurance Agent'}
                 value={item?.agentdetail?.first_name}

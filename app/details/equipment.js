@@ -31,9 +31,6 @@ const equipments = () => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Equipment Information</Text>
-        <Text style={styles.headerMsg}>
-          Use a permanent address where you can receive mail.
-        </Text>
       </View>
       <View style={styles.inputContainer}>
         <Input label={'Equipment Name'} state={name} setState={setName} />
@@ -65,7 +62,7 @@ const equipments = () => {
           onPress={pickImage}
         />
       </View>
-      <Footer onCancel={() => {}} onSave={() => {}} />
+      <Footer onSave={() => {}} />
     </ScrollView>
   )
 }

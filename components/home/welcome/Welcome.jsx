@@ -8,7 +8,10 @@ import Office from '../office/Office'
 import OfficeEquipments from '../officeEquipments/OfficeEquipments'
 import StorageType from '../storageTypes/StorageTypes'
 import { useSelector } from 'react-redux'
-import { selectIsFetching } from '../../../features/data/dataSlice'
+import {
+  selectIsAdmin,
+  selectIsFetching,
+} from '../../../features/data/dataSlice'
 import Search from '../../common/search/Search'
 import Header from '../../common/header/Header'
 import CustomTabs from '../../common/header/CustomTabs'
@@ -17,6 +20,8 @@ const Welcome = () => {
   const [searchQuery, setSearchQuery] = useState()
   const [activeType, setActiveType] = useState(warehouseTypes[0])
   const fetching = useSelector(selectIsFetching)
+
+  const isAdmin = useSelector(selectIsAdmin)
 
   const body = () => {
     switch (activeType) {
@@ -31,19 +36,21 @@ const Welcome = () => {
     }
   }
   return (
-    <ScrollView>
-      <View style={styles.welcomeContainer}>
-        <Header name={'Adrian'} text={'Warehouse'} />
+    <ScrollView style={styles.welcomeContainer}>
+      <View>
+        {/* <Header name={'Adrian'} text={'Warehouse'} /> */}
         <Search
           onSearch={() => {}}
           setSearchQuery={setSearchQuery}
           searchQuery={searchQuery}
         />
-        <CustomTabs
-          data={warehouseTypes}
-          setActiveType={setActiveType}
-          activeType={activeType}
-        />
+        {isAdmin && (
+          <CustomTabs
+            data={warehouseTypes}
+            setActiveType={setActiveType}
+            activeType={activeType}
+          />
+        )}
       </View>
       {body()}
     </ScrollView>

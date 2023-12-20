@@ -12,8 +12,9 @@ import { selectIsFetching } from '../../../features/data/dataSlice'
 import { COLORS } from '../../../constants'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
+import Checkbox from 'expo-checkbox'
 
-const ShipmentType = () => {
+const ShipmentType = ({ wizard, checked, setChecked, data }) => {
   const params = useLocalSearchParams()
   const dispatch = store.dispatch
   const toast = useToast()
@@ -21,14 +22,22 @@ const ShipmentType = () => {
   const fetching = useSelector(selectIsFetching)
 
   useEffect(() => {
-    getShipmentTypes(null, dispatch, setTypes, toast)
+    if (!wizard) {
+      getShipmentTypes(null, dispatch, setTypes, toast)
+    }
   }, [])
+
+  useEffect(() => {
+    if (wizard) {
+      setTypes(data)
+    }
+  }, [data])
 
   return fetching ? (
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <ScrollView style={styles.container}>
-      {!params?.choose && (
+      {!params?.choose && !wizard && (
         <AddNew
           title={'New Shipment Type'}
           page={{
@@ -36,6 +45,11 @@ const ShipmentType = () => {
             screen: 'shipment_type',
           }}
         />
+      )}
+      {wizard && (
+        <Text style={styles.wizTitle}>
+          What Type Of Shipment Would You Like To Make?
+        </Text>
       )}
 
       {types?.results?.map((item, index) => {
@@ -52,16 +66,43 @@ const ShipmentType = () => {
                 : {
                     name: 'new',
                     screen: 'shipment',
-                    params: { type: item?.name },
+                    params: { type: item?.name, typeId: item?.id },
                   }
+            }
+            navigate={!wizard}
+            isOnlyText={true}
+            onClick={() =>
+              setChecked({
+                type: item.name,
+              })
             }
           >
             <View style={styles.textContainer}>
-              <Text style={styles.name} numberOfLines={1}>
-                {item?.name}
+              <View style={styles.wizCheckerHeader}>
+                <Text style={styles.name}>{item?.name}</Text>
+                {wizard && (
+                  <Checkbox
+                    color={COLORS.primary}
+                    value={checked?.type === item.name}
+                    onValueChange={(value) => {
+                      if (value) {
+                        setChecked({
+                          type: item.name,
+                        })
+                      }
+                    }}
+                  />
+                )}
+              </View>
+              <Text
+                style={{
+                  ...styles.type,
+                  alignSelf: wizard ? 'flex-start' : 'auto',
+                }}
+              >
+                {item?.description}
               </Text>
-              <Text style={styles.type}>{item?.description}</Text>
-              {!params?.choose && (
+              {!params?.choose && !wizard && (
                 <Text style={styles.date}>{Date(item?.created_at)}</Text>
               )}
             </View>
