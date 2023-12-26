@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   headerBtn: {
     fontFamily: FONT.regular,
     flexDirection: 'row',
-    marginBottom: SIZES.xSmall,
+    marginBottom: SIZES.large,
     gap: SIZES.small,
     backgroundColor: COLORS.primary,
     borderRadius: SIZES.small,

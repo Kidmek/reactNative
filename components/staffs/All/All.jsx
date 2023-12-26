@@ -1,7 +1,6 @@
-import { View, Text, ActivityIndicator } from 'react-native'
+import { View, Text } from 'react-native'
 import React from 'react'
 import styles from '../../common/styles/common.style'
-import { COLORS } from '../../../constants'
 import { store } from '../../../store'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { useToast } from 'react-native-toast-notifications'
@@ -11,17 +10,15 @@ import { getAllGroups } from '../../../api/users'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 
-const All = ({ fetching }) => {
+const All = ({ fetching, refresh }) => {
   const dispatch = store.dispatch
   const toast = useToast()
   const [groups, setGroups] = useState()
 
   useEffect(() => {
     getAllGroups(null, dispatch, setGroups, toast)
-  }, [])
-  return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
-  ) : (
+  }, [refresh])
+  return (
     <View style={styles.container}>
       <AddNew
         title={'New Group'}

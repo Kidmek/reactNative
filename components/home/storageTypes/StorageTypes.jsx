@@ -1,4 +1,4 @@
-import { View, Text, Image, ActivityIndicator, Dimensions } from 'react-native'
+import { View, Text, Image, Dimensions, ActivityIndicator } from 'react-native'
 import React from 'react'
 import { TouchableOpacity } from 'react-native'
 import styles from '../../common/styles/common.style'
@@ -17,13 +17,13 @@ import { currencyFormat } from '../../common/utils'
 import Checkbox from 'expo-checkbox'
 
 const StorageType = ({
-  fetching,
   choose,
   wizard,
   checked,
   setChecked,
   data,
   params,
+  refresh,
 }) => {
   const width = Dimensions.get('window').width
 
@@ -40,15 +40,15 @@ const StorageType = ({
         getStorages(null, dispatch, setStorageTypes, toast)
       }
     }
-  }, [])
+  }, [refresh])
   useEffect(() => {
     if (data && wizard) {
       setStorageTypes(data)
     }
   }, [data])
 
-  return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+  return wizard && !storageTypes ? (
+    <ActivityIndicator color={COLORS.primary} size={SIZES.xxLarge} />
   ) : (
     <View style={styles.container}>
       {!choose && !wizard && (

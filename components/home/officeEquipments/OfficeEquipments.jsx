@@ -1,18 +1,16 @@
-import { View, Text, Image, ActivityIndicator, Dimensions } from 'react-native'
+import { View, Text, Image, Dimensions } from 'react-native'
 import React from 'react'
-import { TouchableOpacity } from 'react-native'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
 import styles from '../../common/styles/common.style'
-import { COLORS } from '../../../constants'
 import { getOfficeEquipments } from '../../../api/office/office'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 import Carousel from 'react-native-reanimated-carousel'
 
-const OfficeEquipments = ({ fetching }) => {
+const OfficeEquipments = ({ refresh }) => {
   const width = Dimensions.get('window').width
 
   const dispatch = store.dispatch
@@ -21,11 +19,9 @@ const OfficeEquipments = ({ fetching }) => {
   const [officeEquipments, setOfficeEquipments] = useState()
   useEffect(() => {
     getOfficeEquipments(null, dispatch, setOfficeEquipments, toast)
-  }, [])
+  }, [refresh])
 
-  return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
-  ) : (
+  return (
     <View style={styles.container}>
       <AddNew
         title={'New Office Equipment'}

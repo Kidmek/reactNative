@@ -6,6 +6,7 @@ import {
   Image,
   Text,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native'
 
 import { useSelector } from 'react-redux'
@@ -33,11 +34,21 @@ const Customers = () => {
   const toast = useToast()
   const [customers, setCustomers] = useState()
   const fetching = useSelector(selectIsFetching)
+  const [refresh, setRefresh] = useState(false)
+
   useEffect(() => {
     if (!customers) getAllCustomers(null, dispatch, setCustomers, toast)
-  }, [])
+  }, [refresh])
   return (
-    <ScrollView style={styles.welcomeContainer}>
+    <ScrollView
+      style={styles.welcomeContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={fetching}
+          onRefresh={() => setRefresh(!refresh)}
+        />
+      }
+    >
       <View>
         <Search
           onSearch={() => {}}
@@ -45,9 +56,7 @@ const Customers = () => {
           searchQuery={searchQuery}
         />
       </View>
-      {fetching ? (
-        <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
-      ) : (
+      {
         <View style={styles.container}>
           {customers?.results?.map((item, index) => {
             return (
@@ -130,7 +139,7 @@ const Customers = () => {
             )
           })}
         </View>
-      )}
+      }
     </ScrollView>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, ScrollView } from 'react-native'
+import { View, ScrollView, RefreshControl } from 'react-native'
 import styles from '../../common/styles/common.style'
 import { warehouseTypes } from '../../../constants/strings'
 import Warehouse from '../warehouse/Warehouse'
@@ -20,25 +20,33 @@ const Welcome = () => {
   const [searchQuery, setSearchQuery] = useState()
   const [activeType, setActiveType] = useState(warehouseTypes[0])
   const fetching = useSelector(selectIsFetching)
+  const [refresh, setRefresh] = useState(false)
 
   const isAdmin = useSelector(selectIsAdmin)
 
   const body = () => {
     switch (activeType) {
       case warehouseTypes[0]:
-        return <Warehouse fetching={fetching} />
+        return <Warehouse refresh={refresh} />
       case warehouseTypes[1]:
-        return <Office fetching={fetching} />
+        return <Office refresh={refresh} />
       case warehouseTypes[2]:
-        return <OfficeEquipments fetching={fetching} />
+        return <OfficeEquipments refresh={refresh} />
       case warehouseTypes[3]:
-        return <StorageType fetching={fetching} />
+        return <StorageType refresh={refresh} />
     }
   }
   return (
-    <ScrollView style={styles.welcomeContainer}>
+    <ScrollView
+      style={styles.welcomeContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={fetching}
+          onRefresh={() => setRefresh(!refresh)}
+        />
+      }
+    >
       <View>
-        {/* <Header name={'Adrian'} text={'Warehouse'} /> */}
         <Search
           onSearch={() => {}}
           setSearchQuery={setSearchQuery}

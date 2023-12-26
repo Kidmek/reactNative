@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, ScrollView } from 'react-native'
+import { View, ScrollView, RefreshControl } from 'react-native'
 import styles from '../../common/styles/common.style'
 import { customerProductTypes, productTypes } from '../../../constants/strings'
 import { useSelector } from 'react-redux'
@@ -20,23 +20,33 @@ const ProductWelcome = () => {
   const [activeType, setActiveType] = useState(productTypes[0])
   const fetching = useSelector(selectIsFetching)
   const isAdmin = useSelector(selectIsAdmin)
+  const [refresh, setRefresh] = useState(false)
+
   const body = () => {
     switch (activeType) {
       case productTypes[0]:
-        return <All fetching={fetching} isAdmin={isAdmin} />
+        return <All refresh={refresh} isAdmin={isAdmin} />
       case productTypes[1]:
-        return <Returned fetching={fetching} isAdmin={isAdmin} />
+        return <Returned refresh={refresh} isAdmin={isAdmin} />
       case productTypes[2]:
-        return <Damaged fetching={fetching} isAdmin={isAdmin} />
+        return <Damaged refresh={refresh} isAdmin={isAdmin} />
       case productTypes[3]:
-        return <Categories fetching={fetching} />
+        return <Categories refresh={refresh} />
       case productTypes[4]:
-        return <Types fetching={fetching} />
+        return <Types refresh={refresh} />
     }
   }
 
   return (
-    <ScrollView style={styles.welcomeContainer}>
+    <ScrollView
+      style={styles.welcomeContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={fetching}
+          onRefresh={() => setRefresh(!refresh)}
+        />
+      }
+    >
       <View>
         {/* <Header name={'Adrian'} text={'Product'} /> */}
         <Search

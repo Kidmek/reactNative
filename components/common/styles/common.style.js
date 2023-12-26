@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cardsContainer: {
-    marginTop: SIZES.medium,
+    marginVertical: SIZES.medium,
     gap: SIZES.small,
   },
   carousel: {
@@ -68,8 +68,8 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     padding: SIZES.medium,
-    borderRadius: SIZES.small,
-    borderWidth: StyleSheet.hairlineWidth,
+    // borderRadius: SIZES.small,
+    // borderWidth: StyleSheet.hairlineWidth,
     borderColor: COLORS.gray,
     alignItems: 'center',
     justifyContent: 'center',
@@ -107,6 +107,7 @@ const styles = StyleSheet.create({
     paddingTop: SIZES.medium,
     paddingHorizontal: SIZES.small,
     backgroundColor: COLORS.pureWhite,
+    flex: 1,
   },
   shipmentHeader: {
     marginVertical: SIZES.small,

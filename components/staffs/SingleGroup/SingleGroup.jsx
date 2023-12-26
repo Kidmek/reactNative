@@ -1,5 +1,10 @@
 import React, { useState } from 'react'
-import { View, ScrollView, ActivityIndicator } from 'react-native'
+import {
+  View,
+  ScrollView,
+  ActivityIndicator,
+  RefreshControl,
+} from 'react-native'
 
 import { useSelector } from 'react-redux'
 import { selectIsFetching } from '../../../features/data/dataSlice'
@@ -19,13 +24,22 @@ const SingleGroup = ({ id, name }) => {
   const dispatch = store.dispatch
   const toast = useToast()
   const [staffs, setStaffs] = useState()
+  const [refresh, setRefresh] = useState(false)
 
   const fetching = useSelector(selectIsFetching)
   useEffect(() => {
     getAllFromGroup(id, dispatch, setStaffs, toast)
-  }, [])
+  }, [refresh])
   return (
-    <ScrollView style={styles.welcomeContainer}>
+    <ScrollView
+      style={styles.welcomeContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={fetching}
+          onRefresh={() => setRefresh(!refresh)}
+        />
+      }
+    >
       <View>
         <Search
           onSearch={() => {}}
@@ -33,9 +47,7 @@ const SingleGroup = ({ id, name }) => {
           searchQuery={searchQuery}
         />
       </View>
-      {fetching ? (
-        <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
-      ) : (
+      {
         <View style={styles.container}>
           <AddNew
             title={'New ' + name}
@@ -67,7 +79,7 @@ const SingleGroup = ({ id, name }) => {
             )
           })}
         </View>
-      )}
+      }
     </ScrollView>
   )
 }

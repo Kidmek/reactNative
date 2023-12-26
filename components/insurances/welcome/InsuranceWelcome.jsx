@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, RefreshControl } from 'react-native'
 import styles from '../../common/styles/common.style'
 import { AntDesign } from '@expo/vector-icons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
@@ -20,9 +20,18 @@ const InsuranceWelcome = () => {
 
   const fetching = useSelector(selectIsFetching)
   const isAdmin = useSelector(selectIsAdmin)
+  const [refresh, setRefresh] = useState(false)
 
   return (
-    <ScrollView style={styles.welcomeContainer}>
+    <ScrollView
+      style={styles.welcomeContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={fetching}
+          onRefresh={() => setRefresh(!refresh)}
+        />
+      }
+    >
       <View>
         <Search
           onSearch={() => {}}
@@ -47,7 +56,7 @@ const InsuranceWelcome = () => {
           </View>
         )}
       </View>
-      <All fetching={fetching} />
+      <All fetching={fetching} refresh={refresh} />
     </ScrollView>
   )
 }

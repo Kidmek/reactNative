@@ -40,6 +40,8 @@ import HumanResource from '../../home/office/HumanResource'
 import WantStorage from '../../home/storageTypes/WantStorage'
 import SingleStorageType from '../../home/storageTypes/SingleStorageType'
 import { getAllProducts, getProductDetails } from '../../../api/product/product'
+import { addServiceOrders } from '../../../api/dashboard/wizard'
+import * as FileSystem from 'expo-file-system'
 
 const Steps = ({ params }) => {
   const fetching = useSelector(selectIsFetching)
@@ -54,7 +56,9 @@ const Steps = ({ params }) => {
     current: 1,
     previous: 1,
   })
-  const [product, setProduct] = useState()
+  const [product, setProduct] = useState({ file: {} })
+  const [shipmentData, setShipmentData] = useState({ file: {} })
+  const [orderData, setOrderData] = useState({})
   const [products, setProducts] = useState()
   const [transitQns, setTransitQns] = useState(false)
   const [rentQns, setRentQns] = useState()
@@ -62,6 +66,7 @@ const Steps = ({ params }) => {
   const [officeQns, setOfficeQns] = useState()
   const [HRQns, setHRQns] = useState()
   const [portid, setPortid] = useState()
+  const [portName, setPortName] = useState()
   const [agentId, setAgentId] = useState()
   const [type, setType] = useState()
   const [shipmentType, setShipmentType] = useState()
@@ -73,8 +78,8 @@ const Steps = ({ params }) => {
   const [storageId, setStorageId] = useState()
   const [productId, setProductId] = useState()
   const [storageSpace, setStorageSpace] = useState()
-  const [selectedStroage, setSelectedStroage] = useState([])
-
+  const [selectedStorage, setSelectedStorage] = useState([])
+  const [agree, setAgree] = useState(false)
   // All Services
   const allServices = [
     // 1
@@ -88,7 +93,9 @@ const Steps = ({ params }) => {
       component: () => (
         <View>
           <CheckQuestion
-            title={'Would You Like To Transit Product?'}
+            title={`Would You Like To Transit Product (${
+              product?.name ?? ''
+            })?`}
             state={transitQns}
             setState={(value) => setTransitQns(value)}
           />
@@ -101,6 +108,7 @@ const Steps = ({ params }) => {
                 wizard
                 checked={portid}
                 setChecked={(value) => setPortid(value)}
+                setPortName={setPortName}
               />
             </View>
           )}
@@ -171,6 +179,8 @@ const Steps = ({ params }) => {
             <View>
               <View style={common.divider} />
               <NewOrder
+                order={orderData}
+                setOrder={setOrderData}
                 wizard
                 params={{
                   id:
@@ -205,6 +215,7 @@ const Steps = ({ params }) => {
                 wizard
                 checked={shipmentType}
                 setChecked={(value) => {
+                  console.log(value)
                   setShipmentType(value)
                 }}
                 data={shipmentTypes}
@@ -215,7 +226,13 @@ const Steps = ({ params }) => {
             <View>
               <View style={common.divider} />
 
-              <NewShipment params={shipmentType} wizard />
+              <NewShipment
+                wizProduct={product}
+                shipment={shipmentData}
+                setShipment={setShipmentData}
+                params={shipmentType}
+                wizard
+              />
             </View>
           )}
         </View>
@@ -226,6 +243,8 @@ const Steps = ({ params }) => {
       component: () => (
         <View>
           <Info
+            state={agree}
+            setState={setAgree}
             title={'This Is A Success Alert'}
             text={
               "You've completed your steps now you can finish your order once you agreed to our terms and conditions."
@@ -302,6 +321,8 @@ const Steps = ({ params }) => {
               )}
               <View style={common.divider} />
               <NewOrder
+                order={orderData}
+                setOrder={setOrderData}
                 data={
                   type?.name?.toLowerCase() === WAREHOUSE ? warehouse : storage
                 }
@@ -389,7 +410,7 @@ const Steps = ({ params }) => {
                   storageSpace={storageSpace}
                   setStorageSpace={setStorageSpace}
                   checkIfExists={checkIfExists}
-                  setSelectedStroage={setSelectedStroage}
+                  setSelectedStorage={setSelectedStorage}
                   wizard
                 />
               ) : (
@@ -459,7 +480,13 @@ const Steps = ({ params }) => {
         <View>
           {shipmentType?.type && (
             <View>
-              <NewShipment params={shipmentType} wizard data={product} />
+              <NewShipment
+                order={orderData}
+                setOrder={setOrderData}
+                params={shipmentType}
+                wizard
+                data={product}
+              />
             </View>
           )}
         </View>
@@ -565,7 +592,142 @@ const Steps = ({ params }) => {
   }
 
   const checkIfExists = (id) => {
-    return selectedStroage.includes(id)
+    return selectedStorage.includes(id)
+  }
+
+  const addWizard = async () => {
+    const newEndDate = new Date(orderData?.startDate)
+    const newStartDate = new Date(orderData?.endDate)
+    // To calculate the time difference of two dates
+    let Difference_In_Time = newEndDate.getTime() - newStartDate.getTime()
+
+    // To calculate the no. of days between two dates
+    let Difference_In_Days = Math.round(Difference_In_Time / (1000 * 3600 * 24))
+
+    let base64 = null
+    let performa = ''
+    let bol = ''
+    let product_insurance = ''
+    let product_clearance = ''
+    let other_files = ''
+    if (product?.file?.performa?.uri) {
+      base64 = await FileSystem.readAsStringAsync(
+        product?.file?.performa?.uri,
+        {
+          encoding: 'base64',
+        }
+      )
+      performa = [
+        'data:' + product?.file?.performa?.mimeType + ';base64,' + base64,
+      ]
+    }
+    if (product?.file?.bill?.uri) {
+      base64 = await FileSystem.readAsStringAsync(product?.file?.bill?.uri, {
+        encoding: 'base64',
+      })
+      bol = ['data:' + product?.file?.bill?.mimeType + ';base64,' + base64]
+    }
+    if (product?.file?.insurance?.uri) {
+      base64 = await FileSystem.readAsStringAsync(
+        product?.file?.insurance?.uri,
+        {
+          encoding: 'base64',
+        }
+      )
+      product_insurance = [
+        'data:' + product?.file?.insurance?.mimeType + ';base64,' + base64,
+      ]
+    }
+    if (product?.file?.clearance?.uri) {
+      base64 = await FileSystem.readAsStringAsync(
+        product?.file?.clearance?.uri,
+        {
+          encoding: 'base64',
+        }
+      )
+      product_clearance = [
+        'data:' + product?.file?.clearance?.mimeType + ';base64,' + base64,
+      ]
+    }
+    if (product?.file?.other?.uri) {
+      base64 = await FileSystem.readAsStringAsync(product?.file?.other?.uri, {
+        encoding: 'base64',
+      })
+      other_files = [
+        'data:' + product?.file?.other?.mimeType + ';base64,' + base64,
+      ]
+    }
+
+    addServiceOrders(
+      {
+        user: product?.user,
+        length: product?.dimension?.length,
+        width: product?.dimension?.width,
+        height: product?.dimension?.height,
+        available: '',
+        product_type: product?.type?.product_type_name,
+        category: product?.category?.category_name,
+        product_name: product?.name,
+        price_unit: product?.pricePer,
+        weight_unit: product?.weight,
+        weight: parseFloat(product?.qty) * parseFloat(product?.weight),
+        clerance_url: '',
+        sku: product?.SKU,
+        expire_date: product?.expireDate,
+        qr_code: null,
+        price: parseFloat(product?.qty) * parseFloat(product?.pricePer),
+        quantity: product?.qty,
+        clearances: product_clearance,
+        insurances: product_insurance,
+        proformas: performa,
+        otherfiles: other_files,
+        bols: bol,
+        shipmenttype: shipmentType?.type,
+        product: product?.name,
+        productqty: shipmentData?.quantity,
+        initialqty: product?.qty,
+        transitor: shipmentData?.transitor,
+        port: shipmentData?.port?.id,
+        port_name: shipmentData?.port?.name,
+        destination: '',
+        lat: shipmentData?.dropOff?.latitude,
+        lng: shipmentData?.dropOff?.longitude,
+        reason: '',
+        originlat: shipmentData?.pickUp?.latitude,
+        originlng: shipmentData?.pickUp?.longitude,
+        fraight_price: null,
+        company: shipmentData?.company,
+        vehicle: shipmentData?.vehicle,
+        vehicle_id: '',
+        buy_insurance: shipmentData?.sysInsur,
+        buy_clearance: false,
+        agent: '',
+        mapped_warehouse:
+          type?.name?.toLowerCase() === STORAGE ? orderData?.storage : '',
+        warehouse:
+          type?.name?.toLowerCase() === WAREHOUSE ? orderData?.warehouse : '',
+        storage: [],
+        order_type: type?.name?.toLowerCase(),
+        office: [],
+        office_name: '',
+        resource: [],
+        resource_name: '',
+        storage_spaces: [],
+        customer: '',
+        space_to_rent: orderData?.space,
+        starting_date: newStartDate.toISOString().split('T')[0],
+        end_date: newEndDate.toISOString().split('T')[0],
+        remaining_date: Difference_In_Days,
+        request_office: false,
+        request_hr: false,
+        request_storage: false,
+      },
+      dispatch,
+      toast,
+      () => {
+        router.back()
+      }
+    )
   }
 
   useEffect(() => {
@@ -632,7 +794,9 @@ const Steps = ({ params }) => {
             previous: page.current,
           })
         }}
-        onFinish={() => router.back()}
+        onFinish={() => {
+          addWizard()
+        }}
       />
     </View>
   )

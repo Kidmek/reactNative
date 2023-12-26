@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import { View, Text, ScrollView } from 'react-native'
+import { View, Text, ScrollView, RefreshControl } from 'react-native'
 
 import styles from '../../common/styles/common.style'
-import { FontAwesome5 } from '@expo/vector-icons'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useSelector } from 'react-redux'
 import {
@@ -13,19 +12,26 @@ import {
 import { useNavigation } from 'expo-router'
 import Search from '../../common/search/Search'
 import All from '../All/All'
-import Header from '../../common/header/Header'
 
 const OrderWelcome = () => {
   const [searchQuery, setSearchQuery] = useState()
   const navigation = useNavigation()
   const isAdmin = useSelector(selectIsAdmin)
+  const [refresh, setRefresh] = useState(false)
 
   const fetching = useSelector(selectIsFetching)
 
   return (
-    <ScrollView style={styles.welcomeContainer}>
+    <ScrollView
+      style={styles.welcomeContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={fetching}
+          onRefresh={() => setRefresh(!refresh)}
+        />
+      }
+    >
       <View>
-        {/* <Header name={'Adrian'} text={'Order'} /> */}
         <Search
           onSearch={() => {}}
           setSearchQuery={setSearchQuery}
@@ -41,7 +47,6 @@ const OrderWelcome = () => {
                 })
               }}
             >
-              {/* <FontAwesome5 size={25} name='shopping-basket' /> */}
               <View>
                 <Text style={styles.name}>Order Types</Text>
               </View>
@@ -49,7 +54,7 @@ const OrderWelcome = () => {
           </View>
         )}
       </View>
-      <All fetching={fetching} />
+      <All refresh={refresh} />
     </ScrollView>
   )
 }

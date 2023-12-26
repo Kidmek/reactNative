@@ -1,16 +1,28 @@
 import React, { useState } from 'react'
-import { View, ScrollView } from 'react-native'
+import { View, ScrollView, RefreshControl } from 'react-native'
 
 import styles from '../../common/styles/common.style'
 
 import Search from '../../common/search/Search'
 import All from '../All/All'
+import { selectIsFetching } from '../../../features/data/dataSlice'
+import { useSelector } from 'react-redux'
 
 const PortWelcome = () => {
   const [searchQuery, setSearchQuery] = useState()
+  const [refresh, setRefresh] = useState(false)
+  const fetching = useSelector(selectIsFetching)
 
   return (
-    <ScrollView style={styles.welcomeContainer}>
+    <ScrollView
+      style={styles.welcomeContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={fetching}
+          onRefresh={() => setRefresh(!refresh)}
+        />
+      }
+    >
       <View>
         <Search
           onSearch={() => {}}
@@ -18,7 +30,7 @@ const PortWelcome = () => {
           searchQuery={searchQuery}
         />
       </View>
-      <All />
+      <All refresh={refresh} />
     </ScrollView>
   )
 }

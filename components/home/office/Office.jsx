@@ -1,28 +1,25 @@
-import { View, Text, ActivityIndicator } from 'react-native'
+import { View, Text } from 'react-native'
 import React from 'react'
 import styles from '../../common/styles/common.style'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
-import { COLORS } from '../../../constants'
 import { getOffices } from '../../../api/office/office'
 import { mSQUARE } from '../../../constants/strings'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 
-const Office = ({ fetching }) => {
+const Office = ({ refresh }) => {
   const dispatch = store.dispatch
   const toast = useToast()
 
   const [offices, setOffices] = useState()
   useEffect(() => {
     getOffices(null, dispatch, setOffices, toast)
-  }, [])
+  }, [refresh])
 
-  return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
-  ) : (
+  return (
     <View style={styles.container}>
       <AddNew
         title={'New Office'}

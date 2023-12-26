@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, ScrollView } from 'react-native'
+import { View, ScrollView, RefreshControl } from 'react-native'
 
 import styles from '../../common/styles/common.style'
 import { useSelector } from 'react-redux'
@@ -21,21 +21,30 @@ const ShipmentWelcome = () => {
   const [activeType, setActiveType] = useState(shipmentTypes[0])
   const fetching = useSelector(selectIsFetching)
   const isAdmin = useSelector(selectIsAdmin)
+  const [refresh, setRefresh] = useState(false)
 
   const body = () => {
     switch (activeType) {
       case shipmentTypes[0]:
-        return <Started fetching={fetching} />
+        return <Started fetching={fetching} refresh={refresh} />
       case shipmentTypes[1]:
-        return <Transportations fetching={fetching} />
+        return <Transportations fetching={fetching} refresh={refresh} />
       case shipmentTypes[2]:
-        return <ShipmentType fetching={fetching} />
+        return <ShipmentType fetching={fetching} refresh={refresh} />
       case shipmentTypes[3]:
-        return <Methods fetching={fetching} />
+        return <Methods fetching={fetching} refresh={refresh} />
     }
   }
   return (
-    <ScrollView style={styles.welcomeContainer}>
+    <ScrollView
+      style={styles.welcomeContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={fetching}
+          onRefresh={() => setRefresh(!refresh)}
+        />
+      }
+    >
       <View>
         <Search
           onSearch={() => {}}

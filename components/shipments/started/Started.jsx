@@ -1,17 +1,16 @@
-import { View, ActivityIndicator } from 'react-native'
+import { View } from 'react-native'
 import React from 'react'
 import styles from '../../common/styles/common.style'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
-import { COLORS } from '../../../constants'
 import { getShipments } from '../../../api/shipment/shipment'
 import CardDetail from '../../common/detail/CardDetail'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 
-const Started = ({ fetching, type }) => {
+const Started = ({ fetching, type, refresh }) => {
   const dispatch = store.dispatch
   const toast = useToast()
   const [shipments, setShipments] = useState()
@@ -27,11 +26,9 @@ const Started = ({ fetching, type }) => {
 
   useEffect(() => {
     getShipments(type, dispatch, setShipments, toast)
-  }, [type])
+  }, [type, refresh])
 
-  return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
-  ) : (
+  return (
     <View style={styles.container}>
       <AddNew
         title={'New Shipment'}

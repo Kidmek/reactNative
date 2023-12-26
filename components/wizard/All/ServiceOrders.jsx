@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { DataTable } from 'react-native-paper'
 import styles from '../../../app/details/styles/warehouse.style'
 import common from '../../common/styles/common.style'
@@ -12,10 +12,32 @@ import {
   MenuOptions,
   MenuTrigger,
 } from 'react-native-popup-menu'
+import { useNavigation } from 'expo-router/src/useNavigation'
+import { store } from '../../../store'
+import { useToast } from 'react-native-toast-notifications'
+import { deleteSingleServiceOrders } from '../../../api/dashboard/wizard'
+import CustomModal from '../../common/modal/CustomModal'
 
-const ServiceOrders = ({ data }) => {
+const ServiceOrders = ({ data, page, setPage, total, refresh, setRefresh }) => {
+  const navigation = useNavigation()
+  const dispatch = store.dispatch
+  const toast = useToast()
+  const [visible, setVisible] = useState(false)
+  const [selectedId, setSelectedId] = useState()
+  const [searchQuery, setSearchQuery] = useState()
+
+  const onDelete = () => {
+    deleteSingleServiceOrders(selectedId, dispatch, toast, () => {
+      setRefresh(!refresh)
+    })
+  }
   return (
     <View>
+      <CustomModal
+        visible={visible}
+        setVisible={setVisible}
+        onSuccess={onDelete}
+      />
       <Text
         style={{
           fontFamily: FONT.medium,
@@ -26,7 +48,11 @@ const ServiceOrders = ({ data }) => {
       >
         All Service Orders
       </Text>
-      <Search />
+      <Search
+        onSearch={() => {}}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
       <DataTable>
         <DataTable.Header>
           <DataTable.Title>Order</DataTable.Title>
@@ -35,7 +61,7 @@ const ServiceOrders = ({ data }) => {
           <DataTable.Title numeric>Actions</DataTable.Title>
         </DataTable.Header>
 
-        {data?.results?.map((single, index) => {
+        {data?.map((single, index) => {
           return (
             <DataTable.Row
               key={index}
@@ -47,19 +73,9 @@ const ServiceOrders = ({ data }) => {
                 </Text>
               </DataTable.Cell>
               <DataTable.Cell style={{ justifyContent: 'flex-start' }}>
-                <Text style={styles.tableNormalCells}>
-                  {new Date(single.created_at).toDateString()}
-                </Text>
+                <Text style={styles.tableNormalCells}>{single.created_at}</Text>
               </DataTable.Cell>
-              {/* <DataTable.Cell
-                numeric
-                numberOfLines={20}
-                style={{
-                  width: 2,
-                  //   ...common.badge(COLORS.green),
-                  //   flexWrap: 'wrap',
-                }}
-              > */}
+
               <View
                 style={{
                   justifyContent: 'center',
@@ -94,23 +110,38 @@ const ServiceOrders = ({ data }) => {
                     </View>
                   </MenuTrigger>
                   <MenuOptions
-                    customStyles={{
+                    optionsContainerStyle={{
                       justifyContent: 'flex-end',
                       textAlign: 'flex-end',
+                      color: 'red',
+                      width: 'min-content',
+                      paddingHorizontal: SIZES.medium,
+                      paddingVertical: SIZES.small,
                     }}
                   >
                     <MenuOption>
-                      <TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate('details', {
+                            screen: 'wizard',
+                            params: {
+                              id: single?.id,
+                            },
+                          })
+                        }
+                      >
                         <Text style={styles.detailsTextBtn}>Details</Text>
                       </TouchableOpacity>
                     </MenuOption>
+                    <View style={common.divider} />
+
                     <MenuOption>
-                      <TouchableOpacity>
-                        <Text style={styles.detailsTextBtn}>Edit</Text>
-                      </TouchableOpacity>
-                    </MenuOption>
-                    <MenuOption>
-                      <TouchableOpacity>
+                      <TouchableOpacity
+                        onPress={() => {
+                          setSelectedId(single?.id)
+                          setVisible(true)
+                        }}
+                      >
                         <Text style={styles.removeTextBtn}>Remove</Text>
                       </TouchableOpacity>
                     </MenuOption>
@@ -121,37 +152,22 @@ const ServiceOrders = ({ data }) => {
           )
         })}
 
-        <DataTable.Pagination
-          page={1}
-          numberOfPages={3}
-          onPageChange={(page) => {
-            console.log(page)
-          }}
-          label='1-2 of 6'
-        />
+        {page && total && (
+          <DataTable.Pagination
+            page={page}
+            numberOfPages={Math.ceil(total / 10) + 1}
+            onPageChange={(page) => {
+              console.log(Math.ceil(total / 10), page)
+              setPage(page)
+            }}
+            label={`${(page - 1) * 10 + 1} - ${
+              page * 10 > total ? total : page * 10
+            } of ${total}`}
+          />
+        )}
       </DataTable>
     </View>
   )
-}
-const optionsStyles = {
-  optionsContainer: {
-    backgroundColor: 'green',
-    padding: 5,
-  },
-  optionsWrapper: {
-    backgroundColor: 'purple',
-  },
-  optionWrapper: {
-    backgroundColor: 'yellow',
-    margin: 5,
-  },
-  optionTouchable: {
-    underlayColor: 'gold',
-    activeOpacity: 70,
-  },
-  optionText: {
-    color: 'brown',
-  },
 }
 
 export default ServiceOrders

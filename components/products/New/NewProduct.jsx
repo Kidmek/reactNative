@@ -20,6 +20,7 @@ import CustomDropdown from '../../../components/common/dropdown/CustomDropdown'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import Footer from '../../../components/common/footer/Footer'
 import { useNavigation } from 'expo-router'
+import DocumentPicker from '../../common/input/DocumentPicker'
 
 const NewProduct = ({ wizard, product, setProduct }) => {
   const dispatch = store.dispatch
@@ -109,23 +110,45 @@ const NewProduct = ({ wizard, product, setProduct }) => {
         {/* */}
       </View>
       <View style={styles.inputContainer}>
-        <Input label={'Product Name'} state={name} setState={setName} />
-        <CustomDropdown
-          label={'Customer'}
-          options={customers?.results}
-          placeholder={'Select A Customer'}
-          state={user}
-          setState={setUser}
-          labelField={'first_name'}
-          valueField={'id'}
+        <Input
+          label={'Product Name'}
+          state={product ? product?.name : name}
+          setState={
+            product
+              ? (value) => setProduct({ ...product, name: value })
+              : setName
+          }
         />
-        <Input label={'SKU'} state={SKU} setState={setSKU} type={NUMBER} />
+        {!wizard && (
+          <CustomDropdown
+            label={'Customer'}
+            options={customers?.results}
+            placeholder={'Select A Customer'}
+            state={product ? product?.user?.id : user}
+            setState={setUser}
+            labelField={'first_name'}
+            valueField={'id'}
+          />
+        )}
+        <Input
+          label={'SKU'}
+          state={product ? product?.SKU : SKU}
+          setState={
+            product ? (value) => setProduct({ ...product, SKU: value }) : setSKU
+          }
+          type={NUMBER}
+        />
         <CustomDropdown
           label={'Product Type'}
           options={types?.results}
           placeholder={'Select A Product Type'}
-          state={type}
+          state={product ? product?.type?.id : type}
           setState={setType}
+          setOtherState={(value) => {
+            if (setProduct) {
+              setProduct({ ...product, type: value })
+            }
+          }}
           labelField={'product_type_name'}
           valueField={'id'}
         />
@@ -133,48 +156,55 @@ const NewProduct = ({ wizard, product, setProduct }) => {
           label={'Product Category'}
           options={categories?.results}
           placeholder={'Select A Product Category'}
-          state={category}
+          state={product ? product?.category?.id : category}
           setState={setCategory}
+          setOtherState={(value) => {
+            if (setProduct) {
+              setProduct({ ...product, category: value })
+            }
+          }}
           labelField={'category_name'}
           valueField={'id'}
         />
         <Input
           label={'Unit Dimension'}
-          state={dimensions}
-          setState={setDimensions}
+          state={product ? product?.dimensions : dimensions}
+          setState={
+            product
+              ? (value) => setProduct({ ...product, dimensions: value })
+              : setDimensions
+          }
           type={DIMENSION}
         />
-        <Input label={'Quantity'} state={qty} setState={setQty} type={NUMBER} />
+        <Input
+          label={'Quantity'}
+          state={product ? product?.qty : qty}
+          setState={
+            product ? (value) => setProduct({ ...product, qty: value }) : setQty
+          }
+          type={NUMBER}
+        />
         <Input
           label={'Unit Weight (kg)'}
-          state={weight}
-          setState={setWeight}
+          state={product ? product?.weight : weight}
+          setState={
+            product
+              ? (value) => setProduct({ ...product, weight: value })
+              : setWeight
+          }
           type={NUMBER}
         />
 
         <Input
           label={'Unit Price (Birr)'}
-          state={pricePer}
-          setState={setPricePer}
+          state={product ? product?.pricePer : pricePer}
+          setState={
+            product
+              ? (value) => setProduct({ ...product, pricePer: value })
+              : setPricePer
+          }
           type={NUMBER}
         />
-
-        {/* <View style={{ ...styles.inputWrapper, marginBottom: SIZES.medium }}>
-          <Text style={styles.inputLabel}>Product Clerance</Text>
-          <View style={styles.imageInputWrapper}>
-            {image ? (
-              <Image style={styles.image} source={{ uri: image }} />
-            ) : (
-              <FontAwesome5 size={70} name='image' />
-            )}
-
-            <Button
-              title='Change'
-              color={COLORS.secondary}
-              onPress={pickImage}
-            />
-          </View>
-        </View> */}
 
         <Input
           type={DATE}
@@ -182,16 +212,63 @@ const NewProduct = ({ wizard, product, setProduct }) => {
           placeholder={'Select An Expire Date'}
           setWhichToShow={setWhichToShow}
           id={'ex'}
-          state={expireDate}
+          state={product ? product?.expireDate : expireDate}
         />
-        {/* <Input
-          type={DATE}
-          label={'Arriving Date'}
-          placeholder={'Select An Arrival Date'}
-          setWhichToShow={setWhichToShow}
-          id={'ar'}
-          state={arrivingDate}
-        /> */}
+
+        {wizard && (
+          <View>
+            <DocumentPicker
+              title={'Upload Product Performa Invoice'}
+              name={product?.file?.performa?.name}
+              setState={(asset) =>
+                setProduct({
+                  ...product,
+                  file: { ...product?.file, performa: asset },
+                })
+              }
+            />
+            <DocumentPicker
+              title={'Upload Product Bill Of Landing'}
+              name={product?.file?.bill?.name}
+              setState={(asset) =>
+                setProduct({
+                  ...product,
+                  file: { ...product?.file, bill: asset },
+                })
+              }
+            />
+            <DocumentPicker
+              title={'Upload Product Insurance (Optional)'}
+              name={product?.file?.insurance?.name}
+              setState={(asset) =>
+                setProduct({
+                  ...product,
+                  file: { ...product?.file, insurance: asset },
+                })
+              }
+            />
+            <DocumentPicker
+              title={'Upload Product Clearance (Optional)'}
+              name={product?.file?.clearance?.name}
+              setState={(asset) =>
+                setProduct({
+                  ...product,
+                  file: { ...product?.file, clearance: asset },
+                })
+              }
+            />
+            <DocumentPicker
+              title={'Other Files'}
+              name={product?.file?.other?.name}
+              setState={(asset) =>
+                setProduct({
+                  ...product,
+                  file: { ...product?.file, other: asset },
+                })
+              }
+            />
+          </View>
+        )}
 
         {(whichToShow === 'ex' || whichToShow === 'ar') && (
           <DateTimePicker
@@ -200,10 +277,18 @@ const NewProduct = ({ wizard, product, setProduct }) => {
             is24Hour={true}
             dateFormat='longdate'
             onChange={(e, selectedDate) => {
-              whichToShow == 'ex'
-                ? setExpireDate(selectedDate.toDateString())
-                : setArrivingDate(selectedDate.toDateString())
               setWhichToShow(null)
+
+              if (product) {
+                setProduct({
+                  ...product,
+                  expireDate: selectedDate.toDateString(),
+                })
+                return
+              } else {
+                setExpireDate(selectedDate.toDateString())
+                return
+              }
             }}
           />
         )}

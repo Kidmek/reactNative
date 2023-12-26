@@ -1,7 +1,6 @@
-import { View, ActivityIndicator } from 'react-native'
+import { View } from 'react-native'
 import React from 'react'
 import styles from '../../common/styles/common.style'
-import { COLORS } from '../../../constants'
 import { store } from '../../../store'
 import { useToast } from 'react-native-toast-notifications'
 import { useState } from 'react'
@@ -11,17 +10,15 @@ import { getAllInsurance } from '../../../api/product/insurance'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 
-const All = ({ fetching }) => {
+const All = ({ fetching, refresh }) => {
   const dispatch = store.dispatch
   const toast = useToast()
 
   const [insurances, setInsurances] = useState()
   useEffect(() => {
     getAllInsurance(null, dispatch, setInsurances, toast)
-  }, [])
-  return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
-  ) : (
+  }, [refresh])
+  return (
     <View style={styles.container}>
       <AddNew
         title={'New Insurace'}

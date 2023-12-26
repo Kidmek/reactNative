@@ -24,7 +24,13 @@ const Info = ({
       </View>
       <Text style={styles.typeDesc(true, success)}>{text}</Text>
       <View style={styles.header}>
-        <Checkbox />
+        <Checkbox
+          value={state}
+          color={COLORS.primary}
+          onValueChange={(value) => {
+            setState(value)
+          }}
+        />
         <Text style={styles.termsContainer}>
           I Agree With The{' '}
           <Text style={styles.terms}>Terms and Conditions.</Text>

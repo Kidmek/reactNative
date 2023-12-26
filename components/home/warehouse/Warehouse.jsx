@@ -1,4 +1,4 @@
-import { View, Text, Image, ActivityIndicator, Dimensions } from 'react-native'
+import { View, Text, Image, Dimensions, ActivityIndicator } from 'react-native'
 import React from 'react'
 import styles from '../../common/styles/common.style'
 import { useState } from 'react'
@@ -6,7 +6,7 @@ import { getWarehouses } from '../../../api/warehouse/warehouse'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
-import { COLORS } from '../../../constants'
+import { COLORS, SIZES } from '../../../constants'
 import { WAREHOUSE, mSQUARE } from '../../../constants/strings'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
@@ -15,13 +15,13 @@ import { currencyFormat } from '../../common/utils'
 import Checkbox from 'expo-checkbox'
 
 const Warehouse = ({
-  fetching,
   choose,
   wizard,
   checked,
   setChecked,
   data,
   params,
+  refresh,
 }) => {
   const width = Dimensions.get('window').width
   const dispatch = store.dispatch
@@ -29,18 +29,18 @@ const Warehouse = ({
 
   const [warehouses, setWarehouses] = useState()
   useEffect(() => {
-    if (!warehouses && !wizard) {
+    if (!wizard) {
       getWarehouses(null, dispatch, setWarehouses, toast)
     }
-  }, [])
+  }, [refresh])
   useEffect(() => {
     if (data && wizard) {
       setWarehouses(data)
     }
   }, [data])
 
-  return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+  return wizard && !warehouses ? (
+    <ActivityIndicator color={COLORS.primary} size={SIZES.xxLarge} />
   ) : (
     <View style={styles.container}>
       {!choose && !wizard && (

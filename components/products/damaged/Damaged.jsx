@@ -1,27 +1,24 @@
-import { View, Text, Image, ActivityIndicator } from 'react-native'
+import { View, Text, Image } from 'react-native'
 import React from 'react'
 import styles from '../../common/styles/common.style'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
-import { COLORS } from '../../../constants'
 import { getDamagedProducts } from '../../../api/product/product'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 
-const Damaged = ({ fetching, isAdmin }) => {
+const Damaged = ({ refresh, isAdmin }) => {
   const dispatch = store.dispatch
   const toast = useToast()
 
   const [damaged, setDamaged] = useState()
   useEffect(() => {
     getDamagedProducts(null, dispatch, setDamaged, toast)
-  }, [])
+  }, [refresh])
 
-  return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
-  ) : (
+  return (
     <View style={styles.container}>
       {isAdmin && (
         <AddNew

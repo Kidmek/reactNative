@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     marginLeft: 35,
     marginRight: 35,
     margin: 10,
+    position: 'relative',
   },
   buttonStyle: {
     backgroundColor: COLORS.primary,
@@ -65,6 +66,14 @@ const styles = StyleSheet.create({
   inputStyle: {
     flex: 1,
     paddingLeft: 15,
+    paddingRight: 15,
+    borderWidth: 1,
+    borderRadius: 30,
+    borderColor: COLORS.gray2,
+  },
+  phoneInputStyle: {
+    flex: 1,
+    paddingLeft: 55,
     paddingRight: 15,
     borderWidth: 1,
     borderRadius: 30,
@@ -101,6 +110,11 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     fontWeight: 'bold',
     color: COLORS.primary,
+  },
+  prefix: {
+    alignSelf: 'center',
+    position: 'absolute',
+    paddingLeft: 15,
   },
 })
 

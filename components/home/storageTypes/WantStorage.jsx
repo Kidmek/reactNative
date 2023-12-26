@@ -13,8 +13,8 @@ const WantStorage = ({
   storageSpace,
   setStorageSpace,
   checkIfExists,
-  selectedStroage,
-  setSelectedStroage,
+  selectedStorage,
+  setSelectedStorage,
 }) => {
   return (
     <View style={newOrderStyles.listContainer}>
@@ -58,10 +58,10 @@ const WantStorage = ({
                   ios_backgroundColor='#3e3e3e'
                   onValueChange={
                     !checkIfExists(item?.id, STORAGE)
-                      ? () => setSelectedStroage([...selectedStroage, item?.id])
+                      ? () => setSelectedStorage([...selectedStorage, item?.id])
                       : () =>
-                          setSelectedStroage((prev) =>
-                            prev.filter((id) => id != item?.id)
+                          setSelectedStorage(
+                            selectedStorage.filter((id) => id != item?.id)
                           )
                   }
                   value={checkIfExists(item?.id, STORAGE)}

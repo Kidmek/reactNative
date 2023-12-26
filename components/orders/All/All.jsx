@@ -1,6 +1,5 @@
-import { View, ActivityIndicator } from 'react-native'
+import { View } from 'react-native'
 import React from 'react'
-import { COLORS } from '../../../constants'
 import { store } from '../../../store'
 import { useToast } from 'react-native-toast-notifications'
 import { useState } from 'react'
@@ -12,7 +11,7 @@ import SingleCard from '../../common/cards/single/SingleCard'
 import styles from '../../common/styles/common.style'
 import { currencyFormat } from '../../common/utils'
 
-const All = ({ fetching }) => {
+const All = ({ refresh }) => {
   const dispatch = store.dispatch
   const toast = useToast()
 
@@ -20,10 +19,8 @@ const All = ({ fetching }) => {
 
   useEffect(() => {
     getOrders(null, dispatch, setOrders, toast)
-  }, [])
-  return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
-  ) : (
+  }, [refresh])
+  return (
     <View style={styles.container}>
       <AddNew
         title={'New Order'}

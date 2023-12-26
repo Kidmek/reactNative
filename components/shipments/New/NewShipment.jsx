@@ -26,7 +26,14 @@ import { useSelector } from 'react-redux'
 import { COLORS } from '../../../constants'
 import { useNavigation } from 'expo-router'
 
-const NewShipment = ({ params, wizard, data }) => {
+const NewShipment = ({
+  params,
+  wizard,
+  data,
+  shipment,
+  setShipment,
+  wizProduct,
+}) => {
   const fetching = useSelector(selectIsFetching)
   const [location, setLocation] = useState(null)
   const [dropOff, setDropOff] = useState()
@@ -106,6 +113,8 @@ const NewShipment = ({ params, wizard, data }) => {
     }
   }, [])
 
+  console.log(vehicles + '..')
+
   useEffect(() => {
     if (wizard) {
       setProduct(data)
@@ -125,7 +134,13 @@ const NewShipment = ({ params, wizard, data }) => {
           {location && (
             <MapView
               style={styles.map}
-              onPress={(e) => setPickUp(e.nativeEvent.coordinate)}
+              onPress={(e) => {
+                if (shipment) {
+                  setShipment({ ...shipment, pickUp: e.nativeEvent.coordinate })
+                } else {
+                  setPickUp(e.nativeEvent.coordinate)
+                }
+              }}
               initialRegion={{
                 latitude: location.coords?.latitude,
                 longitude: location.coords?.longitude,
@@ -133,12 +148,16 @@ const NewShipment = ({ params, wizard, data }) => {
                 longitudeDelta: 0.0421,
               }}
             >
-              {pickUp && (
+              {(pickUp || shipment?.pickUp) && (
                 <Marker
                   pinColor='red'
                   coordinate={{
-                    latitude: pickUp?.latitude,
-                    longitude: pickUp?.longitude,
+                    latitude: shipment
+                      ? shipment?.pickUp?.latitude
+                      : pickUp?.latitude,
+                    longitude: shipment
+                      ? shipment?.pickUp?.longitude
+                      : pickUp?.longitude,
                   }}
                 />
               )}
@@ -149,7 +168,16 @@ const NewShipment = ({ params, wizard, data }) => {
           <Text style={styles.inputLabel}>Drop Off Location</Text>
           {location && (
             <MapView
-              onPress={(e) => setDropOff(e.nativeEvent.coordinate)}
+              onPress={(e) => {
+                if (shipment) {
+                  setShipment({
+                    ...shipment,
+                    dropOff: e.nativeEvent.coordinate,
+                  })
+                } else {
+                  setDropOff(e.nativeEvent.coordinate)
+                }
+              }}
               style={styles.map}
               initialRegion={{
                 latitude: location.coords?.latitude,
@@ -158,12 +186,16 @@ const NewShipment = ({ params, wizard, data }) => {
                 longitudeDelta: 0.0421,
               }}
             >
-              {dropOff && (
+              {(dropOff || shipment?.dropOff) && (
                 <Marker
                   pinColor='red'
                   coordinate={{
-                    latitude: dropOff?.latitude,
-                    longitude: dropOff?.longitude,
+                    latitude: shipment
+                      ? shipment?.dropOff?.latitude
+                      : dropOff?.latitude,
+                    longitude: shipment
+                      ? shipment?.dropOff?.longitude
+                      : dropOff?.longitude,
                   }}
                 />
               )}
@@ -182,19 +214,27 @@ const NewShipment = ({ params, wizard, data }) => {
           />
         )}
         <Info
-          text={product?.available}
+          text={wizProduct ? wizProduct?.qty : product?.available}
           withoutIcon={true}
           title={'Total Product Qty On Storage '}
         />
         <Info
-          text={product?.weight + ' ' + product?.weightingUnit}
+          text={
+            wizProduct
+              ? wizProduct?.weight * wizProduct?.qty + ' ' + ' KG'
+              : product?.weight + ' ' + product?.weightingUnit
+          }
           withoutIcon={true}
           title={'Total product weight '}
         />
         <Input
           label={'Product Qty to ship'}
-          state={quantity}
-          setState={setQuantity}
+          state={shipment ? shipment?.quantity : quantity}
+          setState={
+            shipment
+              ? (value) => setShipment({ ...shipment, quantity: value })
+              : setQuantity
+          }
           type={NUMBER}
         />
         {!params?.type?.includes('Local') ? (
@@ -203,8 +243,12 @@ const NewShipment = ({ params, wizard, data }) => {
               label={'Shipping Companies'}
               options={companies?.results}
               placeholder={'Select A Company'}
-              state={company}
-              setState={setCompany}
+              state={shipment ? shipment?.company : company}
+              setState={
+                shipment
+                  ? (value) => setShipment({ ...shipment, company: value })
+                  : setCompany
+              }
               labelField={'first_name'}
               valueField={'id'}
             />
@@ -212,31 +256,61 @@ const NewShipment = ({ params, wizard, data }) => {
               label={'Port'}
               options={ports?.results}
               placeholder={'Select A Port'}
-              state={port?.id}
-              setOtherState={setPort}
+              state={shipment ? shipment?.port?.id : port?.id}
+              setOtherState={
+                shipment
+                  ? (value) => setShipment({ ...shipment, port: value })
+                  : setPort
+              }
               labelField={'name'}
               valueField={'id'}
             />
             <CustomDropdown
               label={'Transitor'}
-              options={port?.transitorlist}
+              options={
+                shipment ? shipment?.port?.transitorlist : port?.transitorlist
+              }
               placeholder={'Select A Transitor'}
-              state={transitor}
-              setState={setTransitor}
+              state={shipment ? shipment?.transitor : transitor}
+              setState={
+                shipment
+                  ? (value) => setShipment({ ...shipment, transitor: value })
+                  : setTransitor
+              }
               labelField={'first_name'}
               valueField={'id'}
             />
             <DocumentPicker
               title={'Upload Product Insurance'}
-              name={file.insurance.name}
-              setState={(asset) => setFile({ ...file, insurance: asset })}
+              name={
+                shipment
+                  ? shipment?.file?.insurance?.name
+                  : file?.insurance?.name
+              }
+              setState={(asset) => {
+                if (shipment) {
+                  setShipment({
+                    ...shipment,
+                    file: {
+                      ...shipment?.file,
+                      insurance: asset,
+                    },
+                  })
+                } else {
+                  setFile({ ...file, insurance: asset })
+                }
+              }}
             />
             <Info
               title={`If this product ${
                 product?.product_name ?? ''
               } doesn't have insurance`}
-              setState={setSysInsur}
-              state={sysInsur}
+              setState={
+                shipment
+                  ? (value) => setShipment({ ...shipment, sysInsur: value })
+                  : setSysInsur
+              }
+              state={shipment ? shipment?.sysInsur : sysInsur}
               hasSwitch={true}
               withoutIcon={true}
               switchTitle={'Use System Insurance'}
@@ -266,8 +340,12 @@ const NewShipment = ({ params, wizard, data }) => {
             label={'Vehicle'}
             options={vehicles?.results}
             placeholder={'Select A Vehicle'}
-            state={vehicle}
-            setState={setVehicle}
+            state={shipment ? shipment?.vehicle : vehicle}
+            setState={
+              shipment
+                ? (value) => setShipment({ ...shipment, vehicle: value })
+                : setVehicle
+            }
             labelField={'type'}
             valueField={'id'}
           />

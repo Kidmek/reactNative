@@ -10,7 +10,11 @@ const SingleCard = ({ children, page, isOnlyText, onClick, navigate }) => {
     <TouchableOpacity
       style={
         isOnlyText
-          ? { ...styles.onlyTextContainer, paddingVertical: SIZES.large }
+          ? {
+              ...styles.onlyTextContainer,
+              paddingVertical: SIZES.large,
+              marginHorizontal: navigate ? SIZES.xxSmall : SIZES.xxSmall,
+            }
           : styles.warehouseContainer
       }
       onPress={() => {

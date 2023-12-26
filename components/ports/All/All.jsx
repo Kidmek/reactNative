@@ -1,6 +1,6 @@
-import { View, ActivityIndicator, Text } from 'react-native'
+import { View, Text, ActivityIndicator } from 'react-native'
 import React from 'react'
-import { COLORS } from '../../../constants'
+import { COLORS, SIZES } from '../../../constants'
 import { store } from '../../../store'
 import styles from '../../common/styles/common.style'
 import { useToast } from 'react-native-toast-notifications'
@@ -10,30 +10,33 @@ import CardDetail from '../../common/detail/CardDetail'
 import { getPorts } from '../../../api/shipment/shipment'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
-import { useSelector } from 'react-redux'
-import { selectIsFetching } from '../../../features/data/dataSlice'
 import PortSVG from '../../../assets/icons/ports'
 import Checkbox from 'expo-checkbox'
 
-const All = ({ wizard, checked, setChecked }) => {
+const All = ({
+  wizard,
+  checked,
+  setChecked,
+  fetching,
+  refresh,
+  setPortName,
+}) => {
   const iconSize = 30
 
   const dispatch = store.dispatch
-  const fetching = useSelector(selectIsFetching)
 
   const toast = useToast()
 
   const [ports, setPorts] = useState()
+  const fetch = () => {
+    getPorts(null, dispatch, setPorts, toast)
+  }
 
   useEffect(() => {
-    getPorts(null, dispatch, setPorts, toast)
-  }, [])
-  return fetching ? (
-    <ActivityIndicator
-      style={styles.activityIndicator}
-      size={'xxLarge'}
-      color={COLORS.primary}
-    />
+    fetch()
+  }, [refresh])
+  return wizard && !ports ? (
+    <ActivityIndicator color={COLORS.primary} size={SIZES.xxLarge} />
   ) : (
     <View style={styles.container}>
       {wizard ? (
@@ -55,7 +58,12 @@ const All = ({ wizard, checked, setChecked }) => {
             navigate={!wizard}
             isOnlyText={true}
             onClick={() => {
-              if (setChecked) setChecked(item.id)
+              if (setChecked) {
+                if (setPortName) {
+                  setPortName(item?.name)
+                }
+                setChecked(item.id)
+              }
             }}
           >
             <View style={{ ...styles.onlyTextContainer, borderWidth: 0 }}>
@@ -63,13 +71,16 @@ const All = ({ wizard, checked, setChecked }) => {
                 <View style={styles.wizCheckerHeader}>
                   <View>
                     <PortSVG color={COLORS.primary} size={iconSize} />
-                    <Text style={styles.name}>{'Port ' + item?.country}</Text>
+                    <Text style={styles.name}>{item?.name}</Text>
                   </View>
                   <Checkbox
                     color={COLORS.primary}
                     value={checked === item.id}
                     onValueChange={(value) => {
                       if (value) {
+                        if (setPortName) {
+                          setPortName(item?.name)
+                        }
                         setChecked(item.id)
                       }
                     }}
@@ -77,15 +88,21 @@ const All = ({ wizard, checked, setChecked }) => {
                 </View>
               )}
 
-              {!wizard && (
-                <CardDetail label={'Country'} value={item?.country} />
+              {!wizard ? (
+                <View>
+                  <Text style={styles.name}>{item?.name}</Text>
+                  <Text style={styles.name}>
+                    {item?.country} , {item?.city}
+                  </Text>
+                </View>
+              ) : (
+                <>
+                  <CardDetail label={'Country'} value={item?.country} />
+                  <CardDetail label={'City'} value={item?.city} />
+                </>
               )}
 
-              <CardDetail label={'City'} value={item?.city} />
-              <CardDetail label={'Port Name'} value={item?.name} />
-              {!wizard && (
-                <CardDetail label={'Description'} value={item?.discription} />
-              )}
+              {!wizard && <Text style={styles.type}>{item?.discription}</Text>}
             </View>
           </SingleCard>
         )

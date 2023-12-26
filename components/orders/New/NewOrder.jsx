@@ -39,7 +39,7 @@ import CheckQuestion from '../../../components/common/checkQuestion/CheckQuestio
 import WantStorage from '../../home/storageTypes/WantStorage'
 import { useNavigation } from 'expo-router'
 import { addOrder } from '../../../api/order/order'
-const NewOrder = ({ wizard, params, data }) => {
+const NewOrder = ({ wizard, params, data, order, setOrder }) => {
   const dispatch = store.dispatch
   const navigate = useNavigation()
   const fetching = useSelector(selectIsFetching)
@@ -52,16 +52,28 @@ const NewOrder = ({ wizard, params, data }) => {
   const [startDate, setStartDate] = useState()
   const [whichToShow, setWhichToShow] = useState()
   const [endDate, setEndDate] = useState()
-  const [selectedStroage, setSelectedStroage] = useState([])
+  const [selectedStorage, setSelectedStorage] = useState([])
   const [selectedOffices, setSelectedOffices] = useState([])
+  const [selectedHRS, setSelectedHRS] = useState([])
   const [wantStorage, setWantStorage] = useState(false)
   const [storageSpace, setStorageSpace] = useState()
   const toast = useToast()
 
   const checkIfExists = (id, type) => {
     if (type == STORAGE) {
-      return selectedStroage.includes(id)
+      if (order) {
+        return order?.selectedStorage?.includes(id)
+      }
+      return selectedStorage.includes(id)
+    } else if (type == 'HUMAN') {
+      if (order) {
+        return order?.selectedHRS?.includes(id)
+      }
+      return selectedHRS.includes(id)
     } else {
+      if (order) {
+        return order?.selectedOffices?.includes(id)
+      }
       return selectedOffices.includes(id)
     }
   }
@@ -120,6 +132,17 @@ const NewOrder = ({ wizard, params, data }) => {
   }, [params?.id])
 
   useEffect(() => {
+    if (params?.type == WAREHOUSE) {
+      setOrder({ ...order, warehouse: warehouse?.warehouse_name })
+    } else if (params?.type == STORAGE) {
+      setOrder({
+        ...order,
+        storage: storage?.warehouse_storage_type?.storage_name,
+      })
+    }
+  }, [warehouse, storage])
+
+  useEffect(() => {
     if (data) {
       if (params?.type == WAREHOUSE) {
         setWarehouse(data)
@@ -128,7 +151,6 @@ const NewOrder = ({ wizard, params, data }) => {
       }
     }
   }, [data])
-
   return fetching ? (
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
@@ -173,8 +195,10 @@ const NewOrder = ({ wizard, params, data }) => {
         )}
         <Input
           label={'How much space do you want?'}
-          state={space}
-          setState={setSpace}
+          state={order ? order?.space : space}
+          setState={
+            order ? (value) => setOrder({ ...order, space: value }) : setSpace
+          }
           type={NUMBER}
         />
         {params.type == WAREHOUSE && wizard !== SPACE && (
@@ -268,14 +292,28 @@ const NewOrder = ({ wizard, params, data }) => {
                                 onValueChange={
                                   !checkIfExists(office?.id)
                                     ? () =>
-                                        setSelectedOffices([
-                                          ...selectedOffices,
-                                          office?.id,
-                                        ])
+                                        order
+                                          ? (value) =>
+                                              setOrder({
+                                                ...order,
+                                                space: value,
+                                              })
+                                          : setSelectedOffices([
+                                              ...selectedOffices,
+                                              office?.id,
+                                            ])
                                     : () =>
-                                        setSelectedOffices((prev) =>
-                                          prev.filter((id) => id != office?.id)
-                                        )
+                                        order
+                                          ? (value) =>
+                                              setOrder({
+                                                ...order,
+                                                space: value,
+                                              })
+                                          : setSelectedOffices((prev) =>
+                                              prev.filter(
+                                                (id) => id != office?.id
+                                              )
+                                            )
                                 }
                                 value={checkIfExists(office?.id)}
                               />
@@ -306,7 +344,7 @@ const NewOrder = ({ wizard, params, data }) => {
                       {warehouse?.humanResources?.map((human) => {
                         return (
                           <View
-                            key={office?.id}
+                            key={human?.id}
                             style={newOrderStyles.resourceContainer}
                           >
                             <Text style={detailsStyles.name}>
@@ -340,14 +378,31 @@ const NewOrder = ({ wizard, params, data }) => {
                                 onValueChange={
                                   !checkIfExists(office?.id)
                                     ? () =>
-                                        setSelectedOffices([
-                                          ...selectedOffices,
-                                          office?.id,
-                                        ])
+                                        order
+                                          ? setOrder({
+                                              ...order,
+                                              offices: [
+                                                ...selectedOffices,
+                                                office?.id,
+                                              ],
+                                            })
+                                          : setSelectedHRS([
+                                              ...selectedOffices,
+                                              office?.id,
+                                            ])
                                     : () =>
-                                        setSelectedOffices((prev) =>
-                                          prev.filter((id) => id != office?.id)
-                                        )
+                                        order
+                                          ? setOrder({
+                                              ...order,
+                                              offices: order?.offices?.filter(
+                                                (id) => id != office?.id
+                                              ),
+                                            })
+                                          : setSelectedHRS((prev) =>
+                                              prev.filter(
+                                                (id) => id != office?.id
+                                              )
+                                            )
                                 }
                                 value={checkIfExists(office?.id)}
                               />
@@ -373,20 +428,34 @@ const NewOrder = ({ wizard, params, data }) => {
             <View>
               <CheckQuestion
                 title={'Do you want to add storage type to this warehouse ?'}
-                state={wantStorage}
-                setState={(value) => setWantStorage(value)}
+                state={order ? order?.wantStorage : wantStorage}
+                setState={(value) => {
+                  order
+                    ? setOrder({ ...order, wantStorage: value })
+                    : setWantStorage(value)
+                }}
               />
 
-              {wantStorage &&
-                (warehouse?.warehousestoragemappings &&
-                warehouse?.warehousestoragemappings?.length ? (
+              {(wantStorage || order.wantStorage) &&
+                (warehouse?.warehousestoragemappings?.length ? (
                   <WantStorage
                     storages={warehouse?.warehousestoragemappings}
-                    storageSpace={storageSpace}
-                    selectedStroage={selectedStroage}
-                    setStorageSpace={setStorageSpace}
+                    storageSpace={order ? order?.storageSpace : storageSpace}
+                    selectedStorage={
+                      order ? order?.selectedStorage ?? [] : selectedStorage
+                    }
+                    setStorageSpace={
+                      order
+                        ? (value) => setOrder({ ...order, storageSpace: value })
+                        : setStorageSpace
+                    }
                     checkIfExists={checkIfExists}
-                    setSelectedStroage={setSelectedStroage}
+                    setSelectedStorage={
+                      order
+                        ? (value) =>
+                            setOrder({ ...order, selectedStorage: value })
+                        : setSelectedStorage
+                    }
                   />
                 ) : (
                   <Info
@@ -404,7 +473,7 @@ const NewOrder = ({ wizard, params, data }) => {
           placeholder={'Select A Starting Date'}
           setWhichToShow={setWhichToShow}
           id={'start'}
-          state={startDate}
+          state={order ? order?.startDate : startDate}
         />
         <Input
           type={DATE}
@@ -412,7 +481,7 @@ const NewOrder = ({ wizard, params, data }) => {
           placeholder={'Select An End Date'}
           setWhichToShow={setWhichToShow}
           id={'end'}
-          state={endDate}
+          state={order ? order?.endDate : endDate}
         />
 
         {(whichToShow === 'start' || whichToShow === 'end') && (
@@ -421,10 +490,28 @@ const NewOrder = ({ wizard, params, data }) => {
             mode={'date'}
             is24Hour={true}
             onChange={(e, selectedDate) => {
-              whichToShow == 'start'
-                ? setStartDate(selectedDate.toDateString())
-                : setEndDate(selectedDate.toDateString())
               setWhichToShow(null)
+
+              if (whichToShow == 'start') {
+                if (order) {
+                  setOrder({
+                    ...order,
+                    startDate: selectedDate.toDateString(),
+                  })
+                  return
+                } else {
+                  setStartDate(selectedDate.toDateString())
+                  return
+                }
+              } else {
+                if (order) {
+                  setOrder({ ...order, endDate: selectedDate.toDateString() })
+                  return
+                } else {
+                  setEndDate(selectedDate.toDateString())
+                  return
+                }
+              }
             }}
           />
         )}

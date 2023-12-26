@@ -4,6 +4,7 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native'
 import { React, useEffect, useState } from 'react'
 import styles from '../../common/styles/common.style'
@@ -29,12 +30,21 @@ const WizardWelcome = () => {
   const dispatch = store.dispatch
   const fetching = useSelector(selectIsFetching)
   const toast = useToast()
+  const [refresh, setRefresh] = useState(false)
   const [serviceOrders, setServiceOrders] = useState()
+  const [page, setPage] = useState(1)
+  const [total, setTotal] = useState()
   const navigation = useNavigation()
 
   useEffect(() => {
     getServiceOrders(null, dispatch, setServiceOrders, toast)
-  }, [])
+  }, [refresh])
+
+  useEffect(() => {
+    if (serviceOrders?.count) {
+      setTotal(serviceOrders?.count)
+    }
+  }, [serviceOrders])
 
   const singleCard = ({ icon, title, to }) => {
     return (
@@ -61,7 +71,15 @@ const WizardWelcome = () => {
   }
 
   return (
-    <ScrollView style={styles.welcomeContainer}>
+    <ScrollView
+      style={styles.welcomeContainer}
+      refreshControl={
+        <RefreshControl
+          refreshing={fetching}
+          onRefresh={() => setRefresh(!refresh)}
+        />
+      }
+    >
       {singleCard({
         icon: <ServicesSVG color={COLORS.primary} size={iconSize} />,
         title: 'All Services',
@@ -83,15 +101,16 @@ const WizardWelcome = () => {
         to: CUSTOMS,
       })}
 
-      {fetching ? (
-        <ActivityIndicator
-          style={styles.activityIndicator}
-          size={'xxLarge'}
-          color={COLORS.primary}
+      {
+        <ServiceOrders
+          refresh={refresh}
+          setRefresh={setRefresh}
+          data={serviceOrders?.results?.slice((page - 1) * 10, page * 10 - 1)}
+          page={page}
+          setPage={setPage}
+          total={total}
         />
-      ) : (
-        <ServiceOrders data={serviceOrders} />
-      )}
+      }
     </ScrollView>
   )
 }

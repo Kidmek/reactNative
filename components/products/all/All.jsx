@@ -1,18 +1,18 @@
-import { View, Text, Image, ActivityIndicator } from 'react-native'
+import { View, Text, ActivityIndicator } from 'react-native'
 import React from 'react'
 import styles from '../../common/styles/common.style'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
-import { COLORS } from '../../../constants'
+import { COLORS, SIZES } from '../../../constants'
 import { getAllProducts } from '../../../api/product/product'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 import { currencyFormat } from '../../common/utils'
 import Checkbox from 'expo-checkbox'
 
-const All = ({ fetching, wizard, checked, setChecked, data }) => {
+const All = ({ refresh, wizard, checked, setChecked, data }) => {
   const dispatch = store.dispatch
   const toast = useToast()
 
@@ -21,7 +21,7 @@ const All = ({ fetching, wizard, checked, setChecked, data }) => {
     if (!wizard) {
       getAllProducts(null, dispatch, setProducts, toast)
     }
-  }, [])
+  }, [refresh])
 
   useEffect(() => {
     if (data && wizard) {
@@ -29,8 +29,8 @@ const All = ({ fetching, wizard, checked, setChecked, data }) => {
     }
   }, [data])
 
-  return fetching || !products ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+  return wizard && !products ? (
+    <ActivityIndicator color={COLORS.primary} size={SIZES.xxLarge} />
   ) : (
     <View style={styles.container}>
       {!wizard && (
@@ -47,6 +47,11 @@ const All = ({ fetching, wizard, checked, setChecked, data }) => {
         return (
           <SingleCard
             key={index}
+            page={{
+              name: 'details',
+              screen: 'product',
+              params: { id: item?.id },
+            }}
             navigate={!wizard}
             isOnlyText={true}
             onClick={() => {

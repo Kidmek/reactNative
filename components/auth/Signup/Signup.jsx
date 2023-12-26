@@ -17,6 +17,9 @@ import styles from '../auth.style'
 import Loader from '../../common/loader/Loader'
 import { API, emailRegEx } from '../../../constants/strings'
 import { store } from '../../../store'
+import { setLoading as setLoadingRedux } from '../../../features/data/dataSlice'
+import { getAllGroups } from '../../../api/users'
+import CustomDropdown from '../../common/dropdown/CustomDropdown'
 
 const SignUp = (props) => {
   const dispatch = store.dispatch
@@ -27,6 +30,14 @@ const SignUp = (props) => {
   const [userPassword, setUserPassword] = useState('')
   const [userConfirmPassword, setUserConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [groups, setGroups] = useState()
+  const [groupOptions, setgroupOptions] = useState([
+    {
+      id: null,
+      name: 'Customer',
+    },
+  ])
+  const [group, setGroup] = useState(-1)
   const [errortext, setErrortext] = useState('')
 
   const firstNameInputRef = createRef()
@@ -89,41 +100,52 @@ const SignUp = (props) => {
       return
     }
     //Show Loader
-    dispatch(setLoading(true))
+    dispatch(setLoadingRedux(true))
     var dataToSend = {
       first_name: userFirstName,
       email: userEmail,
       last_name: userLastName,
-      phone: userPhoneNumber,
+      phone: '+251' + userPhoneNumber,
       password: userPassword,
       password_confirmation: userConfirmPassword,
+      group: group == -1 ? null : group,
     }
 
     axios
-      .post(API + '/register', {
+      .post(API + '/register/', {
         ...dataToSend,
       })
       .then((responseJson) => {
         //Hide Loader
-        dispatch(setLoading(false))
-        console.log(responseJson)
+        dispatch(setLoadingRedux(false))
+        console.log(responseJson?.data)
         // If server response message same as Data Matched
-        if (responseJson?.data?.token) {
-          props.setIsLogin(true)
+        if (responseJson?.data) {
+          // props.setIsLogin(true)
           toast.show('Successfully Registered', {
             type: 'success',
           })
+          // props.setIsLogin(true)
         } else {
           setErrortext(responseJson.msg)
         }
       })
       .catch((error) => {
         //Hide Loader
-        dispatch(setLoading(false))
-
-        toast.show(error.message, {
-          type: 'danger',
-        })
+        dispatch(setLoadingRedux(false))
+        console.log(error?.response?.data)
+        const err = error?.response?.data
+        if (err) {
+          Object.entries(err).map(([key, value]) => {
+            toast.show(`${key} error : ${value}`, {
+              type: 'danger',
+            })
+          })
+        } else {
+          toast.show('Unable To Register', {
+            type: 'danger',
+          })
+        }
 
         console.log(error)
       })
@@ -131,6 +153,15 @@ const SignUp = (props) => {
 
   //
 
+  useEffect(() => {
+    getAllGroups(null, dispatch, setGroups, toast)
+  }, [])
+
+  useEffect(() => {
+    if (groups?.results?.length) {
+      setgroupOptions([...groupOptions, ...groups?.results])
+    }
+  }, [groups])
   useEffect(() => {
     if (userEmail) {
       if (!userEmail.match(emailRegEx)) {
@@ -227,11 +258,13 @@ const SignUp = (props) => {
             />
           </View>
           <View style={styles.signUpSectionStyle}>
+            <Text style={styles.prefix}>+251</Text>
             <TextInput
-              style={styles.inputStyle}
+              style={styles.phoneInputStyle}
               onChangeText={(UserPhoneNumber) =>
                 setUserPhoneNumber(UserPhoneNumber)
               }
+              maxLength={9}
               underlineColorAndroid='#f000'
               placeholder='Enter Phone Number'
               placeholderTextColor='#8b9cb5'
@@ -243,6 +276,39 @@ const SignUp = (props) => {
                 passwordInputRef.current && passwordInputRef.current.focus()
               }
               blurOnSubmit={false}
+            />
+          </View>
+          <View
+            style={{
+              ...styles.signUpSectionStyle,
+              flexDirection: 'column',
+              height: 'auto',
+            }}
+          >
+            <CustomDropdown
+              signup
+              label={'Choose A Group'}
+              options={
+                groups?.results
+                  ? [
+                      {
+                        id: -1,
+                        name: 'Customer',
+                      },
+                      ...groups?.results,
+                    ]
+                  : [
+                      {
+                        id: -1,
+                        name: 'Customer',
+                      },
+                    ]
+              }
+              placeholder={'Select A Group'}
+              state={group}
+              setState={setGroup}
+              labelField={'name'}
+              valueField={'id'}
             />
           </View>
           <View style={styles.signUpSectionStyle}>

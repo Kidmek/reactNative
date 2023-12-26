@@ -5,15 +5,14 @@ import {
   Dimensions,
   TouchableOpacity,
   Share,
-  StyleSheet,
 } from 'react-native'
 import React, { useState } from 'react'
 
 import styles from '../../common/styles/warehouse.style'
 import innerStyles from '../../common/styles/withImages.style'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
-import { COLORS, FONT } from '../../../constants'
-import { useLocalSearchParams, useNavigation } from 'expo-router'
+import { COLORS } from '../../../constants'
+import { useNavigation } from 'expo-router'
 import { useEffect, useLayoutEffect } from 'react'
 import {
   getManagedWarehouseDetails,
@@ -26,7 +25,7 @@ import { selectIsFetching, setFetching } from '../../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import Search from '../../../components/common/search/Search'
 import { DataTable } from 'react-native-paper'
-import { mSQUARE } from '../../../constants/strings'
+import { WAREHOUSE, mSQUARE } from '../../../constants/strings'
 import Animated, {
   SlideInDown,
   interpolate,
@@ -460,6 +459,12 @@ const SingleWarehouse = ({ params, wizard, setData }) => {
 
             <TouchableOpacity
               style={[defaultStyles.btn, { paddingRight: 20, paddingLeft: 20 }]}
+              onPress={() => {
+                navigation.navigate('new', {
+                  screen: 'order',
+                  params: { type: WAREHOUSE, id: warehouse.id, params },
+                })
+              }}
             >
               <Text style={defaultStyles.btnText}>Order</Text>
             </TouchableOpacity>

@@ -21,22 +21,27 @@ const styles = StyleSheet.create({
     marginBottom: SIZES.xSmall,
   },
 
-  cardDetailWrapper: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: SIZES.xSmall,
+  cardDetailWrapper: (vertical) => {
+    return {
+      flexDirection: vertical ? 'column' : 'row',
+      justifyContent: 'space-between',
+      marginBottom: SIZES.xSmall,
+    }
   },
   cardDetailLabel: {
     fontSize: SIZES.medium,
     fontFamily: FONT.bold,
   },
-  cardDetailValue: {
-    fontSize: SIZES.medium,
-    fontFamily: FONT.regular,
-    flex: 1,
-    color: COLORS.gray,
-    textAlign: 'right',
-    textTransform: 'capitalize',
+  cardDetailValue: (vertical) => {
+    return {
+      fontSize: SIZES.medium,
+      fontFamily: FONT.regular,
+      flex: 1,
+      color: COLORS.gray,
+      textAlign: vertical ? 'auto' : 'right',
+      textTransform: 'capitalize',
+      marginLeft: vertical ? SIZES.medium : 0,
+    }
   },
   divider: {
     height: StyleSheet.hairlineWidth,

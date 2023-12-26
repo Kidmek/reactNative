@@ -26,7 +26,8 @@ const Agent = ({ portId, wizard, checked, setChecked }) => {
 
   useEffect(() => {
     getPortAgents(portId, dispatch, setAgents, toast)
-  }, [])
+  }, [portId])
+
   return fetching ? (
     <ActivityIndicator
       style={styles.activityIndicator}
@@ -56,7 +57,7 @@ const Agent = ({ portId, wizard, checked, setChecked }) => {
             onClick={() => setChecked(item.id)}
             isOnlyText={true}
           >
-            <View style={styles.onlyTextContainer}>
+            <View style={{ ...styles.onlyTextContainer, borderWidth: 0 }}>
               {wizard && (
                 <View
                   style={{
@@ -86,7 +87,11 @@ const Agent = ({ portId, wizard, checked, setChecked }) => {
               )}
               <CardDetail label={'Email'} value={item?.email} />
 
-              <CardDetail label={'Business License'} value={item?.license} />
+              <CardDetail
+                label={'Business License'}
+                value={item?.license}
+                download
+              />
             </View>
           </SingleCard>
         )

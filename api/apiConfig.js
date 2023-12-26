@@ -136,6 +136,61 @@ export const getSkeleton = (
     })
 }
 
+export const deleteSkeleton = (
+  url,
+  params,
+  dispatchFalse,
+  setLoading,
+  toast,
+  onSuccess
+) => {
+  if (dispatchFalse && setLoading) dispatchFalse(setLoading(true))
+
+  AsyncStorage.getItem('token')
+    .then((token) => {
+      axios
+        .delete(API + url, {
+          params: { params },
+          headers: {
+            Authorization: 'Bearer ' + token,
+          },
+        })
+        .then((responseJson) => {
+          //Hide Loader
+          if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+
+          // If server response message same as Data Matched
+          if (responseJson.status === 204) {
+            if (onSuccess) {
+              onSuccess()
+            }
+            toast?.show('Successfully Deleted', {
+              type: 'success',
+            })
+          }
+        })
+        .catch((error) => {
+          //Hide Loader
+          if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+          if (setGetting) {
+            setGetting(true)
+          }
+          if (toast.show)
+            toast?.show(error?.request?.statusText || error.message, {
+              type: 'danger',
+            })
+        })
+    })
+    .catch(() => {
+      if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+
+      if (toast.show)
+        toast?.show('Unauthorized', {
+          type: 'danger',
+        })
+    })
+}
+
 export const isLoggedIn = async () => {
   let foundToken = false
   await AsyncStorage.getItem('token')

@@ -103,6 +103,19 @@ const _layout = () => {
           headerTitle: 'User Group',
         }}
       />
+
+      <Stack.Screen
+        name='product'
+        options={{
+          headerTitle: 'Product',
+        }}
+      />
+      <Stack.Screen
+        name='wizard'
+        options={{
+          headerTitle: 'All Service Order',
+        }}
+      />
     </Stack>
   )
 }

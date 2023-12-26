@@ -14,10 +14,11 @@ const CustomDropdown = ({
   valueField,
   setOtherState,
   isMulti,
+  signup,
 }) => {
   return (
     <View style={styles.inputWrapper}>
-      <Text style={styles.inputLabel}>{label}</Text>
+      {!signup && <Text style={styles.inputLabel}>{label}</Text>}
       {isMulti ? (
         <MultiSelect
           selectedTextStyle={{ color: COLORS.primary }}
@@ -50,9 +51,27 @@ const CustomDropdown = ({
         />
       ) : (
         <Dropdown
-          style={styles.input}
+          style={
+            !signup
+              ? { ...styles.input }
+              : {
+                  flex: 1,
+                  paddingLeft: 15,
+                  paddingRight: 15,
+                  borderWidth: 1,
+                  borderRadius: 30,
+                  borderColor: COLORS.gray2,
+                }
+          }
           data={options || []}
           placeholder={placeholder}
+          placeholderStyle={
+            signup
+              ? {
+                  color: '#8b9cb5',
+                }
+              : {}
+          }
           value={state}
           labelField={labelField}
           valueField={valueField}

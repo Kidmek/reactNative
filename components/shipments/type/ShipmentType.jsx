@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, ActivityIndicator } from 'react-native'
+import { View, Text, ScrollView } from 'react-native'
 import React from 'react'
 import styles from '../../common/styles/common.style'
 import { useLocalSearchParams } from 'expo-router'
@@ -14,7 +14,7 @@ import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 import Checkbox from 'expo-checkbox'
 
-const ShipmentType = ({ wizard, checked, setChecked, data }) => {
+const ShipmentType = ({ wizard, checked, setChecked, data, refresh }) => {
   const params = useLocalSearchParams()
   const dispatch = store.dispatch
   const toast = useToast()
@@ -25,7 +25,7 @@ const ShipmentType = ({ wizard, checked, setChecked, data }) => {
     if (!wizard) {
       getShipmentTypes(null, dispatch, setTypes, toast)
     }
-  }, [])
+  }, [refresh])
 
   useEffect(() => {
     if (wizard) {
@@ -33,10 +33,8 @@ const ShipmentType = ({ wizard, checked, setChecked, data }) => {
     }
   }, [data])
 
-  return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
-  ) : (
-    <ScrollView style={styles.container}>
+  return (
+    <ScrollView style={wizard ? {} : styles.welcomeContainer}>
       {!params?.choose && !wizard && (
         <AddNew
           title={'New Shipment Type'}
