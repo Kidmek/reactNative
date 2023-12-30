@@ -10,16 +10,21 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.example.ims",
       "config": {
-        "googleMapsApiKey": "YOUR_API_KEY"
+        "googleMapsApiKey": "AIzaSyDonCBNomqhPAW1y06dY4fICo5YvqiLUwA"
       }
     },
     "android": {
       "package": "com.example.ims",
       "config": {
         "googleMaps": {
-          "apiKey": "<android maps key>"
+          "apiKey": "AIzaSyDonCBNomqhPAW1y06dY4fICo5YvqiLUwA"
         }
-      }
+      },
+      "permissions": [
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.FOREGROUND_SERVICE"
+      ]
     },
     "plugins": [
       [
@@ -28,6 +33,11 @@
           "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "3f852231-433c-494c-b2c7-d802e8552385"
+      }
+    }
   }
 }

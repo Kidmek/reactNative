@@ -13,7 +13,7 @@ import * as Haptics from 'expo-haptics'
 import { useRef } from 'react'
 import { useState } from 'react'
 
-const CustomTabs = ({ data, setActiveType, activeType }) => {
+const CustomTabs = ({ data, setActiveType, activeType, iconData }) => {
   const scrollRef = useRef()
   const itemsRef = useRef([])
   const [activeIndex, setActiveIndex] = useState(0)
@@ -34,9 +34,9 @@ const CustomTabs = ({ data, setActiveType, activeType }) => {
         ref={scrollRef}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
-          alignItems: 'flex-end',
-          paddingHorizontal: 16,
-          gap: SIZES.xLarge,
+          paddingHorizontal: SIZES.xLarge,
+          gap: SIZES.xxLarge,
+          flexGrow: 1,
         }}
       >
         {data.map((item, index) => (
@@ -51,16 +51,24 @@ const CustomTabs = ({ data, setActiveType, activeType }) => {
                 alignItems: 'center',
                 justifyContent: 'space-around',
                 flex: 1,
+                gap: SIZES.small,
               }}
             >
-              <MaterialCommunityIcons
-                name='warehouse'
-                size={SIZES.welcomeTabIcons}
-                color={activeType === item ? COLORS.secondary : COLORS.gray}
-              />
+              {iconData && iconData[index] ? (
+                iconData[index](
+                  SIZES.welcomeTabIcons,
+                  activeType === item ? COLORS.secondary : COLORS.gray
+                )
+              ) : (
+                <MaterialCommunityIcons
+                  name='warehouse'
+                  size={SIZES.welcomeTabIcons}
+                  color={activeType === item ? COLORS.secondary : COLORS.gray}
+                />
+              )}
 
               <Text style={styles.categoryText(activeIndex === index)}>
-                {item?.split(' ').join('\n')}
+                {item}
               </Text>
             </View>
           </TouchableOpacity>

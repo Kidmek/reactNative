@@ -24,6 +24,31 @@ const Layout = () => {
     DMRegular: require('../assets/fonts/Montserrat-Regular.ttf'),
   })
 
+  const modalProps = (title) => {
+    return {
+      presentation: 'transparentModal',
+      animation: 'slide_from_bottom',
+      headerShown: true,
+      headerTitle: title,
+      headerTitleAlign: 'center',
+
+      headerLeft: () => (
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={{
+            backgroundColor: '#fff',
+            borderColor: COLORS.grey,
+            borderRadius: 20,
+            borderWidth: 1,
+            padding: 4,
+          }}
+        >
+          <Ionicons name='close-outline' size={22} />
+        </TouchableOpacity>
+      ),
+    }
+  }
+
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
       await SplashScreen.hideAsync()
@@ -81,29 +106,12 @@ const Layout = () => {
             />
             <Stack.Screen
               name='(modals)/filter'
-              options={{
-                presentation: 'transparentModal',
-                animation: 'slide_from_bottom',
-                headerShown: true,
-                headerTransparent: true,
-                headerTitle: 'Filters',
-                headerTitleAlign: 'center',
-                headerLeft: () => (
-                  <TouchableOpacity
-                    onPress={() => router.back()}
-                    style={{
-                      backgroundColor: '#fff',
-                      borderColor: COLORS.grey,
-                      borderRadius: 20,
-                      borderWidth: 1,
-                      padding: 4,
-                    }}
-                  >
-                    <Ionicons name='close-outline' size={22} />
-                  </TouchableOpacity>
-                ),
-              }}
+              options={modalProps('Filters')}
             />
+            <Stack.Screen name='(modals)/driver' options={modalProps('')} />
+            <Stack.Screen name='(modals)/agent' options={modalProps('')} />
+            <Stack.Screen name='(modals)/company' options={modalProps('')} />
+            <Stack.Screen name='(modals)/transitor' options={modalProps('')} />
           </Stack>
           <StatusBar style='dark' />
         </ToastProvider>

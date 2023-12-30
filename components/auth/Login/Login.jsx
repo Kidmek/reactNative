@@ -15,15 +15,10 @@ import styles from '../auth.style'
 import { API, emailRegEx } from '../../../constants/strings'
 import axios from 'axios'
 import { store } from '../../../store'
-import {
-  selectUser,
-  setLoading,
-  setUser,
-} from '../../../features/data/dataSlice'
+import { setLoading, setUser } from '../../../features/data/dataSlice'
 import { useNavigation } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getUser, isLoggedIn } from '../../../api/apiConfig'
-import { useSelector } from 'react-redux'
 
 const Login = ({ setIsLogin }) => {
   const dispatch = store.dispatch
@@ -31,7 +26,6 @@ const Login = ({ setIsLogin }) => {
   const [userEmail, setUserEmail] = useState('')
   const [userPassword, setUserPassword] = useState('')
   const [errortext, setErrortext] = useState('')
-  const user = useSelector(selectUser)
   const emailInputRef = createRef()
   const passwordInputRef = createRef()
   const toast = useToast()
@@ -82,9 +76,6 @@ const Login = ({ setIsLogin }) => {
         dispatch(setLoading(false))
         // If server response message same as Data Matched
         if (responseJson?.data?.token) {
-          toast.show('Successfully Logged In', {
-            type: 'success',
-          })
           if (responseJson?.data?.user) {
             dispatch(setUser(responseJson?.data?.user))
             AsyncStorage.setItem(
@@ -92,9 +83,13 @@ const Login = ({ setIsLogin }) => {
               JSON.stringify(responseJson?.data?.user)
             )
           }
-          if (responseJson?.data?.token)
+          if (responseJson?.data?.token) {
             AsyncStorage.setItem('token', responseJson?.data?.token)
-          navigation.navigate('home')
+            navigation.navigate('home')
+            toast.show('Successfully Logged In', {
+              type: 'success',
+            })
+          }
         } else {
           setErrortext('Please check your email or password')
         }

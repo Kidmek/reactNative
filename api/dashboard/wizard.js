@@ -48,3 +48,15 @@ export const addServiceOrders = (data, dispatchFalse, onSuccess, toast) => {
     toast
   )
 }
+
+export const addWizOrder = (data, dispatchFalse, onSuccess, toast) => {
+  postSkeleton(
+    '/order/',
+    data,
+    null,
+    dispatchFalse,
+    setLoading,
+    onSuccess,
+    toast
+  )
+}

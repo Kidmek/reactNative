@@ -14,6 +14,9 @@ import Categories from '../categories/Categories'
 import Types from '../types/Types'
 import Search from '../../common/search/Search'
 import CustomTabs from '../../common/header/CustomTabs'
+import ProductSVG from '../../../assets/icons/product'
+import ReturnedSVG from '../../../assets/icons/returned'
+import DamagedSVG from '../../../assets/icons/damaged'
 
 const ProductWelcome = () => {
   const [searchQuery, setSearchQuery] = useState()
@@ -55,9 +58,14 @@ const ProductWelcome = () => {
           searchQuery={searchQuery}
         />
         <CustomTabs
-          data={isAdmin ? productTypes : customerProductTypes}
+          data={customerProductTypes}
           setActiveType={setActiveType}
           activeType={activeType}
+          iconData={[
+            (size, color) => <ProductSVG color={color} size={size} />,
+            (size, color) => <ReturnedSVG color={color} size={size} />,
+            (size, color) => <DamagedSVG color={color} size={size} />,
+          ]}
         />
       </View>
       {body()}

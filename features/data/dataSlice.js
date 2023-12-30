@@ -22,14 +22,19 @@ const dataSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload
     },
+    setData: (state, action) => {
+      state.data = action.payload
+    },
     logOut: (state, action) => {
       state.user = null
+      state.data = null
       logout()
     },
   },
 })
 
-export const { setLoading, setFetching, setUser, logOut } = dataSlice.actions
+export const { setLoading, setFetching, setUser, logOut, setData } =
+  dataSlice.actions
 
 export default dataSlice.reducer
 

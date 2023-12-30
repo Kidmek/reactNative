@@ -40,7 +40,6 @@ export const postSkeleton = (
           if (setPosting) {
             setPosting(false)
           }
-          console.log(responseJson)
           // If server response message same as Data Matched
           if (responseJson?.data) {
             if (onSuccess) {
@@ -52,13 +51,108 @@ export const postSkeleton = (
           }
         })
         .catch((error) => {
+          //Hide Loader
+
+          if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+          if (setPosting) {
+            setPosting(false)
+          }
+          console.log('Error At : ', API + url)
           console.log(error)
-          console.log(error.response)
-          console.log(error.response?.data)
+          console.log(error?.response)
+          console.log(error?.response?.data)
+          const err = error?.response?.data
+          console.log(err?.toString().length)
+          if (err?.toString()?.length < 300 && err) {
+            Object.entries(err)?.map(([key, value]) => {
+              if (value?.length < 25) {
+                toast.show(`${key} error : ${value}`, {
+                  type: 'danger',
+                })
+              }
+            })
+          }
+          if (toast.show)
+            toast?.show(errorMsg ?? 'Unable To Save', {
+              type: 'danger',
+            })
+        })
+    })
+    .catch(() => {
+      if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+      if (setPosting) {
+        setPosting(false)
+      }
+      if (toast.show)
+        toast?.show('Unauthorized', {
+          type: 'danger',
+        })
+    })
+}
+
+export const putSkeleton = (
+  url,
+  dataToSend,
+  params,
+  dispatchFalse,
+  setLoading,
+  onSuccess,
+  toast,
+  setPosting,
+  successMsg,
+  headers,
+  errorMsg
+) => {
+  if (dispatchFalse && setLoading) dispatchFalse(setLoading(true))
+  if (setPosting) {
+    setPosting(true)
+  }
+  AsyncStorage.getItem('token')
+    .then((token) => {
+      axios
+        .put(
+          API + url,
+          {
+            ...dataToSend,
+          },
+          {
+            params: { params },
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          }
+        )
+        .then((responseJson) => {
           //Hide Loader
           if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
           if (setPosting) {
             setPosting(false)
+          }
+          // console.log(responseJson)
+          // If server response message same as Data Matched
+          if (responseJson?.data) {
+            if (onSuccess) {
+              onSuccess()
+            }
+            toast?.show(successMsg ?? 'Successfully Saved', {
+              type: 'success',
+            })
+          }
+        })
+        .catch((error) => {
+          //Hide Loader
+          if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+          if (setPosting) {
+            setPosting(false)
+          }
+          const err = error?.response?.data
+
+          if (err) {
+            Object.entries(err)?.map(([key, value]) => {
+              toast.show(`${key} error : ${value}`, {
+                type: 'danger',
+              })
+            })
           }
           if (toast.show)
             toast?.show(errorMsg ?? 'Unable To Save', {
@@ -113,6 +207,7 @@ export const getSkeleton = (
         })
         .catch((error) => {
           //Hide Loader
+          console.log('Error At : ', API + url)
           console.log(error)
           if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
           if (setGetting) {

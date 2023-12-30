@@ -14,6 +14,7 @@ const Input = ({
   setWhichToShow,
   id,
   error,
+  outOfFocus,
 }) => {
   return type === DATE ? (
     <View style={{ ...styles.inputWrapper, position: 'relative' }}>
@@ -72,6 +73,7 @@ const Input = ({
     <View style={styles.inputWrapper}>
       <Text style={styles.inputLabel}>{label}</Text>
       <TextInput
+        onBlur={outOfFocus}
         inputMode={type === NUMBER ? 'numeric' : 'text'}
         style={styles.input(error)}
         value={state}

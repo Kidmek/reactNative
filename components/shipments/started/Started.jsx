@@ -17,7 +17,7 @@ const Started = ({ fetching, type, refresh }) => {
 
   const getProductQty = (shipments, productId) => {
     const product = shipments?.filter((ship) => ship.product == productId)
-    if (product.length) {
+    if (product?.length) {
       return product[0].productqty
     } else {
       return ''
@@ -41,31 +41,35 @@ const Started = ({ fetching, type, refresh }) => {
 
       {shipments?.results?.map((item, index) => {
         return (
-          <SingleCard key={index} isOnlyText={true}>
+          <SingleCard
+            key={index}
+            isOnlyText={true}
+            page={{
+              name: 'details',
+              screen: 'shipment',
+              params: {
+                id: item?.id,
+              },
+            }}
+          >
             <View style={{ ...styles.onlyTextContainer, borderWidth: 0 }}>
               <CardDetail
                 label={'Shipment Method'}
                 value={item?.shipmenttypedetail?.name}
               />
-              <CardDetail
+              {/* <CardDetail
                 label={'Customer'}
                 value={item?.productdetail?.userdetail?.first_name}
-              />
+              /> */}
               <CardDetail
                 label={'Transportation'}
-                value={item?.companydetail?.companyname}
+                value={item?.vehicledetail?.type}
               />
               <CardDetail
                 label={'Product'}
                 value={item?.productdetail?.product_name}
               />
-              <CardDetail
-                label={'Product Qty'}
-                value={getProductQty(
-                  item?.productdetail?.shippedproducts,
-                  item?.productdetail.id
-                )}
-              />
+              <CardDetail label={'Product Qty'} value={item?.productqty} />
               <CardDetail label={'Status'} value={item?.status} />
               <CardDetail label={'Created At'} value={Date(item?.created_at)} />
             </View>

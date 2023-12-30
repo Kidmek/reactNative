@@ -121,7 +121,9 @@ const NewOrder = ({ wizard, params, data, order, setOrder }) => {
     )
   }
   useEffect(() => {
-    getAllCustomers(null, dispatch, setCustomers, toast)
+    if (!wizard) {
+      getAllCustomers(null, dispatch, setCustomers, toast)
+    }
     if (wizard !== SPACE) {
       if (params?.type == WAREHOUSE) {
         getWarehouseDetails(params?.id, dispatch, setWarehouse, toast)
@@ -133,11 +135,16 @@ const NewOrder = ({ wizard, params, data, order, setOrder }) => {
 
   useEffect(() => {
     if (params?.type == WAREHOUSE) {
-      setOrder({ ...order, warehouse: warehouse?.warehouse_name })
+      setOrder({
+        ...order,
+        warehouse: warehouse?.warehouse_name,
+        rate: warehouse?.price_m2,
+      })
     } else if (params?.type == STORAGE) {
       setOrder({
         ...order,
         storage: storage?.warehouse_storage_type?.storage_name,
+        rate: storage?.price_m2,
       })
     }
   }, [warehouse, storage])
@@ -151,6 +158,7 @@ const NewOrder = ({ wizard, params, data, order, setOrder }) => {
       }
     }
   }, [data])
+
   return fetching ? (
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
@@ -168,7 +176,7 @@ const NewOrder = ({ wizard, params, data, order, setOrder }) => {
           <Text style={newOrderStyles.singleLabel}>Available Space</Text>
           <Text style={newOrderStyles.singleValue}>
             {params?.type === WAREHOUSE
-              ? warehouse?.space + mSQUARE
+              ? warehouse?.available_space + mSQUARE
               : storage?.available_space + mSQUARE}
           </Text>
         </View>
@@ -176,7 +184,7 @@ const NewOrder = ({ wizard, params, data, order, setOrder }) => {
           <Text style={newOrderStyles.singleLabel}>{'Price /' + mSQUARE}</Text>
           <Text style={newOrderStyles.singleValue}>
             {params?.type === WAREHOUSE
-              ? warehouse?.full_price + ' Birr'
+              ? warehouse?.price_m2 + ' Birr'
               : storage?.price_m2 + ' Birr'}
           </Text>
         </View>
@@ -491,7 +499,6 @@ const NewOrder = ({ wizard, params, data, order, setOrder }) => {
             is24Hour={true}
             onChange={(e, selectedDate) => {
               setWhichToShow(null)
-
               if (whichToShow == 'start') {
                 if (order) {
                   setOrder({

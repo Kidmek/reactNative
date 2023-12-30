@@ -1,10 +1,20 @@
-import { setFetching, setLoading } from '../../features/data/dataSlice'
-import { getSkeleton, postSkeleton } from '../apiConfig'
+import { setData, setFetching, setLoading } from '../../features/data/dataSlice'
+import { getSkeleton, postSkeleton, putSkeleton } from '../apiConfig'
 
 export const getShipments = (params, dispatchFalse, setData, toast) => {
   getSkeleton('/shipments/', null, dispatchFalse, setFetching, setData, toast)
 }
 
+export const getSingleShipment = (params, dispatchFalse, setData, toast) => {
+  getSkeleton(
+    '/shipments/' + params + '/',
+    null,
+    dispatchFalse,
+    setFetching,
+    setData,
+    toast
+  )
+}
 export const addShipment = (data, dispatchFalse, toast, onSuccess) => {
   postSkeleton(
     '/shipments/',
@@ -29,6 +39,42 @@ export const getTransportations = (params, dispatchFalse, setData, toast) => {
     toast
   )
 }
+export const addDriverTrans = (data, id, dispatchFalse, toast, onSuccess) => {
+  putSkeleton(
+    '/drivers/' + id + '/',
+    data,
+    null,
+    dispatchFalse,
+    setLoading,
+    onSuccess,
+    toast,
+    null
+  )
+}
+export const addTransCompany = (data, id, dispatchFalse, toast, onSuccess) => {
+  putSkeleton(
+    '/transportationcompany/' + id + '/',
+    data,
+    null,
+    dispatchFalse,
+    setLoading,
+    onSuccess,
+    toast,
+    null
+  )
+}
+export const addVehicles = (data, dispatchFalse, toast, onSuccess) => {
+  postSkeleton(
+    '/vehicles/',
+    data,
+    null,
+    dispatchFalse,
+    setLoading,
+    onSuccess,
+    toast,
+    null
+  )
+}
 export const addTransportation = (data, dispatchFalse, toast, onSuccess) => {
   postSkeleton(
     '/transportations/',
@@ -43,6 +89,17 @@ export const addTransportation = (data, dispatchFalse, toast, onSuccess) => {
 }
 export const getVehicles = (params, dispatchFalse, setData, toast) => {
   getSkeleton('/vehicles/', null, dispatchFalse, setFetching, setData, toast)
+}
+
+export const getVehicleByRange = (params, dispatchFalse, setData, toast) => {
+  getSkeleton(
+    '/shipments/get_vehicle/' + params + '/',
+    null,
+    dispatchFalse,
+    setFetching,
+    setData,
+    toast
+  )
 }
 
 export const getTransportationMethods = (
@@ -143,6 +200,43 @@ export const getTransits = (params, dispatchFalse, setData, toast) => {
 export const addTransits = (data, dispatchFalse, toast, onSuccess) => {
   postSkeleton(
     '/transitory/',
+    data,
+    null,
+    dispatchFalse,
+    setLoading,
+    onSuccess,
+    toast,
+    null
+  )
+}
+
+export const addBusinessLicense = (
+  data,
+  id,
+  dispatchFalse,
+  toast,
+  onSuccess
+) => {
+  putSkeleton(
+    '/insuranceagent/' + id + '/',
+    data,
+    null,
+    dispatchFalse,
+    setLoading,
+    onSuccess,
+    toast,
+    null
+  )
+}
+export const registerTransitor = (
+  data,
+  id,
+  dispatchFalse,
+  toast,
+  onSuccess
+) => {
+  putSkeleton(
+    '/transitor/' + id + '/',
     data,
     null,
     dispatchFalse,

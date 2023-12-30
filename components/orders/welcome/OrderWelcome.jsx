@@ -37,7 +37,7 @@ const OrderWelcome = () => {
           setSearchQuery={setSearchQuery}
           searchQuery={searchQuery}
         />
-        {isAdmin && (
+        {/* {isAdmin && (
           <View style={styles.shipmentHeader}>
             <TouchableOpacity
               style={styles.shipmentHeaderWrapper}
@@ -52,7 +52,7 @@ const OrderWelcome = () => {
               </View>
             </TouchableOpacity>
           </View>
-        )}
+        )} */}
       </View>
       <All refresh={refresh} />
     </ScrollView>

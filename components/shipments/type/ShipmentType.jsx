@@ -71,6 +71,7 @@ const ShipmentType = ({ wizard, checked, setChecked, data, refresh }) => {
             isOnlyText={true}
             onClick={() =>
               setChecked({
+                id: item?.id,
                 type: item.name,
               })
             }
@@ -85,6 +86,7 @@ const ShipmentType = ({ wizard, checked, setChecked, data, refresh }) => {
                     onValueChange={(value) => {
                       if (value) {
                         setChecked({
+                          id: item?.id,
                           type: item.name,
                         })
                       }

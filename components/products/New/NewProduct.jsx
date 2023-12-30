@@ -98,8 +98,7 @@ const NewProduct = ({ wizard, product, setProduct }) => {
     getProductTypes(null, dispatch, setTypes, toast)
     getAllCustomers(null, dispatch, setCustomers, toast)
   }, [])
-
-  return !categories || !types || !customers ? (
+  return !categories?.length || !types?.length || !customers?.length ? (
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <ScrollView style={wizard ? '' : styles.container}>

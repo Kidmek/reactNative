@@ -20,7 +20,7 @@ const Damaged = ({ refresh, isAdmin }) => {
 
   return (
     <View style={styles.container}>
-      {isAdmin && (
+      {/* {isAdmin && (
         <AddNew
           title={'New Damaged Product'}
           page={{
@@ -28,7 +28,7 @@ const Damaged = ({ refresh, isAdmin }) => {
             screen: 'damaged_product',
           }}
         />
-      )}
+      )} */}
       <View style={styles.listContainer}>
         {damaged?.data?.map((item, index) => {
           return (

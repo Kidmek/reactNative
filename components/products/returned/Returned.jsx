@@ -20,7 +20,7 @@ const Returned = ({ refresh, isAdmin }) => {
 
   return (
     <View style={styles.container}>
-      {isAdmin && (
+      {/* {isAdmin && (
         <AddNew
           title={'New Returned Product'}
           page={{
@@ -28,7 +28,7 @@ const Returned = ({ refresh, isAdmin }) => {
             screen: 'returned_product',
           }}
         />
-      )}
+      )} */}
       {returned?.results?.map((item, index) => {
         return (
           <SingleCard

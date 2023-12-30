@@ -16,7 +16,15 @@ const HumanResource = ({ warehouse, checked, setChecked }) => {
               key={item?.id}
               onPress={() => {
                 if (setChecked) {
-                  setChecked(item?.id)
+                  if (checkedMulti) {
+                    if (value) {
+                      setChecked([...checked, item?.id])
+                    } else {
+                      setChecked(checked?.filter((c) => c != item?.id))
+                    }
+                  } else {
+                    setChecked(item?.id)
+                  }
                 }
               }}
             >
@@ -29,10 +37,20 @@ const HumanResource = ({ warehouse, checked, setChecked }) => {
                   </Text>
                   <Checkbox
                     color={COLORS.primary}
-                    value={checked === item?.id}
+                    value={
+                      checkedMulti
+                        ? checked?.includes(item?.id)
+                        : checked === item?.id
+                    }
                     onValueChange={(value) => {
-                      if (value) {
-                        if (setChecked) {
+                      if (setChecked) {
+                        if (checkedMulti) {
+                          if (value) {
+                            setChecked([...checked, item?.id])
+                          } else {
+                            setChecked(checked?.filter((c) => c != item?.id))
+                          }
+                        } else {
                           setChecked(item?.id)
                         }
                       }

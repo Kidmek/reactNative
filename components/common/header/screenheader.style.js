@@ -71,8 +71,11 @@ const styles = StyleSheet.create({
     return {
       fontSize: 14,
       fontFamily: FONT.regular,
-      color: isActive ? COLORS.black : COLORS.grey,
+      color: isActive ? COLORS.black : COLORS.gray,
       textAlign: 'center',
+      flexDirection: 'row',
+      textAlignVertical: 'center',
+      flex: 1,
     }
   },
 

@@ -216,6 +216,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: COLORS.grey,
+    marginVertical: 16,
+  },
 })
 
 export default styles

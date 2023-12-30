@@ -48,7 +48,6 @@ const SingleWarehouse = ({ params, wizard, setData }) => {
   const fetching = useSelector(selectIsFetching)
   const toast = useToast()
   const [warehouse, setWarehouse] = useState()
-  const [selectedImg, setSelectedImg] = useState(0)
   const scrollRef = useAnimatedRef()
 
   const shareListing = async () => {
@@ -128,12 +127,12 @@ const SingleWarehouse = ({ params, wizard, setData }) => {
   }, [])
 
   useEffect(() => {
-    if (params?.type == 'Managed') {
-      getManagedWarehouseDetails(params?.id, dispatch, setWarehouse, toast)
-    } else {
-      dispatch(setFetching(true))
-      getWarehouseDetails(params?.id, dispatch, setWarehouse, toast)
-    }
+    // if (params?.type == 'Managed') {
+    //   getManagedWarehouseDetails(params?.id, dispatch, setWarehouse, toast)
+    // } else {
+    dispatch(setFetching(true))
+    getWarehouseDetails(params?.id, dispatch, setWarehouse, toast)
+    // }
   }, [])
 
   useEffect(() => {

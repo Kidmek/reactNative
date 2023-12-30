@@ -133,7 +133,6 @@ const SignUp = (props) => {
       .catch((error) => {
         //Hide Loader
         dispatch(setLoadingRedux(false))
-        console.log(error?.response?.data)
         const err = error?.response?.data
         if (err) {
           Object.entries(err).map(([key, value]) => {

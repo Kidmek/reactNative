@@ -1,4 +1,3 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome'
 import { AntDesign, MaterialCommunityIcons } from '@expo/vector-icons'
 import { Tabs, useNavigation } from 'expo-router'
 import { COLORS, FONT, SIZES } from '../../../constants'
@@ -6,6 +5,21 @@ import { useState } from 'react'
 import { show } from '../../../features/modal/modalSlice'
 import { store } from '../../../store'
 import { HeaderOptions } from '../../../components/common/header/HeaderOptions'
+import { selectData } from '../../../features/data/dataSlice'
+import { useSelector } from 'react-redux'
+import {
+  AGENT,
+  COMPANY,
+  DRIVERS,
+  LABOUR,
+  MANAGER,
+  RENTER,
+  TRANSITOR,
+} from '../../../constants/strings'
+import SpaceSVG from '../../../assets/icons/space'
+import ProductSVG from '../../../assets/icons/product'
+import OrderSVG from '../../../assets/icons/order'
+import ShipmentSVG from '../../../assets/icons/shipment'
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -15,6 +29,7 @@ export default function TabLayout() {
   const navigation = useNavigation()
   const [notification, setNotification] = useState(1)
   const dispatch = store.dispatch
+  const user = useSelector(selectData)
 
   return (
     <Tabs
@@ -33,13 +48,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name='(home)'
         options={{
-          tabBarLabel: 'Warehouse',
+          // tabBarItemStyle: {
+          //   display:
+          //     user?.groupdetail?.name?.toLowerCase() === DRIVERS ||
+          //     user?.groupdetail?.name?.toLowerCase() === AGENT ||
+          //     user?.groupdetail?.name?.toLowerCase() === DRIVERS ||
+          //     user?.groupdetail?.name?.toLowerCase() === MANAGER
+          //       ? 'none'
+          //       : 'flex',
+          // },
+          tabBarLabel:
+            user?.groupdetail?.name?.toLowerCase() === RENTER
+              ? 'Warehouse'
+              : 'Home',
           tabBarIcon: ({ size, color }) => (
-            <MaterialCommunityIcons
-              name='warehouse'
-              size={size}
-              color={color}
-            />
+            <SpaceSVG size={size} color={color} />
           ),
           ...HeaderOptions(navigation, notification),
         }}
@@ -47,9 +70,21 @@ export default function TabLayout() {
       <Tabs.Screen
         name='product'
         options={{
+          tabBarItemStyle: {
+            display:
+              user?.groupdetail?.name?.toLowerCase() === DRIVERS ||
+              user?.groupdetail?.name?.toLowerCase() === AGENT ||
+              user?.groupdetail?.name?.toLowerCase() === RENTER ||
+              user?.groupdetail?.name?.toLowerCase() === MANAGER ||
+              user?.groupdetail?.name?.toLowerCase() === COMPANY ||
+              user?.groupdetail?.name?.toLowerCase() === LABOUR ||
+              user?.groupdetail?.name?.toLowerCase() === TRANSITOR
+                ? 'none'
+                : 'flex',
+          },
           tabBarLabel: 'Product',
           tabBarIcon: ({ size, color }) => (
-            <AntDesign size={size} color={color} name='hdd' />
+            <ProductSVG size={size} color={color} />
           ),
           ...HeaderOptions(navigation, notification),
         }}
@@ -57,9 +92,20 @@ export default function TabLayout() {
       <Tabs.Screen
         name='order'
         options={{
+          tabBarItemStyle: {
+            display:
+              user?.groupdetail?.name?.toLowerCase() === AGENT ||
+              user?.groupdetail?.name?.toLowerCase() === MANAGER ||
+              user?.groupdetail?.name?.toLowerCase() === COMPANY ||
+              user?.groupdetail?.name?.toLowerCase() === DRIVERS ||
+              user?.groupdetail?.name?.toLowerCase() === LABOUR ||
+              user?.groupdetail?.name?.toLowerCase() === TRANSITOR
+                ? 'none'
+                : 'flex',
+          },
           title: 'Order',
           tabBarIcon: ({ size, color }) => (
-            <AntDesign size={size} color={color} name='shoppingcart' />
+            <OrderSVG size={size} color={color} />
           ),
           ...HeaderOptions(navigation, notification),
         }}
@@ -67,9 +113,19 @@ export default function TabLayout() {
       <Tabs.Screen
         name='shipment'
         options={{
+          tabBarItemStyle: {
+            display:
+              user?.groupdetail?.name?.toLowerCase() === RENTER ||
+              user?.groupdetail?.name?.toLowerCase() === LABOUR ||
+              user?.groupdetail?.name?.toLowerCase() === AGENT ||
+              user?.groupdetail?.name?.toLowerCase() === MANAGER ||
+              user?.groupdetail?.name?.toLowerCase() === TRANSITOR
+                ? 'none'
+                : 'flex',
+          },
           title: 'Shipment',
           tabBarIcon: ({ size, color }) => (
-            <FontAwesome size={size} name='truck' color={color} />
+            <ShipmentSVG size={size} color={color} />
           ),
           ...HeaderOptions(navigation, notification),
         }}

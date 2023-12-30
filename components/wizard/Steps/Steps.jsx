@@ -14,6 +14,7 @@ import OrderTypes from '../../orders/orderTypes/OrderTypes'
 import {
   ALL,
   CUSTOMS,
+  INITIALIZED,
   SHIPMNET,
   SPACE,
   STORAGE,
@@ -30,7 +31,11 @@ import { useToast } from 'react-native-toast-notifications'
 import { getOrderTypes } from '../../../api/order/order'
 import NewOrder from '../../orders/New/NewOrder'
 import ShipmentType from '../../shipments/type/ShipmentType'
-import { getShipmentTypes } from '../../../api/shipment/shipment'
+import {
+  addShipment,
+  addTransits,
+  getShipmentTypes,
+} from '../../../api/shipment/shipment'
 import NewShipment from '../../shipments/New/NewShipment'
 import Info from '../../common/cards/info/Info'
 import { useRouter } from 'expo-router'
@@ -40,8 +45,9 @@ import HumanResource from '../../home/office/HumanResource'
 import WantStorage from '../../home/storageTypes/WantStorage'
 import SingleStorageType from '../../home/storageTypes/SingleStorageType'
 import { getAllProducts, getProductDetails } from '../../../api/product/product'
-import { addServiceOrders } from '../../../api/dashboard/wizard'
+import { addServiceOrders, addWizOrder } from '../../../api/dashboard/wizard'
 import * as FileSystem from 'expo-file-system'
+import { getDayDifference } from '../../common/utils'
 
 const Steps = ({ params }) => {
   const fetching = useSelector(selectIsFetching)
@@ -56,8 +62,13 @@ const Steps = ({ params }) => {
     current: 1,
     previous: 1,
   })
+  const [price, setPrice] = useState([])
   const [product, setProduct] = useState({ file: {} })
-  const [shipmentData, setShipmentData] = useState({ file: {} })
+  const [shipmentData, setShipmentData] = useState({
+    file: { clearance: [], insurance: [] },
+    sysInsur: false,
+    sysclear: false,
+  })
   const [orderData, setOrderData] = useState({})
   const [products, setProducts] = useState()
   const [transitQns, setTransitQns] = useState(false)
@@ -65,19 +76,20 @@ const Steps = ({ params }) => {
   const [shipQns, setShipQns] = useState()
   const [officeQns, setOfficeQns] = useState()
   const [HRQns, setHRQns] = useState()
+  const [HRids, setHRids] = useState([])
   const [portid, setPortid] = useState()
   const [portName, setPortName] = useState()
   const [agentId, setAgentId] = useState()
   const [type, setType] = useState()
   const [shipmentType, setShipmentType] = useState()
   const [warehouseId, setWarehouseId] = useState()
-  const [officeId, setOfficeId] = useState()
+  const [officeId, setOfficeId] = useState([])
   const [warehouse, setWarehouse] = useState()
   const [typeQns, setTypeQns] = useState()
   const [storage, setStorage] = useState()
   const [storageId, setStorageId] = useState()
   const [productId, setProductId] = useState()
-  const [storageSpace, setStorageSpace] = useState()
+  const [storageSpace, setStorageSpace] = useState({})
   const [selectedStorage, setSelectedStorage] = useState([])
   const [agree, setAgree] = useState(false)
   // All Services
@@ -322,7 +334,21 @@ const Steps = ({ params }) => {
               <View style={common.divider} />
               <NewOrder
                 order={orderData}
-                setOrder={setOrderData}
+                setOrder={(data) => {
+                  setOrderData(data)
+                  if (
+                    data?.startDate &&
+                    data?.endDate &&
+                    data?.space &&
+                    data?.rate
+                  ) {
+                    const diff = getDayDifference(
+                      data?.startDate,
+                      data?.endDate
+                    )
+                    setPrice([0, 0, diff * data?.space * data?.rate])
+                  }
+                }}
                 data={
                   type?.name?.toLowerCase() === WAREHOUSE ? warehouse : storage
                 }
@@ -350,7 +376,15 @@ const Steps = ({ params }) => {
           <CheckQuestion
             title={'Would You Like To Have An Office In Your Warehouse?'}
             state={officeQns}
-            setState={(value) => setOfficeQns(value)}
+            setState={(value) => {
+              if (!value) {
+                const prev = price
+                prev[page.current - 1] = prev[page.current - 2]
+                setPrice([...prev])
+                setOfficeId([])
+              }
+              setOfficeQns(value)
+            }}
           />
           {officeQns && (
             <View>
@@ -358,7 +392,27 @@ const Steps = ({ params }) => {
               <OfficeWithEquipments
                 warehouse={warehouse}
                 checked={officeId}
-                setChecked={setOfficeId}
+                setChecked={(data) => {
+                  if (data && orderData?.startDate && orderData?.endDate) {
+                    let total = 0
+                    const diff = getDayDifference(
+                      orderData?.startDate,
+                      orderData?.endDate
+                    )
+                    warehouse?.warehouseRecources?.map((item) => {
+                      if (data?.includes(item?.id)) {
+                        total += item?.officeDetail?.price
+                      }
+                    })
+
+                    total = total * diff + price[page.current - 2]
+                    const prev = price
+                    prev[page.current - 1] = total
+                    setPrice([...prev])
+                  }
+                  setOfficeId(data)
+                }}
+                checkedMulti
               />
             </View>
           )}
@@ -373,7 +427,15 @@ const Steps = ({ params }) => {
           <CheckQuestion
             title={'Would You Like To Have Human Resources For Your Warehouse?'}
             state={HRQns}
-            setState={(value) => setHRQns(value)}
+            setState={(value) => {
+              if (!value) {
+                const prev = price
+                prev[page.current - 1] = prev[page.current - 2]
+                setPrice([...prev])
+                setHRids([])
+              }
+              setHRQns(value)
+            }}
           />
           {HRQns && (
             <View>
@@ -381,7 +443,26 @@ const Steps = ({ params }) => {
               <HumanResource
                 warehouse={warehouse}
                 checked={HRQns}
-                setChecked={setHRQns}
+                setChecked={(data) => {
+                  if (data && orderData?.startDate && orderData?.endDate) {
+                    let total = 0
+                    const diff = getDayDifference(
+                      orderData?.startDate,
+                      orderData?.endDate
+                    )
+                    warehouse?.HumanResources?.map((item) => {
+                      if (data?.includes(item?.id)) {
+                        total += item?.officeDetail?.price
+                      }
+                    })
+                    total = total * diff + price[page.current - 2]
+                    const prev = price
+                    prev[page.current - 1] = total
+                    setPrice([...prev])
+                  }
+                  setHRids(data)
+                }}
+                checkedMulti
               />
             </View>
           )}
@@ -398,7 +479,16 @@ const Steps = ({ params }) => {
               'Would You Like To Have Add Storage Types To Your Warehouse?'
             }
             state={typeQns}
-            setState={(value) => setTypeQns(value)}
+            setState={(value) => {
+              if (!value) {
+                const prev = price
+                prev[page.current - 1] = prev[page.current - 2]
+                setPrice([...prev])
+                setSelectedStorage([])
+                setStorageSpace({})
+              }
+              setTypeQns(value)
+            }}
           />
           {typeQns && (
             <View>
@@ -408,9 +498,54 @@ const Steps = ({ params }) => {
                 <WantStorage
                   storages={warehouse?.warehousestoragemappings}
                   storageSpace={storageSpace}
-                  setStorageSpace={setStorageSpace}
+                  setStorageSpace={(data) => {
+                    if (data && orderData?.startDate && orderData?.endDate) {
+                      const diff = getDayDifference(
+                        orderData?.startDate,
+                        orderData?.endDate
+                      )
+                      let total = 0
+                      warehouse?.warehousestoragemappings?.map((item) => {
+                        if (
+                          selectedStorage?.includes(item?.id) &&
+                          data?.[item?.id]
+                        ) {
+                          total += item?.price_m2 * data?.[item?.id]
+                        }
+                      })
+                      total = total * diff + price[page.current - 2]
+                      const prev = price
+                      prev[page.current - 1] = total
+                      setPrice([...prev])
+                    }
+
+                    setStorageSpace(data)
+                  }}
                   checkIfExists={checkIfExists}
-                  setSelectedStorage={setSelectedStorage}
+                  setSelectedStorage={(data) => {
+                    if (data && orderData?.startDate && orderData?.endDate) {
+                      const diff = getDayDifference(
+                        orderData?.startDate,
+                        orderData?.endDate
+                      )
+                      let total = 0
+                      warehouse?.warehousestoragemappings?.map((item) => {
+                        if (
+                          data?.includes(item?.id) &&
+                          storageSpace?.[item?.id]
+                        ) {
+                          total += item?.price_m2 * storageSpace?.[item?.id]
+                        }
+                      })
+                      total = total * diff + price[page.current - 2]
+                      const prev = price
+                      prev[page.current - 1] = total
+                      setPrice([...prev])
+                    }
+
+                    setSelectedStorage(data)
+                  }}
+                  selectedStorage={selectedStorage}
                   wizard
                 />
               ) : (
@@ -431,6 +566,8 @@ const Steps = ({ params }) => {
       component: () => (
         <View>
           <Info
+            state={agree}
+            setState={setAgree}
             title={'This Is A Success Alert'}
             text={
               "You've completed your steps now you can finish your order once you agreed to our terms and conditions."
@@ -442,7 +579,6 @@ const Steps = ({ params }) => {
     },
   ]
   //
-
   // Shipment
   const shipment = [
     // 1
@@ -486,6 +622,10 @@ const Steps = ({ params }) => {
                 params={shipmentType}
                 wizard
                 data={product}
+                shipment={shipmentData}
+                setShipment={(data) => {
+                  setShipmentData(data)
+                }}
               />
             </View>
           )}
@@ -497,6 +637,8 @@ const Steps = ({ params }) => {
       component: () => (
         <View>
           <Info
+            state={agree}
+            setState={setAgree}
             title={'This Is A Success Alert'}
             text={
               "You've completed your steps now you can finish your order once you agreed to our terms and conditions."
@@ -560,6 +702,8 @@ const Steps = ({ params }) => {
       component: () => (
         <View>
           <Info
+            state={agree}
+            setState={setAgree}
             title={'This Is A Success Alert'}
             text={
               "You've completed your steps now you can finish your order once you agreed to our terms and conditions."
@@ -599,7 +743,7 @@ const Steps = ({ params }) => {
     const newEndDate = new Date(orderData?.startDate)
     const newStartDate = new Date(orderData?.endDate)
     // To calculate the time difference of two dates
-    let Difference_In_Time = newEndDate.getTime() - newStartDate.getTime()
+    let Difference_In_Time = newEndDate?.getTime() - newStartDate?.getTime()
 
     // To calculate the no. of days between two dates
     let Difference_In_Days = Math.round(Difference_In_Time / (1000 * 3600 * 24))
@@ -610,6 +754,9 @@ const Steps = ({ params }) => {
     let product_insurance = ''
     let product_clearance = ''
     let other_files = ''
+    let insurances = ''
+    let clearances = ''
+    let storage_spaces = [null, null, null, null, null]
     if (product?.file?.performa?.uri) {
       base64 = await FileSystem.readAsStringAsync(
         product?.file?.performa?.uri,
@@ -657,70 +804,120 @@ const Steps = ({ params }) => {
         'data:' + product?.file?.other?.mimeType + ';base64,' + base64,
       ]
     }
+    if (storageSpace) {
+      let index = storage_spaces.length - 1
 
-    addServiceOrders(
+      Object.entries(storageSpace)?.map(([key, value]) => {
+        if (selectedStorage?.includes(parseInt(key)) && index >= 0) {
+          console.log(index)
+          storage_spaces[index] = value
+          index--
+        }
+      })
+    }
+    addWizOrder(
       {
-        user: product?.user,
-        length: product?.dimension?.length,
-        width: product?.dimension?.width,
-        height: product?.dimension?.height,
-        available: '',
-        product_type: product?.type?.product_type_name,
-        category: product?.category?.category_name,
-        product_name: product?.name,
-        price_unit: product?.pricePer,
-        weight_unit: product?.weight,
-        weight: parseFloat(product?.qty) * parseFloat(product?.weight),
-        clerance_url: '',
-        sku: product?.SKU,
-        expire_date: product?.expireDate,
-        qr_code: null,
-        price: parseFloat(product?.qty) * parseFloat(product?.pricePer),
-        quantity: product?.qty,
-        clearances: product_clearance,
-        insurances: product_insurance,
-        proformas: performa,
-        otherfiles: other_files,
-        bols: bol,
-        shipmenttype: shipmentType?.type,
-        product: product?.name,
-        productqty: shipmentData?.quantity,
-        initialqty: product?.qty,
-        transitor: shipmentData?.transitor,
-        port: shipmentData?.port?.id,
-        port_name: shipmentData?.port?.name,
-        destination: '',
-        lat: shipmentData?.dropOff?.latitude,
-        lng: shipmentData?.dropOff?.longitude,
-        reason: '',
-        originlat: shipmentData?.pickUp?.latitude,
-        originlng: shipmentData?.pickUp?.longitude,
-        fraight_price: null,
-        company: shipmentData?.company,
-        vehicle: shipmentData?.vehicle,
-        vehicle_id: '',
-        buy_insurance: shipmentData?.sysInsur,
-        buy_clearance: false,
-        agent: '',
-        mapped_warehouse:
-          type?.name?.toLowerCase() === STORAGE ? orderData?.storage : '',
-        warehouse:
-          type?.name?.toLowerCase() === WAREHOUSE ? orderData?.warehouse : '',
-        storage: [],
-        order_type: type?.name?.toLowerCase(),
-        office: [],
-        office_name: '',
-        resource: [],
-        resource_name: '',
-        storage_spaces: [],
         customer: '',
         space_to_rent: orderData?.space,
-        starting_date: newStartDate.toISOString().split('T')[0],
-        end_date: newEndDate.toISOString().split('T')[0],
+        starting_date: newStartDate.getFullYear()
+          ? newStartDate?.toISOString()?.split('T')[0]
+          : '',
+        end_date: newEndDate.getFullYear()
+          ? newEndDate?.toISOString()?.split('T')[0]
+          : '',
         remaining_date: Difference_In_Days,
-        request_office: false,
-        request_hr: false,
-        request_storage: false,
+        order_type: type?.id,
+        status: INITIALIZED,
+        storage:
+          type?.name?.toLowerCase() === WAREHOUSE
+            ? selectedStorage?.length
+              ? selectedStorage
+              : []
+            : '',
+        office: [],
+        resource: [],
+        storage_spaces:
+          type?.name?.toLowerCase() === WAREHOUSE
+            ? [null, null, null, '5', '5']
+            : '',
+        equipments: [],
+        mapped_warehouse:
+          type?.name?.toLowerCase() === STORAGE ? storageId : '',
+        warehouse: type?.name?.toLowerCase() === WAREHOUSE ? warehouseId : '',
+      },
+      dispatch,
+      () => {
+        router.back()
+      },
+      toast
+    )
+
+    return
+  }
+
+  const addWizShip = async () => {
+    let insurances = ''
+    let clearances = ''
+    if (shipmentData?.file?.clearance && shipmentData?.file?.clearance.length) {
+      let promises = shipmentData?.file?.clearance.map(async (c) => {
+        if (c.uri) {
+          base64 = await FileSystem.readAsStringAsync(c.uri, {
+            encoding: 'base64',
+          })
+          return 'data:' + c?.mimeType + ';base64,' + base64
+        }
+      })
+      clearances = await Promise.all(promises)
+    }
+    if (shipmentData?.file?.insurance && shipmentData?.file?.insurance.length) {
+      promises = shipmentData?.file?.insurance.map(async (c) => {
+        if (c.uri) {
+          base64 = await FileSystem.readAsStringAsync(c.uri, {
+            encoding: 'base64',
+          })
+          return 'data:' + c?.mimeType + ';base64,' + base64
+        }
+      })
+      insurances = await Promise.all(promises)
+    }
+
+    addShipment(
+      {
+        shipmenttype: shipmentType?.id,
+        product: product?.id,
+        productqty: shipmentData?.quantity,
+        destination: '',
+        initialqty: product?.available,
+        lat: shipmentData?.dropOff?.latitude,
+        lng: shipmentData?.dropOff?.longitude,
+        originlat: shipmentData?.pickUp?.latitude,
+        originlng: shipmentData?.pickUp?.longitude,
+        reason: '',
+        fraight_price: null,
+        port: shipmentData?.port?.id,
+        company: shipmentData?.company,
+        vehicle: shipmentData?.vehicle ?? '',
+        transitor: shipmentData?.transitor,
+        insurances,
+        clearances,
+        buy_clearance: shipmentData?.sysclear,
+        buy_insurance: shipmentData?.sysInsur,
+        agent: shipmentData?.agent ?? '',
+      },
+      dispatch,
+      toast,
+      () => {
+        router.back()
+      }
+    )
+  }
+  const addWizTransit = async () => {
+    addTransits(
+      {
+        product: productId,
+        port: portid,
+        transitor: agentId,
+        request_transitor: '',
       },
       dispatch,
       toast,
@@ -731,6 +928,11 @@ const Steps = ({ params }) => {
   }
 
   useEffect(() => {
+    if (price[page.current - 1] === undefined && price[page.current - 2]) {
+      const prev = price
+      prev[page.current - 1] = price[page.current - 2]
+      setPrice([...prev])
+    }
     if (steps[page.current - 1] && steps[page.current - 1].skip) {
       setPage({
         current:
@@ -741,11 +943,10 @@ const Steps = ({ params }) => {
   }, [page])
 
   useEffect(() => {
-    if (shipmentType?.type && product?.id !== productId) {
+    if (productId) {
       getProductDetails(productId, dispatch, setProduct, toast)
     }
   }, [productId])
-
   useEffect(() => {
     if (
       !storageTypes &&
@@ -763,7 +964,7 @@ const Steps = ({ params }) => {
     if (!shipmentTypes && params?.type !== CUSTOMS) {
       getShipmentTypes(null, dispatch, setShipmentTypes, toast)
     }
-    if ((params?.type === SHIPMNET || params?.type === CUSTOMS) && !products) {
+    if (params?.type === SHIPMNET || params?.type === CUSTOMS) {
       getAllProducts(null, dispatch, setProducts, toast)
     }
   }, [])
@@ -794,8 +995,15 @@ const Steps = ({ params }) => {
             previous: page.current,
           })
         }}
+        price={price[page.current - 1]}
         onFinish={() => {
-          addWizard()
+          if (params?.type === SPACE) {
+            addWizard()
+          } else if (params?.type === SHIPMNET) {
+            addWizShip()
+          } else if (params?.type === CUSTOMS) {
+            addWizTransit()
+          }
         }}
       />
     </View>

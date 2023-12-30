@@ -36,9 +36,9 @@ const WizardWelcome = () => {
   const [total, setTotal] = useState()
   const navigation = useNavigation()
 
-  useEffect(() => {
-    getServiceOrders(null, dispatch, setServiceOrders, toast)
-  }, [refresh])
+  // useEffect(() => {
+  //   getServiceOrders(null, dispatch, setServiceOrders, toast)
+  // }, [refresh])
 
   useEffect(() => {
     if (serviceOrders?.count) {
@@ -101,7 +101,7 @@ const WizardWelcome = () => {
         to: CUSTOMS,
       })}
 
-      {
+      {/* {
         <ServiceOrders
           refresh={refresh}
           setRefresh={setRefresh}
@@ -110,7 +110,7 @@ const WizardWelcome = () => {
           setPage={setPage}
           total={total}
         />
-      }
+      } */}
     </ScrollView>
   )
 }

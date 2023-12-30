@@ -3,12 +3,21 @@ import { Drawer } from 'expo-router/drawer'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import CustomDrawer from '../../components/customDrawer/CustomDrawer'
 import { useState } from 'react'
-import { selectIsAdmin } from '../../features/data/dataSlice'
+import { selectData, selectIsAdmin } from '../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import PortWelcome from '../../components/ports/welcome/PortWelcome'
 import StaffWelcome from '../../components/staffs/welcome/StaffWelcome'
 import Customers from '../../components/staffs/Customers/Customers'
 import Schedule from '../../components/Schedule/Schedule'
+import {
+  AGENT,
+  COMPANY,
+  DRIVERS,
+  LABOUR,
+  MANAGER,
+  RENTER,
+  TRANSITOR,
+} from '../../constants/strings'
 
 // const DrawerNavigator = createDrawerNavigator().Navigator
 
@@ -23,6 +32,7 @@ export default function DrawerLayout() {
   const navigation = useNavigation()
   const [notification, setNotification] = useState(1)
   const isAdmin = useSelector(selectIsAdmin)
+  const user = useSelector(selectData)
 
   return (
     <Drawer
@@ -41,6 +51,8 @@ export default function DrawerLayout() {
         name='wizard'
         options={{
           title: 'Wizard',
+          drawerItemStyle: { display: 'none' },
+
           headerShown: true,
         }}
       />
@@ -56,15 +68,9 @@ export default function DrawerLayout() {
         name='dashboard'
         options={{
           headerShown: true,
-          title: 'Dashboard',
-        }}
-      />
+          drawerItemStyle: { display: 'none' },
 
-      <Drawer.Screen
-        name='transits'
-        options={{
-          title: 'Customes Transits',
-          headerShown: true,
+          title: 'Dashboard',
         }}
       />
 
@@ -78,7 +84,37 @@ export default function DrawerLayout() {
       <Drawer.Screen
         name='insurances'
         options={{
+          drawerItemStyle: {
+            display:
+              user?.groupdetail?.name?.toLowerCase() === RENTER ||
+              user?.groupdetail?.name?.toLowerCase() === DRIVERS ||
+              user?.groupdetail?.name?.toLowerCase() === LABOUR ||
+              user?.groupdetail?.name?.toLowerCase() === MANAGER ||
+              user?.groupdetail?.name?.toLowerCase() === COMPANY ||
+              user?.groupdetail?.name?.toLowerCase() === TRANSITOR
+                ? 'none'
+                : 'flex',
+          },
           title: 'Insurances',
+          headerShown: true,
+        }}
+      />
+      <Drawer.Screen
+        name='transits'
+        options={{
+          drawerItemStyle: {
+            display:
+              user?.groupdetail?.name?.toLowerCase() === RENTER ||
+              user?.groupdetail?.name?.toLowerCase() === DRIVERS ||
+              user?.groupdetail?.name?.toLowerCase() === LABOUR ||
+              user?.groupdetail?.name?.toLowerCase() === AGENT ||
+              user?.groupdetail?.name?.toLowerCase() === MANAGER ||
+              user?.groupdetail?.name?.toLowerCase() === COMPANY
+                ? 'none'
+                : 'flex',
+          },
+
+          title: 'Customes Transits',
           headerShown: true,
         }}
       />
@@ -86,6 +122,8 @@ export default function DrawerLayout() {
         name='reports'
         options={{
           title: 'Reports & Analytics',
+          drawerItemStyle: { display: 'none' },
+
           headerShown: true,
         }}
       />
@@ -95,7 +133,7 @@ export default function DrawerLayout() {
         options={{
           title: 'Ports',
           headerShown: true,
-          drawerItemStyle: { display: !isAdmin ? 'none' : 'flex' },
+          drawerItemStyle: { display: 'none' },
         }}
       />
       <Drawer.Screen
@@ -103,7 +141,7 @@ export default function DrawerLayout() {
         options={{
           title: 'User Groups',
           headerShown: true,
-          drawerItemStyle: { display: !isAdmin ? 'none' : 'flex' },
+          drawerItemStyle: { display: 'none' },
         }}
       />
       <Drawer.Screen
@@ -111,7 +149,7 @@ export default function DrawerLayout() {
         options={{
           title: 'Customers',
           headerShown: true,
-          drawerItemStyle: { display: !isAdmin ? 'none' : 'flex' },
+          drawerItemStyle: { display: 'none' },
         }}
       />
       <Drawer.Screen
@@ -119,7 +157,7 @@ export default function DrawerLayout() {
         options={{
           title: 'Schedule A Visit',
           headerShown: true,
-          drawerItemStyle: { display: isAdmin ? 'none' : 'flex' },
+          drawerItemStyle: { display: 'none' },
         }}
       />
 

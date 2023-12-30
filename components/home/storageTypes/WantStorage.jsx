@@ -43,13 +43,17 @@ const WantStorage = ({
               </Text>
               <Text style={detailsStyles.type}>
                 <Text style={detailsStyles.label}>Price/{mSQUARE}: </Text>
-                {item?.totalprice + ' Birr'}
+                {item?.price_m2 + ' Birr'}
               </Text>
               <Input
                 type={NUMBER}
                 label={'How much space do you want to use ?'}
-                state={storageSpace}
-                setState={setStorageSpace}
+                state={storageSpace[item?.id]}
+                setState={(value) => {
+                  const prev = storageSpace
+                  prev[item?.id] = value
+                  setStorageSpace({ ...prev })
+                }}
               />
               <View style={newOrderStyles.switchContainer}>
                 <Switch
@@ -58,10 +62,15 @@ const WantStorage = ({
                   ios_backgroundColor='#3e3e3e'
                   onValueChange={
                     !checkIfExists(item?.id, STORAGE)
-                      ? () => setSelectedStorage([...selectedStorage, item?.id])
+                      ? () =>
+                          setSelectedStorage(
+                            selectedStorage
+                              ? [...selectedStorage, item?.id]
+                              : [item?.id]
+                          )
                       : () =>
                           setSelectedStorage(
-                            selectedStorage.filter((id) => id != item?.id)
+                            selectedStorage?.filter((id) => id != item?.id)
                           )
                   }
                   value={checkIfExists(item?.id, STORAGE)}

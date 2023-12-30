@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { API } from '../../constants/strings'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export const loginApi = (
   dataToSend,
@@ -75,4 +76,43 @@ export const signUpApi = (
         type: 'danger',
       })
     })
+}
+
+export const getCurrentUser = (dispatchFalse, toast, setData) => {
+  AsyncStorage.getItem('token').then((token) => {
+    if (token) {
+      axios
+        .get(API + '/currentuser/current_user/', {
+          headers: {
+            Authorization: 'Bearer ' + token,
+          },
+        })
+        .then((responseJson) => {
+          //Hide Loader
+          dispatchFalse()
+          // If server response message same as Data Matched
+          if (responseJson.data?.id) {
+            setData(responseJson.data)
+          } else {
+            if (toast.show) {
+              toast.show('Unable To Get User Data', {
+                type: 'danger',
+              })
+            }
+          }
+        })
+        .catch((error) => {
+          //Hide Loader
+          dispatchFalse()
+          console.log(error)
+          if (toast.show) {
+            toast.show('Unable To Get User Data', {
+              type: 'danger',
+            })
+          }
+        })
+    } else {
+      dispatchFalse()
+    }
+  })
 }

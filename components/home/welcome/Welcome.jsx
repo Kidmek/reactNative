@@ -3,7 +3,6 @@ import { View, ScrollView, RefreshControl } from 'react-native'
 import styles from '../../common/styles/common.style'
 import { warehouseTypes } from '../../../constants/strings'
 import Warehouse from '../warehouse/Warehouse'
-import Managed from '../managed/Managed'
 import Office from '../office/Office'
 import OfficeEquipments from '../officeEquipments/OfficeEquipments'
 import StorageType from '../storageTypes/StorageTypes'
@@ -13,8 +12,10 @@ import {
   selectIsFetching,
 } from '../../../features/data/dataSlice'
 import Search from '../../common/search/Search'
-import Header from '../../common/header/Header'
 import CustomTabs from '../../common/header/CustomTabs'
+import SpaceSVG from '../../../assets/icons/space'
+import OfficeSVG from '../../../assets/icons/office'
+import EquipmentSVG from '../../../assets/icons/equipment'
 
 const Welcome = () => {
   const [searchQuery, setSearchQuery] = useState()
@@ -23,7 +24,6 @@ const Welcome = () => {
   const [refresh, setRefresh] = useState(false)
 
   const isAdmin = useSelector(selectIsAdmin)
-
   const body = () => {
     switch (activeType) {
       case warehouseTypes[0]:
@@ -36,6 +36,7 @@ const Welcome = () => {
         return <StorageType refresh={refresh} />
     }
   }
+
   return (
     <ScrollView
       style={styles.welcomeContainer}
@@ -57,6 +58,12 @@ const Welcome = () => {
             data={warehouseTypes}
             setActiveType={setActiveType}
             activeType={activeType}
+            iconData={[
+              (size, color) => <SpaceSVG color={color} size={size} />,
+              (size, color) => <OfficeSVG color={color} size={size} />,
+              (size, color) => <EquipmentSVG color={color} size={size} />,
+              (size, color) => <SpaceSVG color={color} size={size} />,
+            ]}
           />
         )}
       </View>

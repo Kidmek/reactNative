@@ -4,12 +4,17 @@ import * as DocumentPickerApi from 'expo-document-picker'
 import styles from './input.style'
 import { COLORS, FONT, SIZES } from '../../../constants'
 
-const DocumentPicker = ({ title, setState, name }) => {
+const DocumentPicker = ({ title, setState, name, multi }) => {
   const pickDocument = async () => {
-    let result = await DocumentPickerApi.getDocumentAsync({})
+    let result = await DocumentPickerApi.getDocumentAsync({
+      multiple: true,
+    })
     if (result.assets?.length) {
-      console.log(result.assets[0])
-      setState(result.assets[0])
+      if (multi) {
+        setState(result.assets)
+      } else {
+        setState(result.assets[0])
+      }
     }
   }
   return (
@@ -26,6 +31,7 @@ const DocumentPicker = ({ title, setState, name }) => {
         <Pressable
           onPress={pickDocument}
           style={{
+            height: '100%',
             backgroundColor: COLORS.primary,
             paddingVertical: SIZES.small,
             paddingHorizontal: SIZES.medium,
@@ -33,7 +39,14 @@ const DocumentPicker = ({ title, setState, name }) => {
             borderTopLeftRadius: SIZES.xSmall,
           }}
         >
-          <Text style={{ color: 'white', fontFamily: FONT.regular }}>
+          <Text
+            style={{
+              color: 'white',
+              fontFamily: FONT.regular,
+              textAlignVertical: 'center',
+              flex: 1,
+            }}
+          >
             Select Files
           </Text>
         </Pressable>

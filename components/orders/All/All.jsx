@@ -22,7 +22,7 @@ const All = ({ refresh }) => {
   }, [refresh])
   return (
     <View style={styles.container}>
-      <AddNew
+      {/* <AddNew
         title={'New Order'}
         page={{
           name: 'details',
@@ -31,7 +31,7 @@ const All = ({ refresh }) => {
             choose: true,
           },
         }}
-      />
+      /> */}
 
       {orders?.results?.map((item, index) => {
         return (

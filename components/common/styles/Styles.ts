@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { COLORS, FONT } from '../../../constants'
+import { COLORS, FONT, SIZES } from '../../../constants'
 
 export const defaultStyles = StyleSheet.create({
   container: {
@@ -36,10 +36,25 @@ export const defaultStyles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#fff',
     paddingVertical: 10,
+    backgroundColor: COLORS.pureWhite,
     paddingHorizontal: 20,
     borderTopColor: COLORS.grey,
     borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  inputFooter: {
+    alignSelf: 'flex-end',
+    height: 80,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  additionalTitle: {
+    fontFamily: FONT.bold,
+    fontSize: SIZES.medium,
+    textAlign: 'center',
+    marginVertical: SIZES.medium,
   },
 })

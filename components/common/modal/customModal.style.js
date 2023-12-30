@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   modalView: {
     margin: 20,
     backgroundColor: 'white',
-    borderRadius: 20,
+    borderRadius: SIZES.large,
     padding: 35,
     alignItems: 'center',
     shadowColor: '#000',
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: SIZES.xSmall,
     paddingVertical: SIZES.xSmall,
+    borderRadius: SIZES.large,
   },
   btnContainer: {
     flexDirection: 'row',

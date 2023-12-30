@@ -33,7 +33,7 @@ const All = ({ refresh, wizard, checked, setChecked, data }) => {
     <ActivityIndicator color={COLORS.primary} size={SIZES.xxLarge} />
   ) : (
     <View style={styles.container}>
-      {!wizard && (
+      {/* {!wizard && (
         <AddNew
           title={'New Product'}
           page={{
@@ -41,7 +41,7 @@ const All = ({ refresh, wizard, checked, setChecked, data }) => {
             screen: 'product',
           }}
         />
-      )}
+      )} */}
 
       {products?.results?.map((item, index) => {
         return (

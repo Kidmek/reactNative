@@ -14,6 +14,9 @@ import Transportations from '../transportations/Transportations'
 import ShipmentType from '../type/ShipmentType'
 import Methods from '../methods/Methods'
 import CustomTabs from '../../common/header/CustomTabs'
+import ShipmentSVG from '../../../assets/icons/shipment'
+import ShipmentTypeSVG from '../../../assets/icons/shipment-type'
+import MethodSVG from '../../../assets/icons/methods'
 
 const ShipmentWelcome = () => {
   const [searchQuery, setSearchQuery] = useState()
@@ -56,6 +59,13 @@ const ShipmentWelcome = () => {
             data={shipmentTypes}
             setActiveType={setActiveType}
             activeType={activeType}
+            iconData={[
+              (size, color) => <ShipmentSVG color={color} size={size} />,
+              (size, color) => <ShipmentSVG color={color} size={size} />,
+
+              (size, color) => <ShipmentTypeSVG color={color} size={size} />,
+              (size, color) => <MethodSVG color={color} size={size} />,
+            ]}
           />
         )}
       </View>

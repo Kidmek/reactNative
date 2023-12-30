@@ -48,34 +48,13 @@ const warehouse = () => {
     // Validation
     if (images && images.length) {
       const pictures = images.map(async (image) => {
-        let filename = image.split('/').pop()
-
-        let match = /\.(\w+)$/.exec(filename)
-        let type = match ? `image/${match[1]}` : `image`
-        const base64 = await FileSystem.readAsStringAsync(images[0], {
+        const base64 = await FileSystem.readAsStringAsync(image?.uri, {
           encoding: 'base64',
         })
-        return 'data:' + type + ';base64,' + base64
+        return 'data:' + image?.mimeType + ';base64,' + base64
       })
       const resolved = await Promise.all(pictures)
-      console.log({
-        lat: pickedLoction?.latitude,
-        lng: pickedLoction?.longitude,
-        price_m2: pricePer,
-        region,
-        sub_city: subCity,
-        warehouse_name: name,
-        warehouse_meta: description,
-        wereda,
-        zone,
-        space,
-        region,
-        storage_space: space,
-        available_space: space,
-        city,
-        full_price: price,
-        resolved: resolved[0].slice(0, 10),
-      })
+
       addWarehouse(
         {
           lat: parseFloat(pickedLoction?.latitude),
@@ -93,8 +72,8 @@ const warehouse = () => {
           available_space: space,
           city,
           full_price: parseFloat(price),
-          images_url: resolved,
-          image: [resolved[0]],
+          image: resolved,
+          images_url: [resolved[0]],
         },
         dispatch,
         toast,
@@ -114,7 +93,7 @@ const warehouse = () => {
       selectionLimit: 6,
     })
     if (!result.canceled && result.assets.length) {
-      setImages([...images, result.assets[0].uri])
+      setImages([...images, result.assets[0]])
     }
   }
 
@@ -136,7 +115,6 @@ const warehouse = () => {
       getStorages(null, dispatch, setStorages, toast)
     }
   }, [])
-
   return (
     <ScrollView style={styles.container}>
       <View style={styles.header}>
@@ -262,7 +240,7 @@ const warehouse = () => {
           <ScrollView horizontal>
             {images.map((image, index) => (
               <View key={index} style={styles.imagesWrapper}>
-                <Image style={styles.image} source={{ uri: image }} />
+                <Image style={styles.image} source={{ uri: image?.uri }} />
                 <TouchableOpacity
                   style={styles.minusIcon}
                   onPress={() => {

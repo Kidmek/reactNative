@@ -32,15 +32,19 @@ const styles = StyleSheet.create({
     fontSize: SIZES.medium,
     fontFamily: FONT.bold,
   },
-  cardDetailValue: (vertical) => {
+  cardDetailValue: (vertical, status) => {
     return {
       fontSize: SIZES.medium,
       fontFamily: FONT.regular,
-      flex: 1,
-      color: COLORS.gray,
+      flex: status ? 0 : 1,
+      color: status ? 'white' : COLORS.gray,
       textAlign: vertical ? 'auto' : 'right',
       textTransform: 'capitalize',
       marginLeft: vertical ? SIZES.medium : 0,
+      paddingVertical: status ? SIZES.xxSmall : 0,
+      paddingHorizontal: status ? SIZES.xSmall : 0,
+      backgroundColor: status ? status : 'transparent',
+      borderRadius: status ? SIZES.medium : 0,
     }
   },
   divider: {

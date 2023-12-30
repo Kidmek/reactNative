@@ -1,0 +1,101 @@
+import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
+import React, { useState } from 'react'
+import { BlurView } from 'expo-blur'
+import Animated, { SlideInDown } from 'react-native-reanimated'
+import { defaultStyles } from '../../components/common/styles/Styles'
+import Input from '../../components/common/input/Input'
+import DocumentPicker from '../../components/common/input/DocumentPicker'
+import styles from '../../components/common/styles/warehouse.style'
+import { SIZES } from '../../constants'
+import { store } from '../../store'
+import { useToast } from 'react-native-toast-notifications'
+import { addTransCompany } from '../../api/shipment/shipment'
+import * as FileSystem from 'expo-file-system'
+import { selectData } from '../../features/data/dataSlice'
+import { useSelector } from 'react-redux'
+import { router } from 'expo-router'
+const Company = () => {
+  const dispatch = store.dispatch
+  const toast = useToast()
+  //
+
+  //
+  const [companyname, setCompanyname] = useState()
+  const [licenceFile, setLicenceFile] = useState()
+  //
+  const user = useSelector(selectData)
+  const onAdd = async () => {
+    const files = licenceFile?.map(async (file) => {
+      const base64 = await FileSystem.readAsStringAsync(file?.uri, {
+        encoding: 'base64',
+      })
+      return 'data:' + file?.mimeType + ';base64,' + base64
+    })
+    const resolved = await Promise.all(files)
+    addTransCompany(
+      {
+        id: user?.id,
+
+        licenses: resolved,
+        companyname,
+      },
+      user?.id,
+      dispatch,
+      toast,
+      () => {
+        router.back()
+      }
+    )
+  }
+
+  return (
+    <BlurView style={{ flex: 1 }} intensity={100} tint='light'>
+      <ScrollView>
+        <Text style={defaultStyles.additionalTitle}>
+          Additional Required Informations
+        </Text>
+        <View style={styles.divider} />
+        <View style={{ paddingHorizontal: SIZES.medium }}>
+          <Input
+            label={'Company Name'}
+            state={companyname}
+            setState={setCompanyname}
+          />
+          <DocumentPicker
+            title={'Upload Business License'}
+            name={licenceFile
+              ?.map((file) => file?.name + ',\n\n')
+              ?.toString()
+              ?.trim()}
+            setState={(asset) => {
+              setLicenceFile(asset)
+            }}
+            multi
+          />
+        </View>
+      </ScrollView>
+      {/* Footer */}
+      <Animated.View style={defaultStyles.inputFooter}>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+          }}
+        >
+          <TouchableOpacity
+            style={[
+              defaultStyles.btn,
+              { paddingRight: 20, paddingLeft: 20, alignSelf: 'flex-end' },
+            ]}
+            onPress={() => onAdd()}
+          >
+            <Text style={defaultStyles.btnText}>Submit</Text>
+          </TouchableOpacity>
+        </View>
+      </Animated.View>
+    </BlurView>
+  )
+}
+
+export default Company
