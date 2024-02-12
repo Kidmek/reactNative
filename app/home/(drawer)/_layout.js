@@ -20,6 +20,8 @@ import SpaceSVG from '../../../assets/icons/space'
 import ProductSVG from '../../../assets/icons/product'
 import OrderSVG from '../../../assets/icons/order'
 import ShipmentSVG from '../../../assets/icons/shipment'
+import InsuranceSVG from '../../../assets/icons/insurance'
+import TransitSVG from '../../../assets/icons/transit'
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -60,10 +62,23 @@ export default function TabLayout() {
           tabBarLabel:
             user?.groupdetail?.name?.toLowerCase() === RENTER
               ? 'Warehouse'
+              : user?.groupdetail?.name?.toLowerCase() === TRANSITOR
+              ? 'Transit'
+              : user?.groupdetail?.name?.toLowerCase() === DRIVERS
+              ? 'Shipment'
+              : user?.groupdetail?.name?.toLowerCase() === AGENT
+              ? 'Insurance'
               : 'Home',
-          tabBarIcon: ({ size, color }) => (
-            <SpaceSVG size={size} color={color} />
-          ),
+          tabBarIcon: ({ size, color }) =>
+            user?.groupdetail?.name?.toLowerCase() === TRANSITOR ? (
+              <TransitSVG size={size} color={color} />
+            ) : user?.groupdetail?.name?.toLowerCase() === DRIVERS ? (
+              <ShipmentSVG size={size} color={color} />
+            ) : user?.groupdetail?.name?.toLowerCase() === AGENT ? (
+              <InsuranceSVG size={size} color={color} />
+            ) : (
+              <SpaceSVG size={size} color={color} />
+            ),
           ...HeaderOptions(navigation, notification),
         }}
       />
@@ -115,6 +130,7 @@ export default function TabLayout() {
         options={{
           tabBarItemStyle: {
             display:
+              user?.groupdetail?.name?.toLowerCase() === DRIVERS ||
               user?.groupdetail?.name?.toLowerCase() === RENTER ||
               user?.groupdetail?.name?.toLowerCase() === LABOUR ||
               user?.groupdetail?.name?.toLowerCase() === AGENT ||

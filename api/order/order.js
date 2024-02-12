@@ -18,6 +18,16 @@ export const getOrders = (
     setGetting ?? null
   )
 }
+export const getOrderDetails = (params, dispatchFalse, setData, toast) => {
+  getSkeleton(
+    '/order/' + params + '/',
+    null,
+    dispatchFalse,
+    setFetching,
+    setData,
+    toast
+  )
+}
 export const addOrder = (data, dispatchFalse, toast, onSuccess) => {
   postSkeleton(
     '/order/',

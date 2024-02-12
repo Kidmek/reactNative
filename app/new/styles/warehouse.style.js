@@ -81,6 +81,13 @@ const styles = StyleSheet.create({
     right: '3.5%',
     top: '12%',
   },
+  divider: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: COLORS.grey,
+    marginVertical: 16,
+    marginHorizontal: -80,
+    width: '200%',
+  },
 })
 
 export default styles

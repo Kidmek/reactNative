@@ -10,11 +10,11 @@ const newOrderStyles = StyleSheet.create({
     paddingVertical: SIZES.medium,
     paddingHorizontal: SIZES.xxLarge,
     borderRadius: SIZES.small,
-    backgroundColor: COLORS.azure,
+    backgroundColor: COLORS.circleAndInfo,
     ...SHADOWS.medium,
-    shadowColor: 'blue',
+    shadowColor: COLORS.circleAndInfo,
     borderWidth: 1,
-    borderColor: COLORS.blue,
+    borderColor: COLORS.circleAndInfo,
   },
   singleInfoContainer: {
     flex: 1,
@@ -24,11 +24,11 @@ const newOrderStyles = StyleSheet.create({
     width: '100%',
   },
   singleValue: {
-    color: COLORS.blue,
+    color: COLORS.pureWhite,
     fontFamily: FONT.regular,
   },
   singleLabel: {
-    color: COLORS.blue,
+    color: COLORS.pureWhite,
     fontFamily: FONT.bold,
   },
   typeContainer: {},

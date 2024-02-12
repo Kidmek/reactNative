@@ -5,10 +5,11 @@ import StepHeader from './StepsHeader'
 import StepFooter from './StepFooter'
 import NewProduct from '../../products/New/NewProduct'
 import Products from '../../products/all/All'
+import commonStyles from '../../common/styles/common.style'
 import CheckQuestion from '../../common/checkQuestion/CheckQuestion'
 import All from '../../ports/All/All'
 import { ScrollView } from 'react-native-gesture-handler'
-import { SIZES } from '../../../constants'
+import { COLORS, SIZES } from '../../../constants'
 import Agent from '../../transits/Agent/Agent'
 import OrderTypes from '../../orders/orderTypes/OrderTypes'
 import {
@@ -25,8 +26,11 @@ import StorageType from '../../home/storageTypes/StorageTypes'
 import { useSelector } from 'react-redux'
 import { selectIsFetching } from '../../../features/data/dataSlice'
 import { store } from '../../../store'
-import { getMappedStorages } from '../../../api/storage/storage'
-import { getWarehouses } from '../../../api/warehouse/warehouse'
+import { getMappedStorages, getStorages } from '../../../api/storage/storage'
+import {
+  getStorageSpaces,
+  getWarehouses,
+} from '../../../api/warehouse/warehouse'
 import { useToast } from 'react-native-toast-notifications'
 import { getOrderTypes } from '../../../api/order/order'
 import NewOrder from '../../orders/New/NewOrder'
@@ -35,6 +39,7 @@ import {
   addShipment,
   addTransits,
   getShipmentTypes,
+  getTransportationMethods,
 } from '../../../api/shipment/shipment'
 import NewShipment from '../../shipments/New/NewShipment'
 import Info from '../../common/cards/info/Info'
@@ -48,6 +53,11 @@ import { getAllProducts, getProductDetails } from '../../../api/product/product'
 import { addServiceOrders, addWizOrder } from '../../../api/dashboard/wizard'
 import * as FileSystem from 'expo-file-system'
 import { getDayDifference } from '../../common/utils'
+import { getAllGroups } from '../../../api/users'
+import WizStorage from '../../home/storageTypes/WizStorage'
+import SingleCard from '../../common/cards/single/SingleCard'
+import Checkbox from 'expo-checkbox'
+import Vehicles from '../../shipments/transportations/Vehicles'
 
 const Steps = ({ params }) => {
   const fetching = useSelector(selectIsFetching)
@@ -58,6 +68,7 @@ const Steps = ({ params }) => {
   const [warehouses, setWarehouses] = useState()
   const [orderTypes, setOrderTypes] = useState()
   const [shipmentTypes, setShipmentTypes] = useState()
+  const [transTypes, setTransTypes] = useState()
   const [page, setPage] = useState({
     current: 1,
     previous: 1,
@@ -70,20 +81,34 @@ const Steps = ({ params }) => {
     sysclear: false,
   })
   const [orderData, setOrderData] = useState({})
+  const [requests, setRequests] = useState({
+    request_equipment: false,
+    request_hr: false,
+    request_office: false,
+    request_storage: false,
+  })
   const [products, setProducts] = useState()
   const [transitQns, setTransitQns] = useState(false)
   const [rentQns, setRentQns] = useState()
   const [shipQns, setShipQns] = useState()
   const [officeQns, setOfficeQns] = useState()
   const [HRQns, setHRQns] = useState()
-  const [HRids, setHRids] = useState([])
+  const [groups, setGroups] = useState()
+  const [storages, setStorages] = useState()
+  const [HRids, setHRids] = useState({
+    ids: [],
+    values: {},
+  })
   const [portid, setPortid] = useState()
   const [portName, setPortName] = useState()
   const [agentId, setAgentId] = useState()
   const [type, setType] = useState()
   const [shipmentType, setShipmentType] = useState()
   const [warehouseId, setWarehouseId] = useState()
-  const [officeId, setOfficeId] = useState([])
+  const [office, setOffice] = useState({
+    officeId: [],
+    equipmentId: [],
+  })
   const [warehouse, setWarehouse] = useState()
   const [typeQns, setTypeQns] = useState()
   const [storage, setStorage] = useState()
@@ -92,6 +117,7 @@ const Steps = ({ params }) => {
   const [storageSpace, setStorageSpace] = useState({})
   const [selectedStorage, setSelectedStorage] = useState([])
   const [agree, setAgree] = useState(false)
+  const [error, setError] = useState([])
   // All Services
   const allServices = [
     // 1
@@ -227,7 +253,6 @@ const Steps = ({ params }) => {
                 wizard
                 checked={shipmentType}
                 setChecked={(value) => {
-                  console.log(value)
                   setShipmentType(value)
                 }}
                 data={shipmentTypes}
@@ -280,6 +305,7 @@ const Steps = ({ params }) => {
           checked={type}
           setChecked={(value) => {
             setType(value)
+            setPageError(null, null)
             setWarehouseId(null)
             setStorageId(null)
           }}
@@ -297,7 +323,11 @@ const Steps = ({ params }) => {
                 fetching={fetching}
                 wizard
                 checked={warehouseId}
-                setChecked={setWarehouseId}
+                setChecked={(value) => {
+                  setWarehouseId(value)
+                  setPageError(null, null)
+                  reset()
+                }}
                 data={warehouses}
               />
             ) : (
@@ -305,7 +335,11 @@ const Steps = ({ params }) => {
                 fetching={fetching}
                 wizard
                 checked={storageId}
-                setChecked={setStorageId}
+                setChecked={(value) => {
+                  reset()
+                  setStorageId(value)
+                  setPageError(null, null)
+                }}
                 data={storageTypes}
               />
             )}
@@ -336,17 +370,44 @@ const Steps = ({ params }) => {
                 order={orderData}
                 setOrder={(data) => {
                   setOrderData(data)
+                  console.log(type?.name?.toLowerCase() === STORAGE)
                   if (
+                    type?.name?.toLowerCase() === STORAGE &&
+                    !(data.space > 0)
+                  ) {
+                    setPageError('Specify space to rent', 'warning')
+                  } else if (
+                    parseFloat(data?.space) >
+                    parseFloat(storage?.available_space)
+                  ) {
+                    setPageError('Exceeded Total Available Space', 'warning')
+                  } else if (!data?.startDate || !data?.endDate) {
+                    setPageError('Select Start And End Date', 'warning')
+                  } else if (
                     data?.startDate &&
                     data?.endDate &&
-                    data?.space &&
-                    data?.rate
+                    ((type?.name?.toLowerCase() === WAREHOUSE &&
+                      warehouse?.available_space &&
+                      warehouse?.price_m2) ||
+                      (data?.space && storage?.price_m2))
                   ) {
                     const diff = getDayDifference(
                       data?.startDate,
                       data?.endDate
                     )
-                    setPrice([0, 0, diff * data?.space * data?.rate])
+                    const space =
+                      type?.name?.toLowerCase() === WAREHOUSE
+                        ? warehouse?.available_space
+                        : data.space
+                    const price =
+                      type?.name?.toLowerCase() === WAREHOUSE
+                        ? warehouse?.price_m2
+                        : storage?.price_m2
+                    setPrice([0, 0, space * price * diff])
+
+                    setPageError(null, null)
+                  } else {
+                    setPrice([0, 0, 0])
                   }
                 }}
                 data={
@@ -381,7 +442,10 @@ const Steps = ({ params }) => {
                 const prev = price
                 prev[page.current - 1] = prev[page.current - 2]
                 setPrice([...prev])
-                setOfficeId([])
+                setOffice({
+                  officeId: [],
+                  equipmentId: [],
+                })
               }
               setOfficeQns(value)
             }}
@@ -390,8 +454,16 @@ const Steps = ({ params }) => {
             <View>
               <View style={common.divider} />
               <OfficeWithEquipments
+                reqOffice={requests.request_office}
+                setOfficeReq={(value) => {
+                  setRequests({ ...requests, request_office: value })
+                }}
+                reqEquipment={requests.request_equipment}
+                setEquipmentReq={(value) => {
+                  setRequests({ ...requests, request_equipment: value })
+                }}
                 warehouse={warehouse}
-                checked={officeId}
+                checked={office}
                 setChecked={(data) => {
                   if (data && orderData?.startDate && orderData?.endDate) {
                     let total = 0
@@ -400,8 +472,13 @@ const Steps = ({ params }) => {
                       orderData?.endDate
                     )
                     warehouse?.warehouseRecources?.map((item) => {
-                      if (data?.includes(item?.id)) {
+                      if (data?.officeId?.includes(item?.id)) {
                         total += item?.officeDetail?.price
+                        item?.officeDetail?.equipments?.map((eq) => {
+                          if (data?.equipmentId?.includes(eq?.id)) {
+                            total += eq?.price
+                          }
+                        })
                       }
                     })
 
@@ -410,7 +487,7 @@ const Steps = ({ params }) => {
                     prev[page.current - 1] = total
                     setPrice([...prev])
                   }
-                  setOfficeId(data)
+                  setOffice(data)
                 }}
                 checkedMulti
               />
@@ -432,7 +509,10 @@ const Steps = ({ params }) => {
                 const prev = price
                 prev[page.current - 1] = prev[page.current - 2]
                 setPrice([...prev])
-                setHRids([])
+                setHRids({
+                  ids: [],
+                  values: {},
+                })
               }
               setHRQns(value)
             }}
@@ -441,26 +521,51 @@ const Steps = ({ params }) => {
             <View>
               <View style={common.divider} />
               <HumanResource
-                warehouse={warehouse}
-                checked={HRQns}
+                reqHR={requests.request_hr}
+                setHRReq={(value) => {
+                  setRequests({ ...requests, request_hr: value })
+                }}
+                checked={HRids?.ids}
+                groups={groups}
+                values={HRids?.values}
                 setChecked={(data) => {
-                  if (data && orderData?.startDate && orderData?.endDate) {
-                    let total = 0
-                    const diff = getDayDifference(
-                      orderData?.startDate,
-                      orderData?.endDate
-                    )
-                    warehouse?.HumanResources?.map((item) => {
-                      if (data?.includes(item?.id)) {
-                        total += item?.officeDetail?.price
-                      }
-                    })
-                    total = total * diff + price[page.current - 2]
-                    const prev = price
-                    prev[page.current - 1] = total
-                    setPrice([...prev])
+                  // if (data && orderData?.startDate && orderData?.endDate) {
+                  //   let total = 0
+                  //   const diff = getDayDifference(
+                  //     orderData?.startDate,
+                  //     orderData?.endDate
+                  //   )
+                  //   warehouse?.HumanResources?.map((item) => {
+                  //     if (data?.includes(item?.id)) {
+                  //       total += item?.officeDetail?.price
+                  //     }
+                  //   })
+                  //   total = total * diff + price[page.current - 2]
+                  //   const prev = price
+                  //   prev[page.current - 1] = total
+                  //   setPrice([...prev])
+                  // }
+
+                  if (
+                    data?.filter((single) => !(HRids.values[single] > 0))
+                      ?.length
+                  ) {
+                    setPageError('Enter a Quantity for selected HRs', 'warning')
+                  } else {
+                    setPageError(null, null)
                   }
-                  setHRids(data)
+
+                  setHRids({ ...HRids, ids: data })
+                }}
+                setValues={(data) => {
+                  if (
+                    HRids?.ids?.filter((single) => !(data[single] > 0))?.length
+                  ) {
+                    setPageError('Enter a Quantity for selected HRs', 'warning')
+                  } else {
+                    setPageError(null, null)
+                  }
+                  setHRids({ ...HRids, values: data })
                 }}
                 checkedMulti
               />
@@ -493,10 +598,9 @@ const Steps = ({ params }) => {
           {typeQns && (
             <View>
               <View style={common.divider} />
-              {warehouse?.warehousestoragemappings &&
-              warehouse?.warehousestoragemappings.length ? (
-                <WantStorage
-                  storages={warehouse?.warehousestoragemappings}
+              {storages && storages?.results.length ? (
+                <WizStorage
+                  storages={storages?.results}
                   storageSpace={storageSpace}
                   setStorageSpace={(data) => {
                     if (data && orderData?.startDate && orderData?.endDate) {
@@ -504,13 +608,44 @@ const Steps = ({ params }) => {
                         orderData?.startDate,
                         orderData?.endDate
                       )
+                      let totalSpace = 0
+                      let totalAvailableSpace =
+                        type?.name?.toLowerCase() === WAREHOUSE
+                          ? warehouse?.available_space
+                          : orderData?.space
+
                       let total = 0
-                      warehouse?.warehousestoragemappings?.map((item) => {
+                      if (
+                        Object.values(data)?.filter(
+                          (single) => !(single?.space > 0)
+                        )?.length
+                      ) {
+                        setPageError(
+                          'Enter a Quantity for selected storage',
+                          'warning'
+                        )
+                      } else {
+                        Object.values(data).map((single) => {
+                          let space = parseFloat(single.space)
+                          if (!isNaN(space)) {
+                            totalSpace += space
+                          }
+                        })
+                        if (totalSpace > totalAvailableSpace) {
+                          setPageError(
+                            'Exceeded Total Available Space',
+                            'warning'
+                          )
+                        } else {
+                          setPageError(null, null)
+                        }
+                      }
+                      storages?.results?.map((item) => {
                         if (
                           selectedStorage?.includes(item?.id) &&
-                          data?.[item?.id]
+                          data?.[item?.id]?.space
                         ) {
-                          total += item?.price_m2 * data?.[item?.id]
+                          // total += item?.price_m2 * data?.[item?.id]?.space
                         }
                       })
                       total = total * diff + price[page.current - 2]
@@ -523,18 +658,29 @@ const Steps = ({ params }) => {
                   }}
                   checkIfExists={checkIfExists}
                   setSelectedStorage={(data) => {
+                    if (
+                      data?.filter((single) => !(storageSpace[single] > 0))
+                        ?.length
+                    ) {
+                      setPageError(
+                        'Enter a Quantity for selected storage',
+                        'warning'
+                      )
+                    } else {
+                      setPageError(null, null)
+                    }
                     if (data && orderData?.startDate && orderData?.endDate) {
                       const diff = getDayDifference(
                         orderData?.startDate,
                         orderData?.endDate
                       )
                       let total = 0
-                      warehouse?.warehousestoragemappings?.map((item) => {
+                      storages?.results?.map((item) => {
                         if (
                           data?.includes(item?.id) &&
                           storageSpace?.[item?.id]
                         ) {
-                          total += item?.price_m2 * storageSpace?.[item?.id]
+                          // total += item?.price_m2 * storageSpace?.[item?.id]
                         }
                       })
                       total = total * diff + price[page.current - 2]
@@ -547,9 +693,24 @@ const Steps = ({ params }) => {
                   }}
                   selectedStorage={selectedStorage}
                   wizard
+                  totalSpace={
+                    type?.name?.toLowerCase() === WAREHOUSE
+                      ? warehouse?.available_space
+                      : orderData?.space
+                  }
                 />
               ) : (
                 <Info
+                  noIcon
+                  switchTitle={'Request Storage'}
+                  state={requests.request_storage}
+                  setState={(value) => {
+                    setRequests({
+                      ...requests,
+                      request_storage: value,
+                    })
+                  }}
+                  hasSwitch={true}
                   text={
                     " Currently this warehouse dosen't have assigned storage type yet !"
                   }
@@ -589,7 +750,10 @@ const Steps = ({ params }) => {
           <Products
             wizard
             checked={productId}
-            setChecked={setProductId}
+            setChecked={(id) => {
+              setProductId(id)
+              setPageError(null, null)
+            }}
             data={products}
           />
         </View>
@@ -604,9 +768,50 @@ const Steps = ({ params }) => {
             checked={shipmentType}
             setChecked={(value) => {
               setShipmentType(value)
+              setPageError(null, null)
             }}
             data={shipmentTypes}
           />
+        </View>
+      ),
+    },
+    // 2
+    {
+      component: () => (
+        <View>
+          <Text style={common.wizTitle}>Select A Transportation Method</Text>
+          {transTypes?.results?.map((method) => {
+            return (
+              <SingleCard
+                key={method?.id}
+                onClick={() => {
+                  setShipmentData({
+                    ...shipmentData,
+                    method: method?.id,
+                  })
+                  setPageError(null, null)
+                }}
+                isOnlyText
+              >
+                <View style={commonStyles.textContainer}>
+                  <View style={commonStyles.wizCheckerHeader}>
+                    <Text style={commonStyles.name}>{method?.name}</Text>
+                    <Checkbox
+                      color={COLORS.primary}
+                      value={shipmentData?.method === method?.id}
+                      onValueChange={(value) => {
+                        setShipmentData({
+                          ...shipmentData,
+                          method: method?.id,
+                        })
+                        setPageError(null, null)
+                      }}
+                    />
+                  </View>
+                </View>
+              </SingleCard>
+            )
+          })}
         </View>
       ),
     },
@@ -618,12 +823,44 @@ const Steps = ({ params }) => {
             <View>
               <NewShipment
                 order={orderData}
-                setOrder={setOrderData}
+                setOrder={(data) => {
+                  setOrderData(data)
+                }}
                 params={shipmentType}
                 wizard
                 data={product}
                 shipment={shipmentData}
                 setShipment={(data) => {
+                  if (data?.quantity > product?.available) {
+                    setPageError('Exceeded Available Quantity', 'danger')
+                  } else if (!data?.company && shipmentType?.id === 1) {
+                    setPageError('Select Company', 'danger')
+                  } else if (
+                    !data?.agent &&
+                    data.sysInsur &&
+                    shipmentType?.id === 2
+                  ) {
+                    setPageError('Select An Insurance Agent', 'danger')
+                  } else if (
+                    !data?.sysInsur &&
+                    !data?.file?.insurance?.length &&
+                    shipmentType?.id === 2
+                  ) {
+                    setPageError('Upload Insurance', 'danger')
+                  } else if (
+                    !data?.sysclear &&
+                    !data?.file?.clearance?.length &&
+                    shipmentType?.id === 1
+                  ) {
+                    setPageError('Upload Clearance', 'danger')
+                  } else if (!data?.pickUp || !data.dropOff) {
+                    setPageError(
+                      'Select Pick Up and Dropoff Location ',
+                      'danger'
+                    )
+                  } else {
+                    setPageError(null, null)
+                  }
                   setShipmentData(data)
                 }}
               />
@@ -633,6 +870,24 @@ const Steps = ({ params }) => {
       ),
     },
     // 4
+    {
+      component: () => (
+        <View>
+          <Text style={common.wizTitle}>Select A Vehicle</Text>
+          <Vehicles
+            amount={shipmentData.quantity}
+            product={product}
+            setShipment={(data) => {
+              setPageError(null, null)
+              setShipmentData(data)
+            }}
+            shipment={shipmentData}
+          />
+        </View>
+      ),
+      skip: shipmentType?.id !== 2,
+    },
+    // 5
     {
       component: () => (
         <View>
@@ -663,7 +918,10 @@ const Steps = ({ params }) => {
           <Products
             wizard
             checked={productId}
-            setChecked={setProductId}
+            setChecked={(id) => {
+              setPageError(null, null)
+              setProductId(id)
+            }}
             data={products}
           />
         </View>
@@ -676,7 +934,10 @@ const Steps = ({ params }) => {
           <All
             wizard
             checked={portid}
-            setChecked={(value) => setPortid(value)}
+            setChecked={(value) => {
+              setPageError(null, null)
+              setPortid(value)
+            }}
           />
         </View>
       ),
@@ -690,7 +951,10 @@ const Steps = ({ params }) => {
               portId={portid}
               wizard
               checked={agentId}
-              setChecked={(value) => setAgentId(value)}
+              setChecked={(value) => {
+                setPageError(null, null)
+                setAgentId(value)
+              }}
             />
           )}
         </View>
@@ -739,9 +1003,49 @@ const Steps = ({ params }) => {
     return selectedStorage.includes(id)
   }
 
+  const checkError = () => {
+    toast.hideAll()
+    if (error[page.current - 1]?.msg) {
+      toast.show(error[page.current - 1].msg, {
+        type: error[page.current - 1].severity,
+      })
+      return false
+    } else {
+      return true
+    }
+  }
+  const setPageError = (msg, severity) => {
+    setError((prev) => {
+      prev[page.current - 1] = {
+        msg: msg,
+        severity: severity,
+      }
+      return [...prev]
+    })
+  }
+
+  const reset = () => {
+    setOrderData({})
+    setHRids({
+      ids: [],
+      values: {},
+    })
+    setOffice({
+      officeId: [],
+      equipmentId: [],
+    })
+    setRequests({
+      request_equipment: false,
+      request_hr: false,
+      request_office: false,
+      request_storage: false,
+    })
+    setStorageSpace([])
+  }
+
   const addWizard = async () => {
-    const newEndDate = new Date(orderData?.startDate)
-    const newStartDate = new Date(orderData?.endDate)
+    const newEndDate = new Date(orderData?.endDate)
+    const newStartDate = new Date(orderData?.startDate)
     // To calculate the time difference of two dates
     let Difference_In_Time = newEndDate?.getTime() - newStartDate?.getTime()
 
@@ -756,7 +1060,15 @@ const Steps = ({ params }) => {
     let other_files = ''
     let insurances = ''
     let clearances = ''
-    let storage_spaces = [null, null, null, null, null]
+    let storageSpacesValues = Object.values(storageSpace)
+    let groupValues = groups?.results?.length ? new Array(14) : []
+    let storage_spaces = storages?.results?.length
+      ? new Array(storages?.results.length - selectedStorage?.length)
+      : []
+
+    storage_spaces?.fill(null)
+    groupValues?.fill(null)
+    console.log(groupValues)
     if (product?.file?.performa?.uri) {
       base64 = await FileSystem.readAsStringAsync(
         product?.file?.performa?.uri,
@@ -804,47 +1116,106 @@ const Steps = ({ params }) => {
         'data:' + product?.file?.other?.mimeType + ';base64,' + base64,
       ]
     }
-    if (storageSpace) {
-      let index = storage_spaces.length - 1
 
-      Object.entries(storageSpace)?.map(([key, value]) => {
-        if (selectedStorage?.includes(parseInt(key)) && index >= 0) {
-          console.log(index)
-          storage_spaces[index] = value
-          index--
-        }
-      })
+    Object.entries(HRids.values)?.map(([key, value]) => {
+      groupValues[key] = parseInt(value)
+    })
+    const warehouseData = {
+      customer: '',
+      dynamicInputs: [{ label: '', type: '', value: '' }],
+      // [
+      //   ...storage_spaces,
+      //   ...storageSpacesValues?.map((s) => s?.fields ?? []),
+      // ]
+      space_to_rent: warehouse?.available_space,
+      starting_date: newStartDate.getFullYear()
+        ? newStartDate?.toISOString()?.split('T')[0]
+        : '',
+      end_date: newEndDate.getFullYear()
+        ? newEndDate?.toISOString()?.split('T')[0]
+        : '',
+      remaining_date: Difference_In_Days,
+      order_type: type?.id,
+      // status: INITIALIZED,
+
+      storage: selectedStorage?.length ? selectedStorage : [],
+      office: office?.officeId,
+      resource: HRids?.ids,
+      // groupQty: [...groupValues, ...Object.values(HRids.values)],
+      groupQty: groupValues,
+      equipment: office?.equipmentId?.length ? office?.equipmentId : '',
+      shelfs: [],
+      mapped_warehouse: '',
+      warehouse: warehouseId,
+      maxtemps: [
+        ...storage_spaces,
+        ...storageSpacesValues?.map((s) => s?.maxTemp),
+      ],
+      mintemps: [
+        ...storage_spaces,
+        ...storageSpacesValues?.map((s) => s?.minTemp),
+      ],
+      tempunits: [
+        ...storage_spaces,
+        ...storageSpacesValues?.map((s) => {
+          if (s?.tempUnit) {
+            return 'F'
+          } else {
+            return 'C'
+          }
+        }),
+      ],
+      terminals: [
+        ...storage_spaces,
+        ...storageSpacesValues?.map((s) => s?.terminal),
+      ],
+      storage_spaces: [
+        ...storage_spaces,
+        ...storageSpacesValues?.map((s) => s?.space),
+      ],
+      request_equipment: requests.request_equipment,
+      request_hr: requests.request_hr,
+      request_office: requests.request_office,
+      request_storage: requests.request_storage,
+      heights: [],
+      heightunits: [],
+      price_m2s: [],
+    }
+    // console.log(groups)
+    const storageData = {
+      customer: '',
+      dynamicInputs: [{ label: '', type: '', value: '' }],
+
+      space_to_rent: orderData?.space,
+      starting_date: newStartDate.getFullYear()
+        ? newStartDate?.toISOString()?.split('T')[0]
+        : '',
+      end_date: newEndDate.getFullYear()
+        ? newEndDate?.toISOString()?.split('T')[0]
+        : '',
+      remaining_date: Difference_In_Days,
+      order_type: type?.id,
+      storage: [],
+      office: [],
+      resource: [],
+      equipment: [],
+      mapped_warehouse: storageId,
+      warehouse: null,
+      maxtemps: [],
+      mintemps: [],
+      tempunits: [],
+      terminals: [],
+      storage_spaces: [],
+      request_equipment: requests.request_equipment,
+      request_hr: requests.request_hr,
+      request_office: requests.request_office,
+      request_storage: requests.request_storage,
+      heights: [],
+      heightunits: [],
+      price_m2s: [],
     }
     addWizOrder(
-      {
-        customer: '',
-        space_to_rent: orderData?.space,
-        starting_date: newStartDate.getFullYear()
-          ? newStartDate?.toISOString()?.split('T')[0]
-          : '',
-        end_date: newEndDate.getFullYear()
-          ? newEndDate?.toISOString()?.split('T')[0]
-          : '',
-        remaining_date: Difference_In_Days,
-        order_type: type?.id,
-        status: INITIALIZED,
-        storage:
-          type?.name?.toLowerCase() === WAREHOUSE
-            ? selectedStorage?.length
-              ? selectedStorage
-              : []
-            : '',
-        office: [],
-        resource: [],
-        storage_spaces:
-          type?.name?.toLowerCase() === WAREHOUSE
-            ? [null, null, null, '5', '5']
-            : '',
-        equipments: [],
-        mapped_warehouse:
-          type?.name?.toLowerCase() === STORAGE ? storageId : '',
-        warehouse: type?.name?.toLowerCase() === WAREHOUSE ? warehouseId : '',
-      },
+      type?.name?.toLowerCase() === WAREHOUSE ? warehouseData : storageData,
       dispatch,
       () => {
         router.back()
@@ -903,6 +1274,7 @@ const Steps = ({ params }) => {
         buy_clearance: shipmentData?.sysclear,
         buy_insurance: shipmentData?.sysInsur,
         agent: shipmentData?.agent ?? '',
+        transportationtype: shipmentData?.method ?? '',
       },
       dispatch,
       toast,
@@ -927,7 +1299,83 @@ const Steps = ({ params }) => {
     )
   }
 
+  // Error Effect
+  // useEffect(() => {
+  //   toast.hideAll()
+  //   if (error[page.current]?.msg) {
+  //     toast.show(error[page.current].msg, {
+  //       type: error[page.current].severity,
+  //     })
+  //   }
+  // }, [error])
+
+  // Page and price  Effect
   useEffect(() => {
+    if (page.current > error.length) {
+      let err = {
+        msg: null,
+        severity: null,
+      }
+      // SPACE ERRORS
+      if (page.current === 1 && params.type === SPACE) {
+        err.msg = 'Select a Space Type'
+        err.severity = 'danger'
+      } else if (page.current === 2 && params.type === SPACE) {
+        err.msg = `Select a ${
+          type?.name?.toLowerCase() === WAREHOUSE ? 'Warehouse' : 'Storage'
+        }`
+        err.severity = 'danger'
+      } else if (
+        page.current === 3 &&
+        params.type === SPACE &&
+        type?.name?.toLowerCase() === WAREHOUSE
+      ) {
+        err.msg = 'Select Start And End Date'
+        err.severity = 'danger'
+      }
+      //
+
+      // SHIPMENT ERRORS
+      if (page.current === 1 && params.type === SHIPMNET) {
+        err.msg = 'Select a Product'
+        err.severity = 'danger'
+      } else if (page.current === 2 && params.type === SHIPMNET) {
+        err.msg = `Select a shipment type`
+        err.severity = 'danger'
+      } else if (page.current === 3 && params.type === SHIPMNET) {
+        err.msg = 'Select a method'
+        err.severity = 'danger'
+      } else if (
+        page.current === 4 &&
+        params.type === SHIPMNET &&
+        shipmentType?.id === 1
+      ) {
+        err.msg = 'Fill Out All Fields'
+        err.severity = 'danger'
+      } else if (
+        page.current === 5 &&
+        params.type === SHIPMNET &&
+        shipmentType?.id === 2
+      ) {
+        err.msg = 'Select A Vehicle'
+        err.severity = 'danger'
+      }
+      //
+
+      // TRANSIT ERRORS
+      if (page.current === 1 && params.type === CUSTOMS) {
+        err.msg = 'Select a Product'
+        err.severity = 'danger'
+      } else if (page.current === 2 && params.type === CUSTOMS) {
+        err.msg = `Select a port`
+        err.severity = 'danger'
+      } else if (page.current === 3 && params.type === CUSTOMS) {
+        err.msg = 'Select an agent'
+        err.severity = 'danger'
+      }
+      //
+      setError([...error, err])
+    }
     if (price[page.current - 1] === undefined && price[page.current - 2]) {
       const prev = price
       prev[page.current - 1] = price[page.current - 2]
@@ -942,6 +1390,7 @@ const Steps = ({ params }) => {
     }
   }, [page])
 
+  // Data Fetching
   useEffect(() => {
     if (productId) {
       getProductDetails(productId, dispatch, setProduct, toast)
@@ -967,20 +1416,37 @@ const Steps = ({ params }) => {
     if (params?.type === SHIPMNET || params?.type === CUSTOMS) {
       getAllProducts(null, dispatch, setProducts, toast)
     }
+    if (params?.type === SPACE) {
+      getAllGroups(null, dispatch, setGroups, toast)
+      getStorages(null, dispatch, setStorages, toast)
+    }
+    if (params?.type === SHIPMNET) {
+      getTransportationMethods(null, dispatch, setTransTypes, toast)
+    }
   }, [])
-
   return (
     <View style={styles.container}>
-      <StepHeader length={steps.length} current={page.current} />
+      <StepHeader
+        length={
+          type?.name?.toLowerCase() === STORAGE && params?.type === SPACE
+            ? steps.length - 3
+            : shipmentType?.id !== 2 && params?.type === SHIPMNET
+            ? steps.length - 1
+            : steps.length
+        }
+        current={page.current}
+      />
       {steps[page.current - 1] && (
         <ScrollView
           contentContainerStyle={{
             paddingBottom: SIZES.large,
           }}
+          keyboardShouldPersistTaps='always'
           style={{
             ...common.container,
             marginTop: 0,
-            paddingHorizontal: SIZES.medium,
+            paddingHorizontal:
+              params.type === SHIPMNET && page.current == 4 ? 0 : SIZES.medium,
           }}
         >
           {steps[page.current - 1].component()}
@@ -995,6 +1461,8 @@ const Steps = ({ params }) => {
             previous: page.current,
           })
         }}
+        nextDisabled={error[page.current - 1]?.msg}
+        agree={agree}
         price={price[page.current - 1]}
         onFinish={() => {
           if (params?.type === SPACE) {
@@ -1005,6 +1473,7 @@ const Steps = ({ params }) => {
             addWizTransit()
           }
         }}
+        checkError={checkError}
       />
     </View>
   )

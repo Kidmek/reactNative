@@ -14,12 +14,13 @@ const Info = ({
   setState,
   state,
   switchTitle,
+  noIcon,
   success,
 }) => {
   return success ? (
     <View style={styles.infoContainer(false, success)}>
       <View style={styles.header}>
-        <InfoSVG size={25} color={COLORS.green} />
+        {noIcon && <InfoSVG size={25} color={COLORS.green} />}
         <Text style={styles.typeTitle(true, success)}>{title}</Text>
       </View>
       <Text style={styles.typeDesc(true, success)}>{text}</Text>
@@ -39,7 +40,7 @@ const Info = ({
     </View>
   ) : (
     <View style={styles.infoContainer(!hasSwitch)}>
-      {!withoutIcon && (
+      {!withoutIcon && !noIcon && (
         <AntDesign name='infocirlceo' size={15} color={COLORS.blue} />
       )}
       <Text>

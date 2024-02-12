@@ -40,6 +40,8 @@ const innerStyles = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     backgroundColor: COLORS.grey,
     marginVertical: 16,
+    marginHorizontal: -80,
+    width: '200%',
   },
   host: {
     width: 50,

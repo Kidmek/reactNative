@@ -90,7 +90,18 @@ const _layout = () => {
         }}
       />
       {/*  */}
-
+      <Stack.Screen
+        name='insurance'
+        options={{
+          headerTitle: 'Insurance',
+        }}
+      />
+      <Stack.Screen
+        name='transit'
+        options={{
+          headerTitle: 'Transit',
+        }}
+      />
       <Stack.Screen
         name='insurance_options'
         options={{

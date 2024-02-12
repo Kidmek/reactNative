@@ -1,11 +1,18 @@
-import { View, Text, TextInput, TouchableOpacity } from 'react-native'
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+} from 'react-native'
 import React from 'react'
 import styles from './input.style'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { DATE, DIMENSION, MULTI, NUMBER } from '../../../constants/strings'
-import { COLORS } from '../../../constants'
+import { COLORS, FONT } from '../../../constants'
 
 const Input = ({
+  style,
   label,
   state,
   setState,
@@ -15,6 +22,8 @@ const Input = ({
   id,
   error,
   outOfFocus,
+  labelState,
+  setLabelState,
 }) => {
   return type === DATE ? (
     <View style={{ ...styles.inputWrapper, position: 'relative' }}>
@@ -70,12 +79,27 @@ const Input = ({
       </View>
     </View>
   ) : (
-    <View style={styles.inputWrapper}>
-      <Text style={styles.inputLabel}>{label}</Text>
+    <View style={{ ...styles.inputWrapper, gap: 0, flex: 1 }}>
+      {label && <Text style={styles.inputLabel}>{label}</Text>}
+      {setLabelState && (
+        <TextInput
+          placeholder={'Input Label'}
+          value={labelState}
+          style={{
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderBottomColor: COLORS.gray2,
+            fontFamily: FONT.bold,
+          }}
+          onChangeText={(e) => {
+            setLabelState(e)
+          }}
+        />
+      )}
       <TextInput
+        placeholder={placeholder}
         onBlur={outOfFocus}
         inputMode={type === NUMBER ? 'numeric' : 'text'}
-        style={styles.input(error)}
+        style={{ ...styles.input(error, type === MULTI) }}
         value={state}
         numberOfLines={type === MULTI ? 4 : 1}
         multiline={type === MULTI}

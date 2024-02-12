@@ -1,16 +1,36 @@
-import { View, TextInput, TouchableOpacity, Image } from 'react-native'
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  Pressable,
+} from 'react-native'
 import React from 'react'
 import styles from './search.style'
 import { SimpleLineIcons, Ionicons } from '@expo/vector-icons'
 import { useNavigation } from 'expo-router'
 
-const Search = ({ onSearch, setSearchQuery, searchQuery, inner }) => {
+const Search = ({
+  onSearch,
+  setSearchQuery,
+  searchQuery,
+  inner,
+  placeholder,
+}) => {
   const navigation = useNavigation()
   return (
     <>
       <View style={{ ...styles.searchContainer, marginTop: inner ? 0 : '' }}>
         <View style={styles.searchWrapper}>
-          <Ionicons name='search' size={24} />
+          <Pressable
+            onPress={() => {
+              if (onSearch) {
+                onSearch()
+              }
+            }}
+          >
+            <Ionicons name='search' size={24} />
+          </Pressable>
           <TextInput
             multiline
             numberOfLines={2.5}
@@ -19,7 +39,7 @@ const Search = ({ onSearch, setSearchQuery, searchQuery, inner }) => {
             onChangeText={(e) => {
               setSearchQuery(e)
             }}
-            placeholder='What Are You Looking For?'
+            placeholder={placeholder ?? 'What Are You Looking For?'}
           />
         </View>
         <TouchableOpacity

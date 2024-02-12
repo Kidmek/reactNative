@@ -29,7 +29,7 @@ const Choose = () => {
       <Text style={styles.headerText}>What Are You Looking For?</Text>
       <View style={styles.cardContainer}>
         {singleCard('Space Management', SPACE)}
-        {singleCard('Transportation & Logistics', SHIPMNET)}
+        {singleCard('Shipment & Logistics', SHIPMNET)}
         {singleCard('Customs Transit', CUSTOMS)}
       </View>
     </ScrollView>

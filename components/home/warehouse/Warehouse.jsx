@@ -1,4 +1,11 @@
-import { View, Text, Image, Dimensions, ActivityIndicator } from 'react-native'
+import {
+  View,
+  Text,
+  Image,
+  Dimensions,
+  ActivityIndicator,
+  Pressable,
+} from 'react-native'
 import React from 'react'
 import styles from '../../common/styles/common.style'
 import { useState } from 'react'
@@ -7,12 +14,16 @@ import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
 import { COLORS, SIZES } from '../../../constants'
-import { WAREHOUSE, mSQUARE } from '../../../constants/strings'
+import { RENTER, WAREHOUSE, mSQUARE } from '../../../constants/strings'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 import Carousel from 'react-native-reanimated-carousel'
 import { currencyFormat } from '../../common/utils'
 import Checkbox from 'expo-checkbox'
+import { AntDesign } from '@expo/vector-icons'
+import { useNavigation } from 'expo-router'
+import { useSelector } from 'react-redux'
+import { selectData } from '../../../features/data/dataSlice'
 
 const Warehouse = ({
   choose,
@@ -26,7 +37,8 @@ const Warehouse = ({
   const width = Dimensions.get('window').width
   const dispatch = store.dispatch
   const toast = useToast()
-
+  const navigate = useNavigation()
+  const user = useSelector(selectData)
   const [warehouses, setWarehouses] = useState()
   useEffect(() => {
     if (!wizard) {
@@ -79,14 +91,42 @@ const Warehouse = ({
               }
             }}
           >
+            {user?.groupdetail?.name?.toLowerCase() === RENTER && (
+              <Pressable
+                style={{
+                  position: 'absolute',
+                  zIndex: 1000,
+                  right: '5%',
+                  top: '5%',
+                  borderRadius: SIZES.medium,
+                  backgroundColor: COLORS.primary + 'e5',
+                  padding: SIZES.small,
+                }}
+                onPress={() => {
+                  navigate.navigate('new', {
+                    screen: 'warehouse',
+                    params: {
+                      id: item?.id,
+                    },
+                  })
+                }}
+              >
+                <AntDesign
+                  name='edit'
+                  size={SIZES.welcomeTabIcons}
+                  color={'white'}
+                />
+              </Pressable>
+            )}
             <Carousel
-              loop={false}
+              loop={true}
               height={width / 2}
               width={width}
               pagingEnabled={true}
               data={item?.warehouse_images}
-              onSnapToItem={(index) => {}}
+              autoPlay={wizard ? true : false}
               scrollAnimationDuration={1000}
+              autoPlayInterval={2500}
               renderItem={({ item: image }) => (
                 <Image
                   style={{ ...styles.image, alignSelf: 'center' }}
@@ -126,6 +166,7 @@ const Warehouse = ({
                 />
               )}
             </View>
+            {wizard && <View style={{ ...styles.divider, width: '100%' }} />}
           </SingleCard>
         )
       })}

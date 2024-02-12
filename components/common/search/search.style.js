@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     paddingVertical: SIZES.medium,
     fontFamily: FONT.regular,
     paddingHorizontal: SIZES.small,
+    flex: 1,
   },
   searchBtn: {
     padding: SIZES.small,

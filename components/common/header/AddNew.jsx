@@ -4,16 +4,20 @@ import { AntDesign } from '@expo/vector-icons'
 import { useNavigation } from 'expo-router'
 import styles from './screenheader.style'
 
-const AddNew = ({ title, page }) => {
+const AddNew = ({ title, page, onPress }) => {
   const navigation = useNavigation()
 
   return (
     <TouchableOpacity
       onPress={() => {
-        navigation.navigate(page?.name, {
-          screen: page?.screen,
-          params: page?.params,
-        })
+        if (onPress) {
+          onPress()
+        } else {
+          navigation.navigate(page?.name, {
+            screen: page?.screen,
+            params: page?.params,
+          })
+        }
       }}
       style={styles.headerBtn}
     >

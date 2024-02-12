@@ -41,10 +41,10 @@ const styles = StyleSheet.create({
     fontSize: SIZES.large,
   },
   declineBtn: {
-    backgroundColor: COLORS.gray,
+    backgroundColor: COLORS.red,
   },
   acceptBtn: {
-    backgroundColor: COLORS.primary,
+    backgroundColor: COLORS.green,
   },
   btn: {
     flex: 1,
@@ -52,10 +52,29 @@ const styles = StyleSheet.create({
     paddingVertical: SIZES.xSmall,
     borderRadius: SIZES.large,
   },
-  btnContainer: {
+  driverBtn: {
+    paddingHorizontal: SIZES.large,
+    paddingVertical: SIZES.small,
+    borderRadius: SIZES.small,
+    alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: SIZES.small,
+  },
+  btnContainer: {
+    flexDirection: 'row',
+    // justifyContent: 'space-between',
     gap: SIZES.xxLarge,
+  },
+  mapContainer: {
+    // borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
+    borderRadius: SIZES.medium,
+    marginBottom: SIZES.medium,
+  },
+  info: {
+    paddingHorizontal: SIZES.small,
+    marginBottom: SIZES.xxLarge,
   },
 })
 

@@ -11,7 +11,7 @@ const newOrderStyles = StyleSheet.create({
     ...SHADOWS.medium,
     shadowColor: 'blue',
     borderWidth: 1,
-    borderColor: success ? COLORS.green : COLORS.blue,
+    borderColor: success ? COLORS.green : COLORS.circleAndInfo,
     padding: SIZES.small,
     marginVertical: SIZES.small,
   }),
@@ -24,14 +24,14 @@ const newOrderStyles = StyleSheet.create({
   typeTitle: (selected, success) => ({
     fontFamily: FONT.bold,
     fontSize: SIZES.medium,
-    color: success ? COLORS.green : selected ? COLORS.blue : COLORS.gray,
+    color: success ? COLORS.green : selected ? COLORS.primary : COLORS.gray,
   }),
 
   typeDesc: (selected, success) => ({
     flexWrap: 'wrap',
     fontFamily: FONT.regular,
     fontSize: SIZES.small,
-    color: success ? COLORS.green : selected ? COLORS.blue : COLORS.gray,
+    color: success ? COLORS.green : selected ? COLORS.primary : COLORS.gray,
     lineHeight: SIZES.large,
   }),
   switchContainer: {

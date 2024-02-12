@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { COLORS } from '../../constants'
+import { COLORS, SIZES } from '../../constants'
 
 const styles = StyleSheet.create({
   mainBody: {
@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
     margin: 30,
   },
   welcomeTextStyle: {
+    textAlign: 'center',
     fontSize: 35,
     alignSelf: 'center',
     fontWeight: 'bold',
@@ -115,6 +116,21 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     position: 'absolute',
     paddingLeft: 15,
+  },
+  root: { flex: 1, padding: 20 },
+  title: { textAlign: 'center', fontSize: 30 },
+  codeFieldRoot: { paddingHorizontal: SIZES.large },
+  cell: {
+    width: 40,
+    height: 40,
+    lineHeight: 38,
+    fontSize: 24,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: '#00000030',
+    textAlign: 'center',
+  },
+  focusCell: {
+    borderColor: '#000',
   },
 })
 

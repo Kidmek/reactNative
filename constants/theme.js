@@ -1,12 +1,15 @@
 const COLORS = {
   primary: '#1d4ed8',
   secondary: '#444262',
+  circleAndInfo: '#2E81D3',
   tertiary: '#FF7754',
   grey: '#5E5D5E',
   lightGrey: '#c2c2c2',
   dark: '#1A1A1A',
   gray: '#83829A',
   gray2: '#C1C0C8',
+  gray3: '#F2F0F8',
+
   black: '#000000',
   green: '#008000',
 

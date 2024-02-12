@@ -16,7 +16,7 @@ import { API, emailRegEx } from '../../../constants/strings'
 import axios from 'axios'
 import { store } from '../../../store'
 import { setLoading, setUser } from '../../../features/data/dataSlice'
-import { useNavigation } from 'expo-router'
+import { useLocalSearchParams, useNavigation } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getUser, isLoggedIn } from '../../../api/apiConfig'
 
@@ -29,6 +29,7 @@ const Login = ({ setIsLogin }) => {
   const emailInputRef = createRef()
   const passwordInputRef = createRef()
   const toast = useToast()
+  const params = useLocalSearchParams()
 
   useEffect(() => {
     isLoggedIn().then((res) => {

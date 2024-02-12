@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native'
+import { Dimensions, StyleSheet } from 'react-native'
 import { COLORS, FONT, SIZES } from '../../../constants'
 
 const styles = StyleSheet.create({
@@ -121,8 +121,7 @@ const styles = StyleSheet.create({
   },
   map: {
     width: '100%',
-    height: SIZES.xLargePicture,
-    marginBottom: SIZES.medium,
+    height: Dimensions.get('screen').height * 0.5,
   },
 
   textContainer: {

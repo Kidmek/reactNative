@@ -1,11 +1,12 @@
 import { View, Text, Pressable, Platform, Share } from 'react-native'
-import React from 'react'
+import React, { Children } from 'react'
 import styles from './detail.style'
-import { mSQUARE } from '../../../constants/strings'
+import { WEB_URL, mSQUARE } from '../../../constants/strings'
 import { Feather } from '@expo/vector-icons'
-import { COLORS, SIZES } from '../../../constants'
+import { COLORS, FONT, SIZES } from '../../../constants'
 import * as FileSystem from 'expo-file-system'
 import * as Linking from 'expo-linking'
+import { useToast } from 'react-native-toast-notifications'
 
 const CardDetail = ({
   label,
@@ -16,16 +17,19 @@ const CardDetail = ({
   download,
   vertical,
   status,
+  CardChild,
+  onlyPreview,
 }) => {
+  const toast = useToast()
   const onDownload = async () => {
     const base64Code = value.split('base64,')
-    console.log(base64Code[0])
+    let fileName = value?.split('/')
+    fileName = fileName[fileName.length - 1]
     const result = await FileSystem.downloadAsync(
       value,
-      FileSystem.documentDirectory + 'dummy.jpg'
+      FileSystem.documentDirectory + fileName
     )
-    console.log(result)
-    saveFile(result.uri, 'dummy.jpg', result.headers['content-type'])
+    saveFile(result.uri, fileName, result.headers['content-type'])
     // const filename = FileSystem.documentDirectory + 'some_unique_file_name.png'
     // await FileSystem.writeAsStringAsync(filename, base64Code, {
     //   encoding: FileSystem.EncodingType.Base64,
@@ -54,15 +58,17 @@ const CardDetail = ({
           mimetype
         )
           .then(async (uri) => {
-            await FileSystem.writeAsStringAsync(uri, base64, {
+            const url = await FileSystem.writeAsStringAsync(uri, base64, {
               encoding: FileSystem.EncodingType.Base64,
+            })
+            toast.show(`Saved File To  ${uri}`, {
+              type: 'success',
             })
           })
           .catch((e) => console.log(e))
       } else {
-        await Share.share({
-          title: 'dummy',
-          url: uri,
+        toast.show(`Permission Denied`, {
+          type: 'warning',
         })
       }
     } else {
@@ -86,32 +92,61 @@ const CardDetail = ({
             ...styles.cardDetailValue(vertical),
             flexDirection: 'row',
             justifyContent: 'flex-end',
+            alignItems: 'center',
             gap: SIZES.small,
           }}
         >
-          <Pressable>
-            <Feather
-              name='eye'
-              size={SIZES.tabIcons}
-              color={COLORS.primary}
-              onPress={() => {
-                Linking.openURL(value)
-              }}
-            />
-          </Pressable>
-          <Pressable onPress={onDownload}>
+          <Pressable
+            onPress={onDownload}
+            style={{
+              ...styles.cardDetailValue(vertical),
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              gap: SIZES.small,
+            }}
+          >
             <Feather
               name='download'
               size={SIZES.tabIcons}
               color={COLORS.primary}
             />
+            <Text
+              style={{
+                color: 'blue',
+                fontFamily: FONT.bold,
+              }}
+            >
+              Download
+            </Text>
           </Pressable>
+
+          {/* {!onlyPreview && (
+            <Pressable
+              onPress={() => {
+                onDownload()
+                // Linking.openURL(  value)
+              }}
+            >
+              <Feather
+                name='eye'
+                size={SIZES.tabIcons}
+                color={COLORS.primary}
+              />
+            </Pressable>
+          )} */}
         </View>
-      ) : (
-        <Text style={styles.cardDetailValue(vertical, status)}>
+      ) : !CardChild ? (
+        <Text
+          style={{
+            ...styles.cardDetailValue(vertical, status),
+          }}
+        >
           {isDate ? Date(value) : value}
           {isPrice && value ? ' Birr' : isSpace ? ' ' + mSQUARE : ''}
         </Text>
+      ) : (
+        CardChild
       )}
     </View>
   )

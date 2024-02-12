@@ -1,20 +1,26 @@
-import { View, Text, ActivityIndicator } from 'react-native'
+import { View, Text, ActivityIndicator, Pressable } from 'react-native'
 import React from 'react'
 import styles from '../../common/styles/common.style'
 import { useState } from 'react'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
-import { COLORS, SIZES } from '../../../constants'
+import { COLORS, FONT, SIZES } from '../../../constants'
 import { getAllProducts } from '../../../api/product/product'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 import { currencyFormat } from '../../common/utils'
 import Checkbox from 'expo-checkbox'
+import { useNavigation } from 'expo-router'
+import { selectIsAdmin, selectUser } from '../../../features/data/dataSlice'
+import { useSelector } from 'react-redux'
 
 const All = ({ refresh, wizard, checked, setChecked, data }) => {
   const dispatch = store.dispatch
+  const navigation = useNavigation()
   const toast = useToast()
+  const login = useSelector(selectUser)
+  const isAdmin = useSelector(selectIsAdmin)
 
   const [products, setProducts] = useState()
   useEffect(() => {
@@ -33,7 +39,7 @@ const All = ({ refresh, wizard, checked, setChecked, data }) => {
     <ActivityIndicator color={COLORS.primary} size={SIZES.xxLarge} />
   ) : (
     <View style={styles.container}>
-      {/* {!wizard && (
+      {!wizard && (!login?.groups?.length || isAdmin) && (
         <AddNew
           title={'New Product'}
           page={{
@@ -41,7 +47,7 @@ const All = ({ refresh, wizard, checked, setChecked, data }) => {
             screen: 'product',
           }}
         />
-      )} */}
+      )}
 
       {products?.results?.map((item, index) => {
         return (
@@ -90,6 +96,35 @@ const All = ({ refresh, wizard, checked, setChecked, data }) => {
               <Text style={styles.type}>
                 {currencyFormat(item?.price ?? '0') + ' ETB'}
               </Text>
+              {wizard && (
+                <Pressable
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'flex-end',
+                  }}
+                  onPress={() => {
+                    navigation.navigate('details', {
+                      screen: 'product',
+                      params: {
+                        id: item?.id,
+                      },
+                    })
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: COLORS.primary,
+                      fontSize: SIZES.small,
+                      fontFamily: FONT.regular,
+                      textDecorationLine: 'underline',
+                      verticalAlign: 'bottom',
+                      marginTop: SIZES.small,
+                    }}
+                  >
+                    Details
+                  </Text>
+                </Pressable>
+              )}
             </View>
           </SingleCard>
         )

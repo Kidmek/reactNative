@@ -21,11 +21,20 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import Footer from '../../../components/common/footer/Footer'
 import { useNavigation } from 'expo-router'
 import DocumentPicker from '../../common/input/DocumentPicker'
+import {
+  selectData,
+  selectIsAdmin,
+  selectUser,
+} from '../../../features/data/dataSlice'
+import { useSelector } from 'react-redux'
+import Info from '../../common/cards/info/Info'
 
 const NewProduct = ({ wizard, product, setProduct }) => {
   const dispatch = store.dispatch
   const toast = useToast()
   const navigate = useNavigation()
+  const isAdmin = useSelector(selectIsAdmin)
+  const data = useSelector(selectData)
 
   const [types, setTypes] = useState([])
   const [categories, setCategories] = useState([])
@@ -49,7 +58,6 @@ const NewProduct = ({ wizard, product, setProduct }) => {
     width: null,
     height: null,
   })
-
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -65,9 +73,10 @@ const NewProduct = ({ wizard, product, setProduct }) => {
   }
   const onAdd = () => {
     let newDate = new Date(expireDate)
+
     addProduct(
       {
-        user,
+        user: isAdmin ? user : data?.id,
         length: dimensions.length,
         width: dimensions.width,
         height: dimensions.height,
@@ -96,9 +105,14 @@ const NewProduct = ({ wizard, product, setProduct }) => {
   useEffect(() => {
     getProductCategories(null, dispatch, setCategories, toast)
     getProductTypes(null, dispatch, setTypes, toast)
-    getAllCustomers(null, dispatch, setCustomers, toast)
   }, [])
-  return !categories?.length || !types?.length || !customers?.length ? (
+  useEffect(() => {
+    if (isAdmin) {
+      getAllCustomers(null, dispatch, setCustomers, toast)
+    }
+  }, [isAdmin])
+
+  return !categories?.results?.length || !types?.results?.length ? (
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <ScrollView style={wizard ? '' : styles.container}>
@@ -118,7 +132,7 @@ const NewProduct = ({ wizard, product, setProduct }) => {
               : setName
           }
         />
-        {!wizard && (
+        {!wizard && isAdmin && (
           <CustomDropdown
             label={'Customer'}
             options={customers?.results}
@@ -292,6 +306,24 @@ const NewProduct = ({ wizard, product, setProduct }) => {
           />
         )}
       </View>
+      {!wizard && (
+        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+          {weight && qty && (
+            <Info
+              withoutIcon
+              title={'Total Weight\n'}
+              text={weight * qty + ' Kg'}
+            />
+          )}
+          {pricePer && qty && (
+            <Info
+              withoutIcon
+              title={'Total Price\n'}
+              text={pricePer * qty + ' Birr'}
+            />
+          )}
+        </View>
+      )}
       {!wizard && <Footer onSave={onAdd} />}
     </ScrollView>
   )

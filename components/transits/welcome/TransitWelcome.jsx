@@ -7,6 +7,7 @@ import { selectIsFetching } from '../../../features/data/dataSlice'
 
 import Search from '../../common/search/Search'
 import All from '../All/All'
+import { SIZES } from '../../../constants'
 
 const TransitWelcome = () => {
   const [searchQuery, setSearchQuery] = useState()
@@ -17,6 +18,9 @@ const TransitWelcome = () => {
   return (
     <ScrollView
       style={styles.welcomeContainer}
+      contentContainerStyle={{
+        paddingBottom: SIZES.medium,
+      }}
       refreshControl={
         <RefreshControl
           refreshing={fetching}

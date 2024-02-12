@@ -4,8 +4,10 @@ import { View, ScrollView, RefreshControl } from 'react-native'
 import styles from '../../common/styles/common.style'
 import { useSelector } from 'react-redux'
 import {
+  selectData,
   selectIsAdmin,
   selectIsFetching,
+  selectUser,
 } from '../../../features/data/dataSlice'
 import { shipmentTypes } from '../../../constants/strings'
 import Started from '../started/Started'
@@ -17,6 +19,7 @@ import CustomTabs from '../../common/header/CustomTabs'
 import ShipmentSVG from '../../../assets/icons/shipment'
 import ShipmentTypeSVG from '../../../assets/icons/shipment-type'
 import MethodSVG from '../../../assets/icons/methods'
+import { SIZES } from '../../../constants'
 
 const ShipmentWelcome = () => {
   const [searchQuery, setSearchQuery] = useState()
@@ -24,12 +27,19 @@ const ShipmentWelcome = () => {
   const [activeType, setActiveType] = useState(shipmentTypes[0])
   const fetching = useSelector(selectIsFetching)
   const isAdmin = useSelector(selectIsAdmin)
+  const user = useSelector(selectData)
   const [refresh, setRefresh] = useState(false)
 
   const body = () => {
     switch (activeType) {
       case shipmentTypes[0]:
-        return <Started fetching={fetching} refresh={refresh} />
+        return (
+          <Started
+            fetching={fetching}
+            refresh={refresh}
+            cantAdd={!isAdmin || user?.groups?.length > 0}
+          />
+        )
       case shipmentTypes[1]:
         return <Transportations fetching={fetching} refresh={refresh} />
       case shipmentTypes[2]:
@@ -41,6 +51,9 @@ const ShipmentWelcome = () => {
   return (
     <ScrollView
       style={styles.welcomeContainer}
+      contentContainerStyle={{
+        paddingBottom: SIZES.medium,
+      }}
       refreshControl={
         <RefreshControl
           refreshing={fetching}

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { COLORS, FONT, SIZES } from '../../../constants'
+import { COLORS, FONT, SIZES, SHADOWS } from '../../../constants'
 
 const styles = StyleSheet.create({
   inputWrapper: {
@@ -10,16 +10,21 @@ const styles = StyleSheet.create({
     fontSize: SIZES.medium,
     fontFamily: FONT.bold,
   },
-  input: (error) => {
+  input: (error, allBorder) => {
     return {
-      borderWidth: 1,
-      borderRadius: SIZES.medium,
+      borderWidth: allBorder ? 1 : 0,
+      borderBottomWidth: 1,
+      borderRadius: allBorder ? SIZES.medium : 0,
       borderColor: !error ? COLORS.gray2 : COLORS.red,
       fontFamily: FONT.medium,
-      paddingVertical: SIZES.small,
+      paddingTop: allBorder ? 0 : SIZES.small,
+      paddingVertical: allBorder ? SIZES.small : 0,
       paddingHorizontal: SIZES.medium,
-      marginBottom: SIZES.medium,
+      color: COLORS.black,
       textAlignVertical: 'top',
+      marginTop: SIZES.xSmall,
+      marginBottom: SIZES.small,
+      backgroundColor: COLORS.gray3 + '2f',
     }
   },
   dateIcon: {

@@ -15,7 +15,7 @@ import { useToast } from 'react-native-toast-notifications'
 import CustomDropdown from '../../components/common/dropdown/CustomDropdown'
 import { COLORS } from '../../constants'
 import { useSelector } from 'react-redux'
-import { selectIsFetching } from '../../features/data/dataSlice'
+import { selectIsFetching, selectUser } from '../../features/data/dataSlice'
 import { getWarehouses } from '../../api/warehouse/warehouse'
 import { getAllProducts } from '../../api/product/product'
 import { getAllCustomers } from '../../api/users'
@@ -41,6 +41,7 @@ const insurance = () => {
   const [customer, setCustomer] = useState()
   const [warehouses, setWarehouses] = useState()
   const [warehouse, setWarehouse] = useState()
+  const user = useSelector(selectUser)
 
   const onAdd = () => {
     addInsurance(
@@ -65,12 +66,16 @@ const insurance = () => {
   }
   useEffect(() => {
     getAllInsuranceAgents(null, dispatch, setAgents, toast)
-    if (params.type?.toLowerCase() === WAREHOUSE) {
-      getWarehouses(null, dispatch, setWarehouses, toast)
-    } else if (params.type?.toLowerCase() === PRODUCT) {
-      getAllCustomers(null, dispatch, setCustomers, toast)
-    } else if (params.typeId === 3) {
-      getMappedStorages(null, dispatch, setStorageTypes, toast)
+    if (!user?.groups?.length) {
+      getAllProducts(null, dispatch, setProducts, toast)
+    } else {
+      if (params.type?.toLowerCase() === WAREHOUSE) {
+        getWarehouses(null, dispatch, setWarehouses, toast)
+      } else if (params.type?.toLowerCase() === PRODUCT) {
+        getAllCustomers(null, dispatch, setCustomers, toast)
+      } else if (params.typeId === 3) {
+        getMappedStorages(null, dispatch, setStorageTypes, toast)
+      }
     }
   }, [])
 
@@ -79,7 +84,7 @@ const insurance = () => {
       customers?.results?.filter((single) => single.id === customer)[0]
     )
   }, [customer])
-  return (params?.typeId === 1 && !customers) ||
+  return (params?.typeId === 1 && user?.groups?.length && !customers) ||
     (params?.typeId === 2 && !warehouse) ||
     (params?.typeId === 3 && !storageTypes) ? (
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
@@ -93,22 +98,24 @@ const insurance = () => {
       <View style={styles.inputContainer}>
         {params.type?.toLowerCase() === PRODUCT && (
           <>
-            <CustomDropdown
-              label={'Choose A Customer'}
-              options={customers?.results}
-              placeholder={'Select A Customer'}
-              state={customer}
-              setState={setCustomer}
-              labelField={'first_name'}
-              valueField={'id'}
-            />
+            {user?.groups?.length > 0 && (
+              <CustomDropdown
+                label={'Choose A Customer'}
+                options={customers?.results}
+                placeholder={'Select A Customer'}
+                state={customer}
+                setState={setCustomer}
+                labelField={'first_name'}
+                valueField={'id'}
+              />
+            )}
             <CustomDropdown
               label={
                 completeCustomer?.first_name
                   ? completeCustomer?.first_name + "'s Product"
                   : 'Product'
               }
-              options={completeCustomer?.productdetail}
+              options={products?.results ?? completeCustomer?.productdetail}
               placeholder={'Select A Product'}
               state={product}
               setState={setProduct}

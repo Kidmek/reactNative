@@ -59,13 +59,11 @@ export const postSkeleton = (
           }
           console.log('Error At : ', API + url)
           console.log(error)
-          console.log(error?.response)
           console.log(error?.response?.data)
           const err = error?.response?.data
-          console.log(err?.toString().length)
           if (err?.toString()?.length < 300 && err) {
             Object.entries(err)?.map(([key, value]) => {
-              if (value?.length < 25) {
+              if (value?.length < 45) {
                 toast.show(`${key} error : ${value}`, {
                   type: 'danger',
                 })
@@ -128,7 +126,7 @@ export const putSkeleton = (
           if (setPosting) {
             setPosting(false)
           }
-          // console.log(responseJson)
+          // console.log('Put Response : ', responseJson)
           // If server response message same as Data Matched
           if (responseJson?.data) {
             if (onSuccess) {
@@ -141,26 +139,35 @@ export const putSkeleton = (
         })
         .catch((error) => {
           //Hide Loader
-          if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
+          if (dispatchFalse && setLoading) {
+            console.log('Loading False')
+            dispatchFalse(setLoading(false))
+          }
           if (setPosting) {
             setPosting(false)
           }
+          console.log('Error At : ', API + url)
+          console.log(error)
           const err = error?.response?.data
-
-          if (err) {
+          if (err?.toString()?.length < 300 && err) {
+            console.log(error?.response?.data)
             Object.entries(err)?.map(([key, value]) => {
-              toast.show(`${key} error : ${value}`, {
-                type: 'danger',
-              })
+              if (value?.length < 45) {
+                toast.show(`${key} error : ${value}`, {
+                  type: 'danger',
+                })
+              }
             })
           }
+
           if (toast.show)
-            toast?.show(errorMsg ?? 'Unable To Save', {
+            toast?.show(errorMsg ?? 'Unable To Update', {
               type: 'danger',
             })
         })
     })
-    .catch(() => {
+    .catch((err) => {
+      console.log('Put Outer Catch :', err)
       if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
       if (setPosting) {
         setPosting(false)
@@ -198,7 +205,7 @@ export const getSkeleton = (
           //Hide Loader
           if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
           if (setGetting) {
-            setGetting(true)
+            setGetting(false)
           }
           // If server response message same as Data Matched
           if (responseJson?.data) {
@@ -211,7 +218,7 @@ export const getSkeleton = (
           console.log(error)
           if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
           if (setGetting) {
-            setGetting(true)
+            setGetting(false)
           }
           if (toast.show)
             toast?.show(error?.request?.statusText || error.message, {
@@ -222,7 +229,7 @@ export const getSkeleton = (
     .catch(() => {
       if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
       if (setGetting) {
-        setGetting(true)
+        setGetting(false)
       }
       if (toast.show)
         toast?.show('Unauthorized', {
@@ -267,10 +274,7 @@ export const deleteSkeleton = (
         .catch((error) => {
           //Hide Loader
           if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
-          if (setGetting) {
-            setGetting(true)
-          }
-          if (toast.show)
+          if (toast?.show)
             toast?.show(error?.request?.statusText || error.message, {
               type: 'danger',
             })
@@ -279,7 +283,7 @@ export const deleteSkeleton = (
     .catch(() => {
       if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
 
-      if (toast.show)
+      if (toast?.show)
         toast?.show('Unauthorized', {
           type: 'danger',
         })

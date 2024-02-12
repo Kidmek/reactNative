@@ -59,6 +59,24 @@ const NewOrder = ({ wizard, params, data, order, setOrder }) => {
   const [storageSpace, setStorageSpace] = useState()
   const toast = useToast()
 
+  const getValue = (isMinimum, isMaximum) => {
+    let value = ''
+    if (!isMaximum && (whichToShow == 'start' || isMinimum)) {
+      if (order) {
+        value = order?.startDate
+      } else {
+        value = startDate
+      }
+    } else {
+      if (order) {
+        value = order?.endDate
+      } else {
+        value = endDate
+      }
+    }
+    return value ? new Date(value) : new Date()
+  }
+
   const checkIfExists = (id, type) => {
     if (type == STORAGE) {
       if (order) {
@@ -201,14 +219,16 @@ const NewOrder = ({ wizard, params, data, order, setOrder }) => {
             valueField={'id'}
           />
         )}
-        <Input
-          label={'How much space do you want?'}
-          state={order ? order?.space : space}
-          setState={
-            order ? (value) => setOrder({ ...order, space: value }) : setSpace
-          }
-          type={NUMBER}
-        />
+        {(!wizard || params.type !== WAREHOUSE) && (
+          <Input
+            label={'How much space do you want?'}
+            state={order ? order?.space : space}
+            setState={
+              order ? (value) => setOrder({ ...order, space: value }) : setSpace
+            }
+            type={NUMBER}
+          />
+        )}
         {params.type == WAREHOUSE && wizard !== SPACE && (
           <View style={styles.inputWrapper}>
             <Text style={styles.inputLabel}>
@@ -494,29 +514,40 @@ const NewOrder = ({ wizard, params, data, order, setOrder }) => {
 
         {(whichToShow === 'start' || whichToShow === 'end') && (
           <DateTimePicker
-            value={new Date()}
+            value={getValue(true)}
             mode={'date'}
             is24Hour={true}
+            minimumDate={whichToShow === 'start' ? new Date() : getValue(true)}
+            maximumDate={
+              whichToShow === 'start'
+                ? !order?.endDate && !endDate
+                  ? null
+                  : getValue(true, true)
+                : null
+            }
             onChange={(e, selectedDate) => {
               setWhichToShow(null)
-              if (whichToShow == 'start') {
-                if (order) {
-                  setOrder({
-                    ...order,
-                    startDate: selectedDate.toDateString(),
-                  })
-                  return
+
+              if (e.type === 'set') {
+                if (whichToShow == 'start') {
+                  if (order) {
+                    setOrder({
+                      ...order,
+                      startDate: selectedDate.toDateString(),
+                    })
+                    return
+                  } else {
+                    setStartDate(selectedDate.toDateString())
+                    return
+                  }
                 } else {
-                  setStartDate(selectedDate.toDateString())
-                  return
-                }
-              } else {
-                if (order) {
-                  setOrder({ ...order, endDate: selectedDate.toDateString() })
-                  return
-                } else {
-                  setEndDate(selectedDate.toDateString())
-                  return
+                  if (order) {
+                    setOrder({ ...order, endDate: selectedDate.toDateString() })
+                    return
+                  } else {
+                    setEndDate(selectedDate.toDateString())
+                    return
+                  }
                 }
               }
             }}

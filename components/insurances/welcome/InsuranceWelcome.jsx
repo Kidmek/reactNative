@@ -13,6 +13,7 @@ import { useNavigation } from 'expo-router'
 import Search from '../../common/search/Search'
 import All from '../All/All'
 import Header from '../../common/header/Header'
+import { SIZES } from '../../../constants'
 
 const InsuranceWelcome = () => {
   const [searchQuery, setSearchQuery] = useState()
@@ -25,6 +26,9 @@ const InsuranceWelcome = () => {
   return (
     <ScrollView
       style={styles.welcomeContainer}
+      contentContainerStyle={{
+        paddingBottom: SIZES.medium,
+      }}
       refreshControl={
         <RefreshControl
           refreshing={fetching}

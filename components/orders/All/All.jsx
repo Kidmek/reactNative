@@ -35,7 +35,15 @@ const All = ({ refresh }) => {
 
       {orders?.results?.map((item, index) => {
         return (
-          <SingleCard key={index} isOnlyText={true}>
+          <SingleCard
+            key={index}
+            isOnlyText={true}
+            page={{
+              name: 'details',
+              screen: 'order',
+              params: { id: item?.id },
+            }}
+          >
             <View style={{ ...styles.onlyTextContainer, borderWidth: 0 }}>
               <CardDetail
                 label={'Order Type'}

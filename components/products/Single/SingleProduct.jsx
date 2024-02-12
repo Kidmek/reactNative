@@ -14,7 +14,10 @@ import { COLORS, SIZES } from '../../../constants'
 import { store as reduxStore } from '../../../store'
 import { useToast } from 'react-native-toast-notifications'
 import MapView, { Marker } from 'react-native-maps'
-import { selectIsFetching } from '../../../features/data/dataSlice'
+import {
+  selectIsAdmin,
+  selectIsFetching,
+} from '../../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import Animated, { SlideInDown } from 'react-native-reanimated'
 import { defaultStyles } from '../../../components/common/styles/Styles'
@@ -25,6 +28,7 @@ import { getProductDetails } from '../../../api/product/product'
 const SingleProduct = ({ params }) => {
   const dispatch = reduxStore.dispatch
   const fetching = useSelector(selectIsFetching)
+  const isAdmin = useSelector(selectIsAdmin)
   const toast = useToast()
   const [product, setProduct] = useState()
   const [store, setStore] = useState()
@@ -164,42 +168,44 @@ const SingleProduct = ({ params }) => {
         </View>
       </ScrollView>
 
-      <Animated.View
-        style={defaultStyles.footer}
-        entering={SlideInDown.delay(200)}
-      >
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            gap: SIZES.small,
-          }}
+      {isAdmin && (
+        <Animated.View
+          style={defaultStyles.footer}
+          entering={SlideInDown.delay(200)}
         >
-          <TouchableOpacity
-            style={[
-              defaultStyles.btn,
-              {
-                paddingHorizontal: SIZES.small,
-                backgroundColor: COLORS.secondary,
-              },
-            ]}
-            onPress={() => {}}
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              gap: SIZES.small,
+            }}
           >
-            <Text style={{ ...defaultStyles.btnText, fontSize: SIZES.small }}>
-              Edit
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[defaultStyles.btn, { paddingHorizontal: SIZES.small }]}
-            onPress={() => {}}
-          >
-            <Text style={{ ...defaultStyles.btnText, fontSize: SIZES.small }}>
-              Attach Files
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </Animated.View>
+            <TouchableOpacity
+              style={[
+                defaultStyles.btn,
+                {
+                  paddingHorizontal: SIZES.small,
+                  backgroundColor: COLORS.secondary,
+                },
+              ]}
+              onPress={() => {}}
+            >
+              <Text style={{ ...defaultStyles.btnText, fontSize: SIZES.small }}>
+                Edit
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[defaultStyles.btn, { paddingHorizontal: SIZES.small }]}
+              onPress={() => {}}
+            >
+              <Text style={{ ...defaultStyles.btnText, fontSize: SIZES.small }}>
+                Attach Files
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </Animated.View>
+      )}
     </View>
   )
 }

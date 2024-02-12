@@ -1,10 +1,6 @@
 import { View, Text, Modal, TouchableOpacity } from 'react-native'
 import React from 'react'
 import styles from './customModal.style'
-import { selectView, toggleModal } from '../../../features/modal/modalSlice'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigation } from 'expo-router'
-import { logOut } from '../../../features/data/dataSlice'
 import Input from '../input/Input'
 import { MULTI } from '../../../constants/strings'
 
@@ -16,19 +12,14 @@ const CustomModal = ({
   setInput,
   title,
 }) => {
-  const navigate = useNavigation()
-  const showModal = useSelector(selectView)
-  const dispatch = useDispatch()
   return (
     <Modal
       animationType='slide'
       transparent={true}
-      visible={visible !== undefined ? visible : showModal}
+      visible={visible}
       onRequestClose={() => {
         if (setVisible) {
           setVisible(false)
-        } else {
-          dispatch(toggleModal())
         }
       }}
     >
@@ -37,7 +28,7 @@ const CustomModal = ({
           <Text style={styles.modalText}>{title ?? 'Are You Sure?'}</Text>
           {setInput && (
             <Input
-              label={'Share us the reason why you want to decline this order ?'}
+              label={"What's the reason for the decline ?"}
               setState={setInput}
               state={input}
               type={MULTI}
@@ -48,8 +39,6 @@ const CustomModal = ({
               onPress={() => {
                 if (setVisible) {
                   setVisible(false)
-                } else {
-                  dispatch(toggleModal())
                 }
               }}
               style={[styles.declineBtn, styles.btn]}
@@ -61,10 +50,6 @@ const CustomModal = ({
                 if (onSuccess) {
                   onSuccess()
                   setVisible(false)
-                } else {
-                  navigate.goBack()
-                  dispatch(logOut())
-                  dispatch(toggleModal())
                 }
               }}
               style={[styles.acceptBtn, styles.btn]}

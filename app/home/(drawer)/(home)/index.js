@@ -40,12 +40,11 @@ const index = () => {
       }
     )
   }, [])
-  // console.log(user)
 
   useEffect(() => {
     if (
       user?.groupdetail?.name?.toLowerCase() === DRIVERS &&
-      (!user?.licenseid || !user?.vehicledetail)
+      (!user?.license || !user?.vehicledetail)
     ) {
       navigate.navigate('(modals)/driver', {
         step: !user?.licenseid ? 1 : 2,

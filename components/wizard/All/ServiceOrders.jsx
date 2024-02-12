@@ -157,7 +157,6 @@ const ServiceOrders = ({ data, page, setPage, total, refresh, setRefresh }) => {
             page={page}
             numberOfPages={Math.ceil(total / 10) + 1}
             onPageChange={(page) => {
-              console.log(Math.ceil(total / 10), page)
               setPage(page)
             }}
             label={`${(page - 1) * 10 + 1} - ${

@@ -9,7 +9,7 @@ import { useToast } from 'react-native-toast-notifications'
 import CustomDropdown from '../../../components/common/dropdown/CustomDropdown'
 import { COLORS } from '../../../constants'
 import { useSelector } from 'react-redux'
-import { selectIsFetching } from '../../../features/data/dataSlice'
+import { selectIsFetching, selectUser } from '../../../features/data/dataSlice'
 import { addTransits, getPorts } from '../../../api/shipment/shipment'
 import { getAllCustomers } from '../../../api/users'
 import { getAllProducts } from '../../../api/product/product'
@@ -30,6 +30,7 @@ const NewTransit = () => {
   const [customer, setCustomer] = useState()
   const [ports, setPorts] = useState()
   const [port, setPort] = useState()
+  const user = useSelector(selectUser)
 
   const onAdd = () => {
     addTransits(
@@ -49,11 +50,16 @@ const NewTransit = () => {
 
   useEffect(() => {
     getPorts(null, dispatch, setPorts, toast)
-    getAllCustomers(null, dispatch, setCustomers, toast)
+    if (user?.groups?.length) {
+      getAllCustomers(null, dispatch, setCustomers, toast)
+    }
     getAllProducts(null, dispatch, setProducts, toast)
   }, [])
 
-  return !(ports && customers && products) ? (
+  return user?.groups?.length &&
+    !customers &&
+    !ports &&
+    !(ports && customers && products) ? (
     <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
   ) : (
     <ScrollView style={styles.container}>
@@ -61,15 +67,18 @@ const NewTransit = () => {
         <Text style={styles.headerTitle}>Transit Information</Text>
       </View>
       <View style={styles.inputContainer}>
-        <CustomDropdown
-          label={'Customer'}
-          options={customers?.results}
-          placeholder={'Select A Customer'}
-          state={customer}
-          setState={setCustomer}
-          labelField={'first_name'}
-          valueField={'id'}
-        />
+        {user?.groups?.length > 0 && (
+          <CustomDropdown
+            label={'Customer'}
+            options={customers?.results}
+            placeholder={'Select A Customer'}
+            state={customer}
+            setState={setCustomer}
+            labelField={'first_name'}
+            valueField={'id'}
+          />
+        )}
+
         <CustomDropdown
           label={'Product'}
           options={products?.results}
@@ -88,15 +97,17 @@ const NewTransit = () => {
           labelField={'name'}
           valueField={'id'}
         />
-        <CustomDropdown
-          label={'Transitor'}
-          options={port?.transitorlist}
-          placeholder={'Select A Transitor'}
-          state={transitor}
-          setState={setTransitor}
-          labelField={'first_name'}
-          valueField={'id'}
-        />
+        {port && (
+          <CustomDropdown
+            label={'Transitor'}
+            options={port?.transitorlist}
+            placeholder={'Select A Transitor'}
+            state={transitor}
+            setState={setTransitor}
+            labelField={'first_name'}
+            valueField={'id'}
+          />
+        )}
       </View>
       <Footer onSave={onAdd} />
     </ScrollView>

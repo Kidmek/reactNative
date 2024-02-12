@@ -52,11 +52,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: SIZES.small,
     alignSelf: 'flex-end',
   },
-  buttonTitle: {
-    paddingVertical: SIZES.large,
-    color: COLORS.primary,
-    fontFamily: FONT.bold,
-    fontSize: SIZES.medium,
+  buttonTitle: (disabled) => {
+    return {
+      paddingVertical: SIZES.large,
+      color: disabled ? COLORS.gray : COLORS.primary,
+      fontFamily: FONT.bold,
+      fontSize: SIZES.medium,
+    }
   },
   footerItems: {
     flexDirection: 'row',

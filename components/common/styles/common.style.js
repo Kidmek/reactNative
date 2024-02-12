@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
     fontSize: SIZES.large,
     textAlign: 'center',
     marginBottom: SIZES.medium,
+    textTransform: 'capitalize',
   },
   wizCheckerHeader: {
     flexDirection: 'row',

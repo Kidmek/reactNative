@@ -5,7 +5,7 @@ export const getAllUser = (params, dispatchFalse, setData, toast) => {
   getSkeleton('/allusers/', params, dispatchFalse, setFetching, setData, toast)
 }
 export const getAllGroups = (params, dispatchFalse, setData, toast) => {
-  getSkeleton('/groups/', params, dispatchFalse, setFetching, setData, toast)
+  getSkeleton('/hrgroups/', params, dispatchFalse, setFetching, setData, toast)
 }
 export const addGroups = (data, dispatchFalse, toast, onSuccess) => {
   postSkeleton(

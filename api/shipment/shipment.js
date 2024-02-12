@@ -1,5 +1,10 @@
 import { setData, setFetching, setLoading } from '../../features/data/dataSlice'
-import { getSkeleton, postSkeleton, putSkeleton } from '../apiConfig'
+import {
+  deleteSkeleton,
+  getSkeleton,
+  postSkeleton,
+  putSkeleton,
+} from '../apiConfig'
 
 export const getShipments = (params, dispatchFalse, setData, toast) => {
   getSkeleton('/shipments/', null, dispatchFalse, setFetching, setData, toast)
@@ -14,6 +19,42 @@ export const getSingleShipment = (params, dispatchFalse, setData, toast) => {
     setData,
     toast
   )
+}
+export const updateSingleShipment = (
+  params,
+  data,
+  dispatchFalse,
+  onSuccess,
+  toast
+) => {
+  putSkeleton(
+    '/shipments/' + params + '/',
+    data,
+    params,
+    dispatchFalse,
+    setLoading,
+    onSuccess,
+    toast
+  )
+}
+
+export const deleteSingleShipment = (
+  params,
+  dispatchFalse,
+  onSuccess,
+  toast
+) => {
+  deleteSkeleton(
+    '/shipments/' + params + '/',
+    params,
+    dispatchFalse,
+    setLoading,
+    toast,
+    onSuccess
+  )
+}
+export const getDrivers = (params, dispatchFalse, setData, toast) => {
+  getSkeleton('/drivers/', null, dispatchFalse, setFetching, setData, toast)
 }
 export const addShipment = (data, dispatchFalse, toast, onSuccess) => {
   postSkeleton(
@@ -207,6 +248,50 @@ export const addTransits = (data, dispatchFalse, toast, onSuccess) => {
     onSuccess,
     toast,
     null
+  )
+}
+
+export const getSingleTransit = (params, dispatchFalse, setData, toast) => {
+  getSkeleton(
+    '/transitory/' + params + '/',
+    params,
+    dispatchFalse,
+    setFetching,
+    setData,
+    toast
+  )
+}
+export const updateSingleTransit = (
+  params,
+  data,
+  dispatchFalse,
+  onSuccess,
+  toast
+) => {
+  putSkeleton(
+    '/transitory/' + params + '/',
+    data,
+    params,
+    dispatchFalse,
+    setLoading,
+    onSuccess,
+    toast
+  )
+}
+
+export const deleteSingleTransit = (
+  params,
+  dispatchFalse,
+  onSuccess,
+  toast
+) => {
+  deleteSkeleton(
+    '/transitory/' + params + '/',
+    params,
+    dispatchFalse,
+    setLoading,
+    toast,
+    onSuccess
   )
 }
 

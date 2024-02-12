@@ -1,5 +1,5 @@
-import { Stack, useRouter } from 'expo-router'
-import { Provider, useDispatch, useSelector } from 'react-redux'
+import { Stack, router, useNavigation, useRouter } from 'expo-router'
+import { Provider } from 'react-redux'
 import { MenuProvider } from 'react-native-popup-menu'
 import { ToastProvider } from 'react-native-toast-notifications'
 import { store } from '../store'
@@ -7,16 +7,106 @@ import { StatusBar } from 'expo-status-bar'
 import { TouchableOpacity, View } from 'react-native'
 import { Text } from 'react-native'
 import { COLORS } from '../constants'
-import { useCallback } from 'react'
+import { useCallback, useEffect } from 'react'
 import { useFonts } from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import Loader from '../components/common/loader/Loader'
-import CustomModal from '../components/common/modal/CustomModal'
 import { Ionicons } from '@expo/vector-icons'
+import LogoutModal from '../components/common/modal/LogoutModal'
+import * as Device from 'expo-device'
+import * as Notifications from 'expo-notifications'
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+})
+async function registerForPushNotificationsAsync() {
+  let token
+
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    })
+  }
+
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync()
+    let finalStatus = existingStatus
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync()
+      finalStatus = status
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!')
+      return
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data
+  } else {
+    alert('Must use physical device for Push Notifications')
+  }
+
+  return token
+}
+function useNotificationObserver() {
+  const navigation = useNavigation()
+  useEffect(() => {
+    registerForPushNotificationsAsync()
+    let isMounted = true
+
+    function redirect(notification) {
+      const data = notification.request.content.data
+      // console.log('_layout Notification Redirect')
+      // console.log(data?.params)
+      if (data?.name) {
+        navigation.navigate(data?.name, {
+          screen: data?.screen,
+          params: data?.params,
+        })
+        // router.push({
+        //   pathname: '/' + data?.name + '/' + data?.screen,
+        //   params: data?.params,
+        // })
+        // navigation.navigate('details', {
+        //   screen: 'shipment',
+        //   params: data?.params,
+        // })
+      }
+    }
+
+    Notifications.getLastNotificationResponseAsync().then((response) => {
+      if (!isMounted || !response?.notification) {
+        return
+      }
+      redirect(response?.notification)
+    })
+
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        redirect(response.notification)
+      }
+    )
+
+    return () => {
+      isMounted = false
+      subscription.remove()
+    }
+  }, [])
+}
+
+export const unstable_settings = {
+  initialRouteName: 'home/index',
+}
 SplashScreen.preventAutoHideAsync()
 
 const Layout = () => {
+  useNotificationObserver()
+
   const router = useRouter()
   const [fontsLoaded] = useFonts({
     DMBold: require('../assets/fonts/Montserrat-Bold.ttf'),
@@ -60,7 +150,11 @@ const Layout = () => {
     <Provider store={store}>
       <Loader />
 
-      <CustomModal />
+      <LogoutModal
+        onSuccess={() => {
+          router.back()
+        }}
+      />
       <MenuProvider>
         <ToastProvider
           placement='bottom'

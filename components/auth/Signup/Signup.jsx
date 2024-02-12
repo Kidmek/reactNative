@@ -50,6 +50,9 @@ const SignUp = (props) => {
 
   const handleSubmitButton = () => {
     setErrortext('')
+    props.setIsLogin(false)
+    props.setOtp(true)
+    return
     if (!userFirstName) {
       toast.show('Please Enter A First Name', {
         type: 'danger',
@@ -125,6 +128,8 @@ const SignUp = (props) => {
           toast.show('Successfully Registered', {
             type: 'success',
           })
+          props.setIsLogin(false)
+          props.setOtp(true)
           // props.setIsLogin(true)
         } else {
           setErrortext(responseJson.msg)

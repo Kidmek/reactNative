@@ -36,7 +36,6 @@ import Animated, {
 import { defaultStyles } from '../../../components/common/styles/Styles'
 import { currencyFormat } from '../../../components/common/utils'
 import Carousel from 'react-native-reanimated-carousel'
-import wizard from '../../../app/home/wizard'
 import CardDetail from '../../common/detail/CardDetail'
 
 const { width } = Dimensions.get('window')
@@ -456,7 +455,7 @@ const SingleWarehouse = ({ params, wizard, setData }) => {
               <Text>Birr</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={[defaultStyles.btn, { paddingRight: 20, paddingLeft: 20 }]}
               onPress={() => {
                 navigation.navigate('new', {
@@ -466,7 +465,7 @@ const SingleWarehouse = ({ params, wizard, setData }) => {
               }}
             >
               <Text style={defaultStyles.btnText}>Order</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
         </Animated.View>
       )}

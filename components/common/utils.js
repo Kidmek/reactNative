@@ -1,3 +1,6 @@
+import { io } from 'socket.io-client'
+import { SOCKET_URL } from '../../constants/strings'
+
 export const currencyFormat = (num) => {
   return num?.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
@@ -13,3 +16,6 @@ export const getDayDifference = (startDate, endDate) => {
 
   return Difference_In_Days
 }
+
+const socket = io.connect(SOCKET_URL)
+export default socket
