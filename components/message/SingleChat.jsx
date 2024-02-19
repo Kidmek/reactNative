@@ -11,6 +11,7 @@ const SingleChat = ({ conversation, data }) => {
   const otherUser = conversation?.users?.filter(
     (u) => u?.email != data?.email
   )?.[0]
+
   // const [otherUser, setOtherUser] = useState();
   return (
     <TouchableOpacity

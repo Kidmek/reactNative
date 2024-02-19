@@ -12,9 +12,8 @@ import {
 import { useNavigation } from 'expo-router'
 import Search from '../../common/search/Search'
 import All from '../All/All'
-import { SIZES } from '../../../constants'
 
-const OrderWelcome = () => {
+const PaymentWelcome = () => {
   const [searchQuery, setSearchQuery] = useState()
   const navigation = useNavigation()
   const isAdmin = useSelector(selectIsAdmin)
@@ -31,9 +30,6 @@ const OrderWelcome = () => {
           onRefresh={() => setRefresh(!refresh)}
         />
       }
-      contentContainerStyle={{
-        paddingBottom: SIZES.large,
-      }}
     >
       <View>
         <Search
@@ -63,4 +59,4 @@ const OrderWelcome = () => {
   )
 }
 
-export default OrderWelcome
+export default PaymentWelcome

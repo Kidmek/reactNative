@@ -15,16 +15,17 @@ import SingleCard from '../../common/cards/single/SingleCard'
 import { useSelector } from 'react-redux'
 import { selectData } from '../../../features/data/dataSlice'
 import Footer from '../../common/footer/Footer'
-import { DRIVERS } from '../../../constants/strings'
+import { ACCEPTED, DRIVERS, INITIALIZED } from '../../../constants/strings'
 import * as Location from 'expo-location'
 import CustomModal from '../../common/modal/CustomModal'
 import DriverModal from '../../common/modal/DriverModal'
 import { Audio } from 'expo-av'
 import * as Notifications from 'expo-notifications'
+import { useNavigation } from 'expo-router'
 
 const Started = ({ fetching, type, refresh, cantAdd }) => {
   const ONE_SECOND_IN_MS = 1000
-
+  const navigation = useNavigation()
   const PATTERN = [
     1 * ONE_SECOND_IN_MS,
     2 * ONE_SECOND_IN_MS,
@@ -73,6 +74,12 @@ const Started = ({ fetching, type, refresh, cantAdd }) => {
       },
       dispatch,
       () => {
+        navigation.navigate('details', {
+          screen: 'shipment',
+          params: {
+            id: shipment?.id,
+          },
+        })
         getShipments(type, dispatch, setShipments, toast)
       },
       toast
@@ -129,7 +136,11 @@ const Started = ({ fetching, type, refresh, cantAdd }) => {
   useEffect(() => {
     if (
       shipments?.results?.[0] &&
-      user?.groupdetail?.name?.toLowerCase() === DRIVERS
+      user?.groupdetail?.name?.toLowerCase() === DRIVERS &&
+      shipment?.results?.[0]?.originlng &&
+      shipment?.results?.[0]?.originlat &&
+      shipment?.results?.[0]?.lng &&
+      shipment?.results?.[0]?.lat
     ) {
       setShipment(shipments?.results?.[0])
       setNewVisible(true)
@@ -215,20 +226,33 @@ const Started = ({ fetching, type, refresh, cantAdd }) => {
                 value={item?.created_at?.replace(' ', '\n')}
               />
             </View>
-            {user?.groupdetail?.name?.toLowerCase() === DRIVERS && (
-              <Footer
-                onSave={() => {
-                  setShipment(item)
-                  onAdd(true)
-                }}
-                onCancel={() => {
-                  setShipment(item)
-                  setVisible(true)
-                }}
-                saveText={'Accept'}
-                cancelText={'Decline'}
-              />
-            )}
+            {user?.groupdetail?.name?.toLowerCase() === DRIVERS &&
+              item?.status?.toLowerCase() === INITIALIZED && (
+                <Footer
+                  onSave={() => {
+                    setShipment(item)
+                    onAdd(true)
+                  }}
+                  onCancel={() => {
+                    setShipment(item)
+                    setVisible(true)
+                  }}
+                  saveText={'Accept'}
+                  cancelText={'Decline'}
+                />
+              )}
+            <View style={{ width: '90%' }}>
+              {user?.groupdetail?.name?.toLowerCase() === DRIVERS &&
+                item?.status?.toLowerCase() === ACCEPTED && (
+                  <Footer
+                    onSave={() => {
+                      //
+                    }}
+                    start
+                    saveText={'Start'}
+                  />
+                )}
+            </View>
           </SingleCard>
         )
       })}

@@ -19,6 +19,11 @@ import { io } from 'socket.io-client'
 import { SOCKET_URL } from '../../constants/strings'
 import socket from '../common/utils'
 import * as Notifications from 'expo-notifications'
+import {
+  getAllCustomers,
+  getAllGroups,
+  getAllGroupsNotHr,
+} from '../../api/users'
 
 const Message = () => {
   const ONE_SECOND_IN_MS = 1000
@@ -60,7 +65,6 @@ const Message = () => {
         toast
       )
     } else {
-      // getAllCustomers(null, dispatch, setCustomers, toast)
       if (myId?.id) {
         getSingleConversations(
           { user1: myId?.id },
@@ -70,91 +74,82 @@ const Message = () => {
         )
       }
     }
+    // getAllCustomers(null, dispatch, setCustomers, toast)
 
-    // getAllGroups(null, dispatch, setUsers, toast)
+    // getAllGroupsNotHr(null, dispatch, setUsers, toast)
   }, [refresh, data])
 
-  //   useEffect(() => {
-  //     if (customers?.results) {
-  //       customers?.results?.map((c) => {
+  // useEffect(() => {
+  //   console.log('Customers', customers?.count)
+  //   if (customers?.results) {
+  //     customers?.results?.map((c) => {
+  //       addUser(
+  //         {
+  //           email: c?.email,
+  //           phone: c?.phone,
+  //           ProfilePicture: c?.ProfilePicture,
+  //           first_name: c?.first_name,
+  //           last_name: c?.last_name,
+  //         },
+  //         dispatch,
+  //         null,
+  //         toast
+  //       )
+  //     })
+  //   }
+  // }, [customers])
+  // useEffect(() => {
+  //   console.log('Users', users?.count)
+  //   if (users?.results) {
+  //     users?.results?.map((u) => {
+  //       u?.userslist?.map((ul) => {
   //         addUser(
   //           {
-  //             email: c?.email,
-  //             phone: c?.phone,
-  //             ProfilePicture: c?.ProfilePicture,
-  //             first_name: c?.first_name,
-  //             last_name: c?.last_name,
+  //             email: ul?.email,
+  //             phone: ul?.phone,
+  //             ProfilePicture: ul?.ProfilePicture,
+  //             first_name: ul?.first_name,
+  //             last_name: ul?.last_name,
   //           },
   //           dispatch,
   //           null,
   //           toast
   //         )
   //       })
-  //     }
-  //   }, [customers])
-  //   useEffect(() => {
-  //     if (users?.results) {
-  //       users?.results?.map((u) => {
-  //         u?.userslist?.map((ul) => {
-  //           addUser(
-  //             {
-  //               email: ul?.email,
-  //               phone: ul?.phone,
-  //               ProfilePicture: ul?.ProfilePicture,
-  //               first_name: ul?.first_name,
-  //               last_name: ul?.last_name,
-  //             },
-  //             dispatch,
-  //             null,
-  //             toast
-  //           )
-  //         })
-  //       })
-  //     }
-  //   }, [users])
+  //     })
+  //   }
+  // }, [users])
 
   useEffect(() => {
     if (myId?.id) {
       socket?.on('getMsg', async (data) => {
-        // console.log('Outside')
-        // console.log(data)
-        // console.log(data?.sender_email)
-        console.log({
-          name: 'details',
-          screen: 'conversation',
-          params: {
-            new: false,
-            conversation: data.conversation,
-            otherUser: data?.sender_email,
-          },
-        })
         if (data?.sender_email?.email && data?.sender_email.first_name) {
-          Vibration.vibrate(PATTERN)
-          await Notifications.scheduleNotificationAsync({
-            content: {
-              title: `${data?.sender_email.first_name}  ${data?.sender_email.last_name}`,
-              body: `${data?.message}`,
-              data: {
-                name: 'details',
-                screen: 'conversation',
-                params: {
-                  new: false,
-                  conversation: data.conversation,
-                  otherUser: data?.sender_email
-                    ? { ...data?.sender_email }
-                    : {},
-                },
-              },
-            },
-            trigger: null,
-          })
+          // Vibration.vibrate(PATTERN)
+          // await Notifications.scheduleNotificationAsync({
+          //   content: {
+          //     title: `${data?.sender_email.first_name}  ${data?.sender_email.last_name}`,
+          //     body: `${data?.message}`,
+          //     data: {
+          //       name: 'details',
+          //       screen: 'conversation',
+          //       params: {
+          //         new: false,
+          //         conversation: data.conversation,
+          //         otherUser: data?.sender_email
+          //           ? { ...data?.sender_email }
+          //           : {},
+          //       },
+          //     },
+          //   },
+          //   trigger: null,
+          // })
         }
 
         setRefresh(!refresh)
       })
       socket?.emit('addUser', myId?.id)
       socket?.on('connect_error', (error) => {
-        console.log('Connection Error:', error)
+        // console.log('Connection Error:', error)
       })
       //   socket?.on('seen', (data) => {
       //     console.log(data)

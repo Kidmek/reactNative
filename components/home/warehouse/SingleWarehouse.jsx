@@ -394,6 +394,7 @@ const SingleWarehouse = ({ params, wizard, setData }) => {
                   latitudeDelta: 0.0922,
                   longitudeDelta: 0.0421,
                 }}
+                showsUserLocation
               >
                 <Marker
                   pinColor='red'

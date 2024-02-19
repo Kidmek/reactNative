@@ -1,7 +1,7 @@
 import { View, TouchableOpacity, Text } from 'react-native'
 import React from 'react'
 import styles from './footer.style'
-import { COLORS } from '../../../constants'
+import { COLORS, SIZES } from '../../../constants'
 import { useNavigation } from 'expo-router/src/useNavigation'
 
 const Footer = ({
@@ -11,9 +11,28 @@ const Footer = ({
   cancelText,
   onlyCancel,
   onlySave,
+  start,
 }) => {
   const navigate = useNavigation()
-  return (
+  return start ? (
+    <View>
+      <TouchableOpacity
+        style={{
+          backgroundColor: COLORS.primary,
+          paddingVertical: SIZES.medium,
+          borderRadius: SIZES.small,
+          alignItems: 'center',
+        }}
+        onPress={() => {
+          onSave()
+        }}
+      >
+        <Text style={{ ...styles.text, color: COLORS.pureWhite }}>
+          {saveText ?? 'Start'}
+        </Text>
+      </TouchableOpacity>
+    </View>
+  ) : (
     <View style={styles.footer}>
       {!onlySave && (
         <TouchableOpacity

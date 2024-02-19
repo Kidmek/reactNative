@@ -57,4 +57,11 @@ export const defaultStyles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: SIZES.medium,
   },
+  image: {
+    flex: 1,
+    width: '90%',
+    height: '100%',
+    borderRadius: SIZES.small,
+    alignSelf: 'center',
+  },
 })

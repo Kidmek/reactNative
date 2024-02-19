@@ -5,10 +5,11 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  Image,
 } from 'react-native'
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useNavigation } from 'expo-router'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, AntDesign } from '@expo/vector-icons'
 import { COLORS, FONT, SIZES } from '../../constants'
 import {
   createConversation,
@@ -25,6 +26,9 @@ import messageStyles from './message.style'
 import { selectData } from '../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import socket from '../common/utils'
+import * as DocumentPickerApi from 'expo-document-picker'
+import { MSG_API } from '../../constants/strings'
+import axios from 'axios'
 
 const Conversation = ({ params }) => {
   const dispatch = store.dispatch
@@ -35,12 +39,112 @@ const Conversation = ({ params }) => {
   const [text, setText] = useState()
   const data = useSelector(selectData)
   const [conversation, setConversation] = useState(params?.conversation)
+  const [files, setFiles] = useState()
 
   const [IDs, setIDs] = useState({
     my: {},
     other: {},
   })
-  // console.log('Conversation Params', params)
+  const [loading, setLoading] = useState(false)
+
+  // Document Picker
+  const pickDocument = async () => {
+    let result = await DocumentPickerApi.getDocumentAsync({
+      multiple: true,
+      type: 'image/*',
+    })
+    if (result?.assets?.length) {
+      setFiles(result.assets)
+    }
+  }
+
+  //   On Message Send
+  const sendMsg = async () => {
+    const formData = new FormData()
+    if (files && files?.length) {
+      files.forEach((file) => {
+        const { name, mimeType, uri } = file
+        formData.append('images', { name, type: mimeType, uri })
+      })
+    }
+
+    const data = {
+      sender: IDs.my?.id,
+      reciever: IDs.other?.id,
+      seen: false,
+      message: text,
+      conversation: conversation?.id ?? data?.id,
+    }
+
+    formData.append('sender', IDs.my?.id)
+    formData.append('reciever', IDs.other?.id)
+    formData.append('seen', false)
+    formData.append('message', text)
+    formData.append('conversation', conversation?.id ?? data?.id)
+
+    try {
+      const response = await axios({
+        method: 'POST',
+        url: MSG_API + '/messages',
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+      if (response.status === 200) {
+        socket.emit('sendMsg', {
+          sender: IDs.my?.id,
+          reciever: IDs.other?.id,
+          message: text,
+          conversation: conversation?.id,
+          sender_email: IDs.my,
+          images: response.data?.images,
+        })
+        setMessages([
+          ...messages,
+          {
+            sender: IDs.my?.id,
+            reciever: IDs.other?.id,
+            seen: false,
+            message: text,
+            conversation: data?.id,
+            images: response.data?.images,
+            sent_at: new Date(),
+          },
+        ])
+      } else {
+        console.log('Upload failed', response.status)
+      }
+    } catch (error) {
+      console.log(
+        'Error:',
+        error.response ? error.response.data : error.message
+      )
+    }
+  }
+  const onSend = async () => {
+    setText('')
+    setFiles([])
+    if (!conversation?.id) {
+      createConversation(
+        {
+          last_sender: IDs?.my?.id,
+          users: [IDs?.my?.id, IDs?.other?.id],
+          last_message: text,
+          seen: false,
+        },
+        dispatch,
+        (data) => {
+          setConversation(data)
+          sendMsg()
+        },
+        toast
+      )
+    } else {
+      sendMsg()
+    }
+  }
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitleAlign: 'center',
@@ -72,15 +176,19 @@ const Conversation = ({ params }) => {
 
   //   Get Messages and Mark Seen
   useEffect(() => {
-    if (conversation) {
+    if (conversation && !messages?.length) {
+      setLoading(true)
       getConversationMsgs(
         { conversation: conversation?.id },
         dispatch,
-        setMessages,
+        (msgs) => {
+          setLoading(false)
+          setMessages(msgs)
+        },
         toast
       )
     }
-  }, [])
+  }, [conversation])
 
   //   Fetch Ids
   useEffect(() => {
@@ -118,6 +226,7 @@ const Conversation = ({ params }) => {
                   message: data?.message,
                   conversation: data?.conversation,
                   sent_at: new Date(),
+                  images: data?.images,
                 },
               ]
 
@@ -129,7 +238,7 @@ const Conversation = ({ params }) => {
         }
       })
       socket?.on('connect_error', (error) => {
-        console.log('Connection Error:', error)
+        // console.log('Connection Error:', error)
       })
 
       if (
@@ -168,85 +277,13 @@ const Conversation = ({ params }) => {
     }
   }, [IDs])
 
-  //   On Message Send
-  const onSend = () => {
-    setText('')
-    const data = {
-      sender: IDs.my?.id,
-      reciever: IDs.other?.id,
-      seen: false,
-      message: text,
-      conversation: conversation?.id ?? data?.id,
+  useEffect(() => {
+    if (text?.length) {
+      setFiles([])
     }
-    if (!conversation?.id) {
-      createConversation(
-        {
-          last_sender: IDs?.my?.id,
-          users: [IDs?.my?.id, IDs?.other?.id],
-          last_message: text,
-          seen: false,
-        },
-        dispatch,
-        (data) => {
-          setConversation(data)
-          sendMessage(
-            data,
-            dispatch,
-            () => {
-              socket.emit('sendMsg', {
-                sender: IDs.my?.id,
-                reciever: IDs.other?.id,
-                message: text,
-                conversation: conversation?.id,
-                sender_email: IDs.my,
-              })
-              setMessages([
-                {
-                  sender: IDs.my?.id,
-                  reciever: IDs.other?.id,
-                  seen: false,
-                  message: text,
-                  conversation: data?.id,
-                  sent_at: new Date(),
-                },
-              ])
-            },
-            toast
-          )
-        },
-        toast
-      )
-    } else {
-      sendMessage(
-        data,
-        dispatch,
-        () => {
-          setMessages([
-            ...messages,
-            {
-              sender: IDs.my?.id,
-              reciever: IDs.other?.id,
-              seen: false,
-              message: text,
-              conversation: conversation?.id,
-              sent_at: new Date(),
-            },
-          ])
-          socket.emit('sendMsg', {
-            sender: IDs.my?.id,
-            reciever: IDs.other?.id,
-            message: text,
-            conversation: conversation?.id,
-            sender_email: IDs.my,
-          })
-        },
-        toast
-      )
-    }
-  }
-  return (conversation && messages === undefined) ||
-    !IDs.my?.id ||
-    !IDs.other?.id ? (
+  }, [text])
+
+  return loading ? (
     <ActivityIndicator
       size={SIZES.xxLarge}
       color={COLORS.primary}
@@ -276,17 +313,20 @@ const Conversation = ({ params }) => {
         }
       >
         {messages ? (
-          messages?.map((message, index) => (
-            <SingleMessage
-              key={index}
-              message={message}
-              isOwn={
-                message?.sender?.email
-                  ? message?.sender?.email === IDs?.my?.email
-                  : message?.sender === IDs?.my?.id
-              }
-            />
-          ))
+          messages?.map(
+            (message, index) =>
+              (message?.message?.length > 0 || message?.images?.length > 0) && (
+                <SingleMessage
+                  key={index}
+                  message={message}
+                  isOwn={
+                    message?.sender?.email
+                      ? message?.sender?.email === IDs?.my?.email
+                      : message?.sender === IDs?.my?.id
+                  }
+                />
+              )
+          )
         ) : (
           <Text style={{ ...messageStyles.type, textAlign: 'center' }}>
             No Messages Yet
@@ -294,17 +334,55 @@ const Conversation = ({ params }) => {
         )}
       </ScrollView>
       <View style={messageStyles.inputContainer}>
-        <TextInput
-          multiline
-          style={messageStyles.inputStyle}
-          value={text}
-          onChangeText={setText}
-          placeholder='Write Your Message'
-        />
+        {(!text || text?.length == 0) && (
+          <TouchableOpacity
+            style={messageStyles.attachmentIcon}
+            onPress={pickDocument}
+            disabled={text || text?.length > 0}
+          >
+            <Ionicons
+              name='document-attach-outline'
+              size={SIZES.xxLarge}
+              color={COLORS.primary}
+            />
+          </TouchableOpacity>
+        )}
+        {files?.length > 0 ? (
+          <ScrollView horizontal>
+            {files?.map((image, index) => (
+              <View key={index} style={messageStyles.imagesWrapper}>
+                <Image
+                  style={messageStyles.image}
+                  source={{ uri: image?.uri }}
+                />
+                <TouchableOpacity
+                  style={messageStyles.minusIcon}
+                  onPress={() => {
+                    setFiles((prev) =>
+                      prev.filter((prevImage) => prevImage !== image)
+                    )
+                  }}
+                >
+                  <AntDesign name='minuscircle' size={15} color={COLORS.red} />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </ScrollView>
+        ) : (
+          <TextInput
+            multiline
+            style={messageStyles.inputStyle}
+            value={text}
+            onChangeText={setText}
+            placeholder='Write Your Message'
+          />
+        )}
         <TouchableOpacity
-          style={messageStyles.iconContainer(!text || text.length === 0)}
+          style={messageStyles.iconContainer(
+            !files?.length && (!text || text.length === 0)
+          )}
           onPress={onSend}
-          disabled={!text || text?.length === 0}
+          disabled={!files?.length && (!text || text?.length === 0)}
         >
           <Ionicons name='send' size={30} color={COLORS.pureWhite} />
         </TouchableOpacity>

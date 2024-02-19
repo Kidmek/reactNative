@@ -106,6 +106,7 @@ const DriverModal = ({
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                   }}
+                  showsUserLocation
                 >
                   {location?.coords?.longitude &&
                     location?.coords?.latitude && (

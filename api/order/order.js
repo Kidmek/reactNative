@@ -28,6 +28,17 @@ export const getOrderDetails = (params, dispatchFalse, setData, toast) => {
     toast
   )
 }
+export const orderPayment = (data, dispatchFalse, setData, toast) => {
+  postSkeleton(
+    '/orderpayment/',
+    data,
+    null,
+    dispatchFalse,
+    setFetching,
+    setData,
+    toast
+  )
+}
 export const addOrder = (data, dispatchFalse, toast, onSuccess) => {
   postSkeleton(
     '/order/',

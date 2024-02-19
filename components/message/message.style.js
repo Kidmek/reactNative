@@ -16,6 +16,15 @@ const messageStyles = StyleSheet.create({
       marginBottom: SIZES.small,
     }
   },
+  singleImgMsg: (isOwn) => {
+    return {
+      flexDirection: 'column',
+      gap: SIZES.small,
+      borderRadius: SIZES.xxLarge,
+      position: 'relative',
+      alignSelf: isOwn ? 'flex-start' : 'flex-end',
+    }
+  },
   singleMsg: (isOwn) => {
     return {
       flexDirection: 'row',
@@ -98,6 +107,23 @@ const messageStyles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: SIZES.small,
   },
+  imagesWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row',
+    gap: SIZES.medium,
+  },
+  minusIcon: {
+    position: 'relative',
+    top: 0,
+    right: 0,
+    marginEnd: SIZES.large,
+  },
+  image: {
+    height: SIZES.smallPicture,
+    width: SIZES.smallPicture,
+  },
+  messageBtm: {},
   iconContainer: (disabled) => {
     return {
       backgroundColor: disabled ? COLORS.gray : COLORS.primary,

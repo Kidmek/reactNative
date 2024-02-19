@@ -22,17 +22,6 @@ const All = ({ refresh }) => {
   }, [refresh])
   return (
     <View style={styles.container}>
-      {/* <AddNew
-        title={'New Order'}
-        page={{
-          name: 'details',
-          screen: 'order_type',
-          params: {
-            choose: true,
-          },
-        }}
-      /> */}
-
       {orders?.results?.map((item, index) => {
         return (
           <SingleCard
@@ -40,7 +29,7 @@ const All = ({ refresh }) => {
             isOnlyText={true}
             page={{
               name: 'details',
-              screen: 'order',
+              screen: 'payment',
               params: { id: item?.id },
             }}
           >
@@ -50,6 +39,17 @@ const All = ({ refresh }) => {
                 value={item?.OrderTypeDetail?.ordertype_name}
               />
               <CardDetail
+                label={'Total Price'}
+                value={currencyFormat(item?.totalprice ?? '0')}
+                isPrice={true}
+              />
+              <CardDetail
+                label={'Time Duration'}
+                value={item?.remaining_date + ' Days'}
+              />
+              <CardDetail label={'Status'} value={item?.status} />
+
+              <CardDetail
                 label={'Ordered'}
                 value={
                   item?.OrderTypeDetail?.ordertype_name == 'Storage'
@@ -57,19 +57,7 @@ const All = ({ refresh }) => {
                     : item?.warehousedetail?.warehouse_name
                 }
               />
-              <CardDetail label={'Space'} value={item?.space_to_rent} isSpace />
 
-              <CardDetail
-                label={'Day Duration'}
-                value={item?.OrderTypeDetail?.ordertype_name}
-              />
-
-              {/* <CardDetail
-                label={'Price'}
-                value={currencyFormat(item?.price ?? '0')}
-                isPrice={true}
-              /> */}
-              <CardDetail label={'Status'} value={item?.status} />
               <CardDetail
                 label={'Created At'}
                 value={item?.created_at}

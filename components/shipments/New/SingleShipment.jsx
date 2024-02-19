@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   Dimensions,
   ScrollView,
+  Pressable,
 } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import {
@@ -26,10 +27,19 @@ import { currencyFormat } from '../../common/utils'
 import Info from '../../common/cards/info/Info'
 import SingleDriver from './SingleDriver'
 import Footer from '../../common/footer/Footer'
+import { Feather } from '@expo/vector-icons'
+
 import CustomModal from '../../common/modal/CustomModal'
 import * as Location from 'expo-location'
 import { router } from 'expo-router'
-import { DRIVERS, MAP_KEY } from '../../../constants/strings'
+import {
+  ACCEPTED,
+  DRIVERS,
+  INITIALIZED,
+  MAP_KEY,
+} from '../../../constants/strings'
+import Input from '../../common/input/Input'
+import AddNew from '../../common/header/AddNew'
 
 const SingleShipment = ({ params }) => {
   const { height } = Dimensions.get('screen')
@@ -40,6 +50,7 @@ const SingleShipment = ({ params }) => {
   const toast = useToast()
   const [shipment, setShipment] = useState()
   const [journey, setJourney] = useState()
+  const [fields, setFields] = useState([])
 
   const [location, setLocation] = useState()
   const user = useSelector(selectData)
@@ -64,7 +75,7 @@ const SingleShipment = ({ params }) => {
         completed: false,
         confirmed: false,
         declined_reason: !accept ? reason : '',
-        dynamicInputs: [],
+        dynamicInputs: fields,
         id: params?.id,
         shipmenttype: shipment?.shipmenttypedetail?.id,
         fraight_price: shipment?.fraight_price,
@@ -139,6 +150,7 @@ const SingleShipment = ({ params }) => {
                 latitudeDelta: 0.0922,
                 longitudeDelta: 0.0421,
               }}
+              showsUserLocation
             >
               {location?.coords?.longitude && location?.coords?.latitude && (
                 <Marker
@@ -221,7 +233,10 @@ const SingleShipment = ({ params }) => {
             </Text>
             <View style={innerStyles.divider} />
             {shipment?.vehicledetail?.driver?.email && (
-              <SingleDriver driver={shipment?.vehicledetail?.driver} />
+              <SingleDriver
+                driver={shipment?.vehicledetail?.driver}
+                licenseplate={shipment?.vehicledetail?.licenseplate}
+              />
             )}
           </View>
           <View>
@@ -263,7 +278,7 @@ const SingleShipment = ({ params }) => {
           </View>
         </View>
         <View style={innerStyles.divider} />
-        <View>
+        <View style={{ marginBottom: SIZES.small }}>
           <View>
             <Text style={innerStyles.name}>
               {shipment?.shipmenttypedetail?.name}
@@ -298,10 +313,10 @@ const SingleShipment = ({ params }) => {
               label={'Vehicle'}
               value={shipment?.vehicledetail?.type}
             />
-            <CardDetail
+            {/* <CardDetail
               label={'Vehicle License Plate'}
               value={shipment?.vehicledetail?.licenseplate}
-            />
+            /> */}
             <CardDetail
               label={'Shipment Distance'}
               value={parseFloat(shipment?.distance)?.toFixed(3) + ' Km'}
@@ -344,18 +359,96 @@ const SingleShipment = ({ params }) => {
           </View>
           {/* <Info text={'  waiting for to accept this shipment order.'} /> */}
         </View>
-        {user?.groupdetail?.name?.toLowerCase() === DRIVERS && (
-          <Footer
-            onSave={() => {
-              onAdd(true)
-            }}
-            onCancel={() => {
-              setVisible(true)
-            }}
-            saveText={'Accept'}
-            cancelText={'Decline'}
-          />
-        )}
+
+        {user?.groupdetail?.name?.toLowerCase() === DRIVERS &&
+          shipment?.status?.toLowerCase() === INITIALIZED && (
+            <View>
+              {fields?.map((field, index) => {
+                return (
+                  <View
+                    key={index}
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      gap: SIZES.small,
+                    }}
+                  >
+                    <Input
+                      style={{
+                        flex: 1,
+                      }}
+                      labelState={field?.label}
+                      setLabelState={(value) => {
+                        const prev = fields
+
+                        prev[index] = { ...field, label: value }
+                        setFields([...prev])
+                      }}
+                      state={field?.value}
+                      setState={(value) => {
+                        const prev = fields
+
+                        prev[index] = { ...field, value: value }
+                        setFields([...prev])
+                      }}
+                    />
+                    <Pressable
+                      onPress={() => {
+                        let prev = fields
+                        prev = prev.filter((_, prevIndex) => {
+                          return prevIndex !== index
+                        })
+                        setFields([...prev])
+                      }}
+                    >
+                      <Feather
+                        name='trash'
+                        color={'red'}
+                        size={SIZES.xxLarge}
+                      />
+                    </Pressable>
+                  </View>
+                )
+              })}
+
+              <AddNew
+                title={'Add Transportation Costs'}
+                onPress={() => {
+                  setFields([
+                    ...fields,
+                    {
+                      label: 'Label ' + parseInt(fields.length) + 1,
+                      value: '',
+                      type: '',
+                    },
+                  ])
+                }}
+              />
+              <View style={innerStyles.divider} />
+
+              <Footer
+                onSave={() => {
+                  onAdd(true)
+                }}
+                onCancel={() => {
+                  setVisible(true)
+                }}
+                saveText={'Accept'}
+                cancelText={'Decline'}
+              />
+            </View>
+          )}
+        {user?.groupdetail?.name?.toLowerCase() === DRIVERS &&
+          shipment?.status?.toLowerCase() === ACCEPTED && (
+            <Footer
+              onSave={() => {
+                //
+              }}
+              start
+              saveText={'Start'}
+            />
+          )}
       </View>
     </ScrollView>
   )

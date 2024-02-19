@@ -1,12 +1,8 @@
-import { View, Text } from 'react-native'
 import React from 'react'
+import PaymentWelcome from '../../components/payment/welcome/PaymentWelcome'
 
 const payments = () => {
-  return (
-    <View>
-      <Text>payments</Text>
-    </View>
-  )
+  return <PaymentWelcome />
 }
 
 export default payments

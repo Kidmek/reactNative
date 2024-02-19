@@ -796,6 +796,7 @@ const Steps = ({ params }) => {
                 <View style={commonStyles.textContainer}>
                   <View style={commonStyles.wizCheckerHeader}>
                     <Text style={commonStyles.name}>{method?.name}</Text>
+
                     <Checkbox
                       color={COLORS.primary}
                       value={shipmentData?.method === method?.id}
@@ -808,6 +809,7 @@ const Steps = ({ params }) => {
                       }}
                     />
                   </View>
+                  <Text style={commonStyles.type}>{method?.description}</Text>
                 </View>
               </SingleCard>
             )

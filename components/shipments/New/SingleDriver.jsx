@@ -3,8 +3,8 @@ import React from 'react'
 import SingleCard from '../../common/cards/single/SingleCard'
 import { customerStyles } from '../../staffs/Customers/customers.style'
 import styles from '../../common/styles/common.style'
-import { COLORS } from '../../../constants'
-const SingleDriver = ({ driver }) => {
+import { COLORS, FONT, SIZES } from '../../../constants'
+const SingleDriver = ({ driver, licenseplate }) => {
   return (
     <SingleCard isOnlyText={true}>
       <View style={customerStyles.container}>
@@ -22,8 +22,20 @@ const SingleDriver = ({ driver }) => {
           <Text style={styles.name}>
             {driver?.first_name + ' ' + driver?.last_name}
           </Text>
-          {/* <Text style={styles.middle}>{driver?.phone}</Text> */}
+          <Text style={styles.middle}>{driver?.phone}</Text>
           <Text style={styles.type}>{driver?.email}</Text>
+          {licenseplate && (
+            <Text
+              style={{
+                fontFamily: FONT.medium,
+                fontSize: SIZES.medium,
+                letterSpacing: 1,
+                textTransform: 'uppercase',
+              }}
+            >
+              {licenseplate}
+            </Text>
+          )}
           <Text
             style={customerStyles.popUpText(
               driver?.is_active ? COLORS.green : COLORS.gray2

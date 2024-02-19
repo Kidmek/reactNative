@@ -1,7 +1,6 @@
-import { View, Text } from 'react-native'
 import React from 'react'
 import { useLocalSearchParams } from 'expo-router'
-import SingleOrder from '../../components/orders/Single/SinlgeOrder'
+import SingleOrder from '../../components/orders/Single/SingleOrder'
 
 const order = () => {
   const params = useLocalSearchParams()

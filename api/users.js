@@ -4,6 +4,9 @@ import { getSkeleton, postSkeleton } from './apiConfig'
 export const getAllUser = (params, dispatchFalse, setData, toast) => {
   getSkeleton('/allusers/', params, dispatchFalse, setFetching, setData, toast)
 }
+export const getAllGroupsNotHr = (params, dispatchFalse, setData, toast) => {
+  getSkeleton('/groups/', params, dispatchFalse, setFetching, setData, toast)
+}
 export const getAllGroups = (params, dispatchFalse, setData, toast) => {
   getSkeleton('/hrgroups/', params, dispatchFalse, setFetching, setData, toast)
 }

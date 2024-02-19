@@ -89,7 +89,15 @@ const _layout = () => {
           headerTitle: 'Order',
         }}
       />
+
+      <Stack.Screen
+        name='payment'
+        options={{
+          headerTitle: 'Invoice',
+        }}
+      />
       {/*  */}
+
       <Stack.Screen
         name='insurance'
         options={{
