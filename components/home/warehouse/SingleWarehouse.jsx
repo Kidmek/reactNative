@@ -133,7 +133,6 @@ const SingleWarehouse = ({ params, wizard, setData }) => {
     getWarehouseDetails(params?.id, dispatch, setWarehouse, toast)
     // }
   }, [])
-
   useEffect(() => {
     if (warehouse && setData) {
       setData(warehouse)

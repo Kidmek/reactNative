@@ -61,7 +61,7 @@ export const getOrderTypes = (
   setGetting
 ) => {
   getSkeleton(
-    '/ordertype',
+    '/ordertype/',
     null,
     dispatchFalse,
     setFetching,

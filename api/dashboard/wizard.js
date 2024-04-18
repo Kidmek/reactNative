@@ -2,7 +2,14 @@ import { setFetching, setLoading } from '../../features/data/dataSlice'
 import { deleteSkeleton, getSkeleton, postSkeleton } from '../apiConfig'
 
 export const getServiceOrders = (params, dispatchFalse, setData, toast) => {
-  getSkeleton('/allservice', params, dispatchFalse, setFetching, setData, toast)
+  getSkeleton(
+    '/allservice/',
+    params,
+    dispatchFalse,
+    setFetching,
+    setData,
+    toast
+  )
 }
 
 export const getSingleServiceOrders = (
@@ -39,7 +46,7 @@ export const deleteSingleServiceOrders = (
 
 export const addServiceOrders = (data, dispatchFalse, onSuccess, toast) => {
   postSkeleton(
-    '/allservice',
+    '/allservice/',
     data,
     null,
     dispatchFalse,

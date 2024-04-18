@@ -3,7 +3,7 @@ import { getSkeleton, postSkeleton } from '../apiConfig'
 
 export const getStorages = (params, dispatchFalse, setData, toast) => {
   getSkeleton(
-    '/storagetype',
+    '/storagetype/',
     params,
     dispatchFalse,
     setFetching,
@@ -13,7 +13,7 @@ export const getStorages = (params, dispatchFalse, setData, toast) => {
 }
 export const getMappedStorages = (params, dispatchFalse, setData, toast) => {
   getSkeleton(
-    '/warehousestoragemapping',
+    '/warehousestoragemapping/',
     params,
     dispatchFalse,
     setFetching,
@@ -53,7 +53,7 @@ export const getMappedStorageDetails = (
 }
 
 export const getShelves = (params, dispatchFalse, setData, toast) => {
-  getSkeleton('/shelve', params, dispatchFalse, setFetching, setData, toast)
+  getSkeleton('/shelve/', params, dispatchFalse, setFetching, setData, toast)
 }
 
 export const addShelveType = (data, dispatchFalse, toast, onSuccess) => {

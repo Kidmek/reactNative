@@ -68,6 +68,7 @@ const Warehouse = ({
       {wizard && <Text style={styles.wizTitle}>Choose Warehouse</Text>}
 
       {warehouses?.results?.map((item, index) => {
+        console.log(item.warehouse_images)
         return (
           <SingleCard
             key={index}

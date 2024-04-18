@@ -30,7 +30,9 @@ const StepFooter = ({
           style={{
             flexDirection: 'row',
             justifyContent: 'center',
-            backgroundColor: COLORS.pureWhite,
+            position: 'absolute',
+            bottom: '100%',
+            alignSelf: 'center',
           }}
         >
           <View

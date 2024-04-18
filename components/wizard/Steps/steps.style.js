@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    zIndex: 10,
   },
   titleCircle: {
     marginTop: 10,
@@ -26,6 +27,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 35,
     marginHorizontal: 20,
+    zIndex: 1,
   },
   circle: {
     borderWidth: 1,

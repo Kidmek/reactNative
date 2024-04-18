@@ -1441,7 +1441,7 @@ const Steps = ({ params }) => {
       {steps[page.current - 1] && (
         <ScrollView
           contentContainerStyle={{
-            paddingBottom: SIZES.large,
+            paddingBottom: SIZES.mediumPicture,
           }}
           keyboardShouldPersistTaps='always'
           style={{

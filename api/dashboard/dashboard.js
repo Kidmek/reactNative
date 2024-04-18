@@ -8,7 +8,7 @@ export const getDashboardData = (
   toast
 ) => {
   getSkeleton(
-    '/admindashboard',
+    '/admindashboard/',
     params,
     dispatchFalse,
     setFetching,
