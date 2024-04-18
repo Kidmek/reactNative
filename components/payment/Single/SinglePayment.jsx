@@ -14,7 +14,6 @@ import innerStyles from '../../common/styles/withImages.style'
 import { COLORS, FONT, SIZES } from '../../../constants'
 import { store as reduxStore } from '../../../store'
 import { useToast } from 'react-native-toast-notifications'
-import * as Linking from 'expo-linking'
 import { selectIsFetching } from '../../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import CardDetail from '../../common/detail/CardDetail'
@@ -22,6 +21,7 @@ import { getOrderDetails, orderPayment } from '../../../api/order/order'
 import { mSQUARE } from '../../../constants/strings'
 import { currencyFormat } from '../../common/utils'
 import { defaultStyles } from '../../common/styles/Styles'
+import { useFocusEffect, useNavigation } from 'expo-router'
 
 const SinglePayment = ({ params }) => {
   const dispatch = reduxStore.dispatch
@@ -29,7 +29,8 @@ const SinglePayment = ({ params }) => {
   const toast = useToast()
   const [order, setOrder] = useState()
   const [refresh, setRefresh] = useState()
-  const [store, setStore] = useState()
+  const [paymentInitiated, setPaymentInitiated] = useState(false)
+  const navigation = useNavigation()
 
   const onConfirm = () => {
     orderPayment(
@@ -48,14 +49,21 @@ const SinglePayment = ({ params }) => {
   useEffect(() => {
     getOrderDetails(params.id, dispatch, setOrder, toast)
   }, [refresh])
-  useEffect(() => {
-    const found = order?.ProductsStored?.filter(
-      (stored) => stored?.order === order?.id
-    )
-    if (found?.length) {
-      setStore(found[0])
+
+  // useEffect(() => {
+  //   const found = order?.ProductsStored?.filter(
+  //     (stored) => stored?.order === order?.id
+  //   )
+  //   if (found?.length) {
+  //     setStore(found[0])
+  //   }
+  // }, [order])
+  useFocusEffect(() => {
+    if (paymentInitiated) {
+      setRefresh(!refresh)
+      setPaymentInitiated(false)
     }
-  }, [order])
+  })
 
   return fetching ? (
     <ActivityIndicator
@@ -161,7 +169,11 @@ const SinglePayment = ({ params }) => {
               <Pressable
                 onPress={() => {
                   if (order?.checkoutdata?.data?.checkout_url) {
-                    Linking.openURL(order?.checkoutdata?.data?.checkout_url)
+                    setPaymentInitiated(true)
+                    navigation.navigate('details', {
+                      screen: 'chapa',
+                      params: { url: order?.checkoutdata?.data?.checkout_url },
+                    })
                   }
                 }}
               >
@@ -172,7 +184,7 @@ const SinglePayment = ({ params }) => {
                     fontFamily: FONT.bold,
                   }}
                 >
-                  Click Here To Redirect To Checkout
+                  Click Here To Checkout
                 </Text>
               </Pressable>
             )}

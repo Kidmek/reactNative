@@ -96,6 +96,12 @@ const _layout = () => {
           headerTitle: 'Invoice',
         }}
       />
+      <Stack.Screen
+        name='chapa'
+        options={{
+          headerTitle: 'Checkout',
+        }}
+      />
       {/*  */}
 
       <Stack.Screen
