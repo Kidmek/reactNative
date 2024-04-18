@@ -9,7 +9,7 @@ import { useEffect } from 'react'
 import { getShipmentTerms } from '../../../api/shipment/shipment'
 import { selectIsFetching } from '../../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
-import { COLORS } from '../../../constants'
+import { COLORS, SIZES } from '../../../constants'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 const Terms = () => {
@@ -39,7 +39,7 @@ const Terms = () => {
       />
 
       {fetching ? (
-        <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+        <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primary} />
       ) : (
         terms?.data?.map((item, index) => {
           return (

@@ -5,7 +5,7 @@ import { getManaged } from '../../../api/warehouse/warehouse'
 import { useEffect } from 'react'
 import { useToast } from 'react-native-toast-notifications'
 import { store } from '../../../store'
-import { COLORS } from '../../../constants'
+import { COLORS, SIZES } from '../../../constants'
 import { mSQUARE } from '../../../constants/strings'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
@@ -21,7 +21,7 @@ const Managed = ({ fetching }) => {
   }, [])
 
   return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+    <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primary} />
   ) : (
     <View style={styles.container}>
       <AddNew

@@ -22,6 +22,7 @@ import OrderSVG from '../../../assets/icons/order'
 import ShipmentSVG from '../../../assets/icons/shipment'
 import InsuranceSVG from '../../../assets/icons/insurance'
 import TransitSVG from '../../../assets/icons/transit'
+import { Platform } from 'react-native'
 
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
@@ -40,7 +41,7 @@ export default function TabLayout() {
         tabBarActiveTintColor: COLORS.primary,
         tabBarLabelStyle: {
           fontFamily: FONT.regular,
-          marginBottom: SIZES.small,
+          marginBottom: Platform.OS == 'android' ? SIZES.small : 0,
         },
         tabBarStyle: {
           height: '10%',

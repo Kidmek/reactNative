@@ -7,7 +7,7 @@ import { useEffect } from 'react'
 import { store } from '../../../store'
 import { useToast } from 'react-native-toast-notifications'
 import CustomDropdown from '../../../components/common/dropdown/CustomDropdown'
-import { COLORS } from '../../../constants'
+import { COLORS, SIZES } from '../../../constants'
 import { useSelector } from 'react-redux'
 import { selectIsFetching, selectUser } from '../../../features/data/dataSlice'
 import { addTransits, getPorts } from '../../../api/shipment/shipment'
@@ -60,7 +60,7 @@ const NewTransit = () => {
     !customers &&
     !ports &&
     !(ports && customers && products) ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+    <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primary} />
   ) : (
     <ScrollView style={styles.container}>
       <View style={styles.header}>

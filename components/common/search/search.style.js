@@ -9,6 +9,7 @@ const styles = StyleSheet.create({
     marginTop: SIZES.large,
     marginHorizontal: SIZES.medium,
     gap: SIZES.medium,
+    marginBottom: SIZES.large,
   },
   searchWrapper: {
     flexDirection: 'row',
@@ -20,9 +21,9 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.xxLarge,
     ...SHADOWS.medium,
     flex: 1,
+    height: SIZES.xxLarge * 2,
   },
   searchInput: {
-    paddingVertical: SIZES.medium,
     fontFamily: FONT.regular,
     paddingHorizontal: SIZES.small,
     flex: 1,

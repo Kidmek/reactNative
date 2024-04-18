@@ -39,7 +39,7 @@ const Vehicles = ({ amount, product, setShipment, shipment }) => {
     }
   }, [])
   return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+    <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primary} />
   ) : (
     <ScrollView
       contentContainerStyle={{

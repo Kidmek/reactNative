@@ -33,7 +33,6 @@ const Search = ({
           </Pressable>
           <TextInput
             multiline
-            numberOfLines={2.5}
             style={styles.searchInput}
             value={searchQuery}
             onChangeText={(e) => {

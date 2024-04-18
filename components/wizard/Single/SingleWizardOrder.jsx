@@ -36,7 +36,7 @@ const SingleWizardOrder = ({ params }) => {
   return fetching ? (
     <ActivityIndicator
       style={styles.activityIndicator}
-      size={'xxLarge'}
+      size={SIZES.xxLarge}
       color={COLORS.primary}
     />
   ) : (

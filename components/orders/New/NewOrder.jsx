@@ -178,7 +178,7 @@ const NewOrder = ({ wizard, params, data, order, setOrder }) => {
   }, [data])
 
   return fetching ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+    <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primary} />
   ) : (
     <ScrollView style={styles.container}>
       {!wizard === SPACE && (

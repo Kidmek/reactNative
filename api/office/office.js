@@ -18,7 +18,7 @@ export const getOfficeDetail = (params, dispatchFalse, setData, toast) => {
 
 export const getOfficeEquipments = (params, dispatchFalse, setData, toast) => {
   getSkeleton(
-    '/officeequipments',
+    '/officeequipments/',
     params,
     dispatchFalse,
     setFetching,

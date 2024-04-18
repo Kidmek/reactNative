@@ -9,7 +9,7 @@ export const getOrders = (
   setGetting
 ) => {
   getSkeleton(
-    '/order',
+    '/order/',
     null,
     dispatchFalse,
     setFetching,

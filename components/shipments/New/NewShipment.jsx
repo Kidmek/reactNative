@@ -174,7 +174,7 @@ const NewShipment = ({
   return (wizard && !product?.id) ||
     (!params?.type?.includes('Local') && (!companies || !ports)) ||
     !agents ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+    <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primary} />
   ) : (
     <ScrollView
       keyboardShouldPersistTaps='always'
@@ -235,7 +235,7 @@ const NewShipment = ({
             />
           )} */}
           {/* {fetching ? (
-            <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+            <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primary} />
           ) : (
             vehicles?.map((item) => {
               return (

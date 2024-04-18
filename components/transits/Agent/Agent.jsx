@@ -1,6 +1,6 @@
 import { View, ActivityIndicator, Text } from 'react-native'
 import React from 'react'
-import { COLORS } from '../../../constants'
+import { COLORS, SIZES } from '../../../constants'
 import { store } from '../../../store'
 import styles from '../../common/styles/common.style'
 import { useToast } from 'react-native-toast-notifications'
@@ -31,7 +31,7 @@ const Agent = ({ portId, wizard, checked, setChecked }) => {
   return fetching ? (
     <ActivityIndicator
       style={styles.activityIndicator}
-      size={'xxLarge'}
+      size={SIZES.xxLarge}
       color={COLORS.primary}
     />
   ) : (

@@ -7,7 +7,7 @@ import { useToast } from 'react-native-toast-notifications'
 import { useEffect } from 'react'
 import { selectIsFetching } from '../../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
-import { COLORS } from '../../../constants'
+import { COLORS, SIZES } from '../../../constants'
 import { getAllInsuranceTypes } from '../../../api/product/insurance'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
@@ -34,7 +34,7 @@ const InsuranceOptions = ({ params }) => {
         </View>
       )}
       {fetching ? (
-        <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+        <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primary} />
       ) : (
         insuranceOptions?.results?.map((item, index) => {
           return (

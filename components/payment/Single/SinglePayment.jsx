@@ -11,7 +11,7 @@ import React, { useState, useEffect } from 'react'
 
 import styles from '../../common/styles/warehouse.style'
 import innerStyles from '../../common/styles/withImages.style'
-import { COLORS, FONT } from '../../../constants'
+import { COLORS, FONT, SIZES } from '../../../constants'
 import { store as reduxStore } from '../../../store'
 import { useToast } from 'react-native-toast-notifications'
 import * as Linking from 'expo-linking'
@@ -60,7 +60,7 @@ const SinglePayment = ({ params }) => {
   return fetching ? (
     <ActivityIndicator
       style={styles.activityIndicator}
-      size={'xxLarge'}
+      size={SIZES.xxLarge}
       color={COLORS.primary}
     />
   ) : (

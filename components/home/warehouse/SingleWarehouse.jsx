@@ -11,7 +11,7 @@ import React, { useState } from 'react'
 import styles from '../../common/styles/warehouse.style'
 import innerStyles from '../../common/styles/withImages.style'
 import { AntDesign, Ionicons } from '@expo/vector-icons'
-import { COLORS } from '../../../constants'
+import { COLORS, SIZES } from '../../../constants'
 import { useNavigation } from 'expo-router'
 import { useEffect, useLayoutEffect } from 'react'
 import {
@@ -142,7 +142,7 @@ const SingleWarehouse = ({ params, wizard, setData }) => {
   return fetching ? (
     <ActivityIndicator
       style={styles.activityIndicator}
-      size={'xxLarge'}
+      size={SIZES.xxLarge}
       color={COLORS.primary}
     />
   ) : (

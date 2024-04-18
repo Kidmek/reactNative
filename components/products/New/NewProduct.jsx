@@ -113,7 +113,7 @@ const NewProduct = ({ wizard, product, setProduct }) => {
   }, [isAdmin])
 
   return !categories?.results?.length || !types?.results?.length ? (
-    <ActivityIndicator size={'xxLarge'} color={COLORS.primary} />
+    <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primary} />
   ) : (
     <ScrollView style={wizard ? '' : styles.container}>
       <View style={styles.header}>

@@ -43,7 +43,7 @@ export const editWarehouse = (
 
 export const getManaged = (params, dispatchFalse, setData, toast) => {
   getSkeleton(
-    '/mapedWarehouse',
+    '/mapedWarehouse/',
     params,
     dispatchFalse,
     setFetching,
@@ -54,7 +54,7 @@ export const getManaged = (params, dispatchFalse, setData, toast) => {
 
 export const getStorageSpaces = (params, dispatchFalse, setData, toast) => {
   getSkeleton(
-    '/warehousestoragemapping',
+    '/warehousestoragemapping/',
     params,
     dispatchFalse,
     setFetching,
