@@ -1,9 +1,30 @@
 import React from 'react'
-import { Stack } from 'expo-router'
+import { Stack, useNavigation } from 'expo-router'
+import { Platform, TouchableOpacity } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import innerStyles from '../../components/common/styles/withImages.style'
 
 const _layout = () => {
+  const navigation = useNavigation()
   return (
-    <Stack>
+    <Stack
+      screenOptions={{
+        // headerBackVisible: Platform.OS == 'ios' ? false : false,
+        headerLeft: () => {
+          if (Platform.OS == 'android') {
+            return null
+          }
+          return (
+            <TouchableOpacity
+              style={innerStyles.roundButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name='chevron-back' size={24} color={'#000'} />
+            </TouchableOpacity>
+          )
+        },
+      }}
+    >
       <Stack.Screen
         name='warehouse'
         options={{

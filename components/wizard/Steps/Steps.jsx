@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import {
+  View,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+} from 'react-native'
 import common from '../../common/styles/common.style'
 import StepHeader from './StepsHeader'
 import StepFooter from './StepFooter'
@@ -1427,7 +1433,7 @@ const Steps = ({ params }) => {
     }
   }, [])
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StepHeader
         length={
           type?.name?.toLowerCase() === STORAGE && params?.type === SPACE
@@ -1477,7 +1483,7 @@ const Steps = ({ params }) => {
         }}
         checkError={checkError}
       />
-    </View>
+    </SafeAreaView>
   )
 }
 

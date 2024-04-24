@@ -153,6 +153,7 @@ const SingleOrder = ({ params }) => {
           }
           scrollAnimationDuration={1000}
           autoPlayInterval={2500}
+          autoPlay
           renderItem={({ item: image }) => (
             <Animated.Image
               source={{ uri: image?.image }}

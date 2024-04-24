@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from 'react-native'
+import { StyleSheet, Dimensions, Platform } from 'react-native'
 import { COLORS, FONT, SIZES } from '../../../constants'
 const styles = StyleSheet.create({
   container: {
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   footerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: SIZES.small,
+    paddingHorizontal: Platform.OS == 'android' ? SIZES.small : SIZES.large,
     alignSelf: 'flex-end',
   },
   buttonTitle: (disabled) => {

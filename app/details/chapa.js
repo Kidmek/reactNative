@@ -4,7 +4,6 @@ import { WebView } from 'react-native-webview'
 
 const chapa = () => {
   const params = useLocalSearchParams()
-  console.log(params.url)
   return (
     <WebView
       style={{

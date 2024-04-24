@@ -14,7 +14,9 @@ const notificationStyles = StyleSheet.create({
       marginBottom: SIZES.small,
     }
   },
-  textWrapper: {},
+  textWrapper: {
+    flex: 1,
+  },
   content: (seen) => {
     return {
       fontFamily: seen ? FONT.medium : FONT.bold,
