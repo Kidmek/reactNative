@@ -115,7 +115,7 @@ const Driver = () => {
 
   useEffect(() => {
     if (params.step) {
-      console.log('Params', params.step)
+      // console.log('Params', params.step)
       setStep(params.step)
     }
   }, [params])

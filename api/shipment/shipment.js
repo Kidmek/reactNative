@@ -226,7 +226,7 @@ export const getPorts = (params, dispatchFalse, setData, toast) => {
 
 export const getPortAgents = (params, dispatchFalse, setData, toast) => {
   getSkeleton(
-    '/ports/' + params,
+    '/ports/' + params + '/',
     null,
     dispatchFalse,
     setFetching,
