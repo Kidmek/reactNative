@@ -11,6 +11,9 @@
       "distribution": "internal",
       "android": {
         "buildType": "apk"
+      },
+      "env": {
+        "ANDROID_HOME": "C:/Users/kidus/AppData/Local/Android/Sdk"
       }
     },
     "production": {}
