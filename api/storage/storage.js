@@ -73,7 +73,7 @@ export const addShelveType = (data, dispatchFalse, toast, onSuccess) => {
 
 export const getStorageDetail = (params, dispatchFalse, setData, toast) => {
   getSkeleton(
-    '/storage/' + params,
+    '/storage/' + params + '/',
     null,
     dispatchFalse,
     setFetching,

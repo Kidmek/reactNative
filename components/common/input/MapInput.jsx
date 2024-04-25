@@ -12,7 +12,7 @@ const MapInput = ({ notifyChange }) => {
       listViewDisplayed={false}
       fetchDetails={true}
       onPress={(data, details = null) => {
-        console.log('Pressed')
+        // console.log('Pressed')
         notifyChange(details.geometry.location)
       }}
       query={{

@@ -7,7 +7,7 @@ export const getOffices = (params, dispatchFalse, setData, toast) => {
 
 export const getOfficeDetail = (params, dispatchFalse, setData, toast) => {
   getSkeleton(
-    '/offices/' + params,
+    '/offices/' + params + '/',
     null,
     dispatchFalse,
     setFetching,

@@ -376,7 +376,7 @@ const Steps = ({ params }) => {
                 order={orderData}
                 setOrder={(data) => {
                   setOrderData(data)
-                  console.log(type?.name?.toLowerCase() === STORAGE)
+                  // console.log(type?.name?.toLowerCase() === STORAGE)
                   if (
                     type?.name?.toLowerCase() === STORAGE &&
                     !(data.space > 0)
@@ -1076,7 +1076,7 @@ const Steps = ({ params }) => {
 
     storage_spaces?.fill(null)
     groupValues?.fill(null)
-    console.log(groupValues)
+    // console.log(groupValues)
     if (product?.file?.performa?.uri) {
       base64 = await FileSystem.readAsStringAsync(
         product?.file?.performa?.uri,
