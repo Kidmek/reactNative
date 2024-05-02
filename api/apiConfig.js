@@ -1,6 +1,7 @@
 import { API } from '../constants/strings'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
+import { Platform } from 'react-native'
 
 export const postSkeleton = (
   url,
@@ -23,7 +24,7 @@ export const postSkeleton = (
     .then((token) => {
       axios
         .post(
-          API + url,
+          API + convertUrl(url),
           {
             ...dataToSend,
           },
@@ -57,7 +58,7 @@ export const postSkeleton = (
           if (setPosting) {
             setPosting(false)
           }
-          console.log('Error At : ', API + url)
+          console.log('Error At Post : ', API + convertUrl(url))
           console.log(error)
           console.log(error?.response?.data)
           const err = error?.response?.data
@@ -77,6 +78,8 @@ export const postSkeleton = (
         })
     })
     .catch(() => {
+      console.log('Error At Outer Post : ', API + convertUrl(url))
+      console.log(error)
       if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
       if (setPosting) {
         setPosting(false)
@@ -109,7 +112,7 @@ export const putSkeleton = (
     .then((token) => {
       axios
         .put(
-          API + url,
+          API + convertUrl(url),
           {
             ...dataToSend,
           },
@@ -146,7 +149,7 @@ export const putSkeleton = (
           if (setPosting) {
             setPosting(false)
           }
-          console.log('Error At : ', API + url)
+          console.log('Error At Put : ', API + convertUrl(url))
           console.log(error)
           const err = error?.response?.data
           if (err?.toString()?.length < 300 && err) {
@@ -167,7 +170,8 @@ export const putSkeleton = (
         })
     })
     .catch((err) => {
-      console.log('Put Outer Catch :', err)
+      console.log('Error At Outer Put : ', API + convertUrl(url))
+      console.log(err)
       if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
       if (setPosting) {
         setPosting(false)
@@ -195,7 +199,7 @@ export const getSkeleton = (
   AsyncStorage.getItem('token')
     .then((token) => {
       axios
-        .get(API + url, {
+        .get(API + convertUrl(url), {
           params: { params },
           headers: {
             Authorization: 'Bearer ' + token,
@@ -214,7 +218,7 @@ export const getSkeleton = (
         })
         .catch((error) => {
           //Hide Loader
-          console.log('Error At : ', API + url)
+          console.log('Error At Get : ', API + convertUrl(url))
           console.log(error)
           if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
           if (setGetting) {
@@ -226,7 +230,9 @@ export const getSkeleton = (
             })
         })
     })
-    .catch(() => {
+    .catch((error) => {
+      console.log('Error At Outer Get : ', API + convertUrl(url))
+      console.log(error)
       if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
       if (setGetting) {
         setGetting(false)
@@ -251,7 +257,7 @@ export const deleteSkeleton = (
   AsyncStorage.getItem('token')
     .then((token) => {
       axios
-        .delete(API + url, {
+        .delete(API + convertUrl(url), {
           params: { params },
           headers: {
             Authorization: 'Bearer ' + token,
@@ -272,7 +278,11 @@ export const deleteSkeleton = (
           }
         })
         .catch((error) => {
+          console.log('Error At Delete : ', API + convertUrl(url))
+          console.log(error)
+          if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
           //Hide Loader
+
           if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
           if (toast?.show)
             toast?.show(error?.request?.statusText || error.message, {
@@ -281,6 +291,8 @@ export const deleteSkeleton = (
         })
     })
     .catch(() => {
+      console.log('Error At Outer Delete : ', API + convertUrl(url))
+      console.log(error)
       if (dispatchFalse && setLoading) dispatchFalse(setLoading(false))
 
       if (toast?.show)
@@ -312,4 +324,22 @@ export const getUser = async () => {
 export const logout = async () => {
   await AsyncStorage.removeItem('user_id')
   await AsyncStorage.removeItem('token')
+}
+
+const convertUrl = (url) => {
+  console.log('URL:', url)
+  return url
+
+  try {
+    if (Platform.OS == 'ios') {
+      return url
+    } else {
+      if (url?.charAt(url?.length - 1) == '/')
+        return url.substring(0, url.length - 1)
+    }
+  } catch (err) {
+    console.log('Error at converting url ')
+    console.log(err)
+    return url
+  }
 }

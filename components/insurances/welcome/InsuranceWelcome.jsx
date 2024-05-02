@@ -1,8 +1,13 @@
 import React, { useState } from 'react'
-import { View, Text, ScrollView, RefreshControl } from 'react-native'
+import {
+  View,
+  Text,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+} from 'react-native'
 import styles from '../../common/styles/common.style'
 import { AntDesign } from '@expo/vector-icons'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 import { useSelector } from 'react-redux'
 import {
   selectIsAdmin,

@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet } from 'react-native'
-import { COLORS, FONT, SIZES } from '../../../constants'
+import { COLORS, FONT, SHADOWS, SIZES } from '../../../constants'
 
 const styles = StyleSheet.create({
   container: {
@@ -219,6 +219,15 @@ const styles = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     backgroundColor: COLORS.grey,
     marginVertical: 16,
+  },
+  onlyTextContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SIZES.medium,
+    borderRadius: SIZES.small,
+    ...SHADOWS.medium,
+    backgroundColor: COLORS.pureWhite,
   },
 })
 

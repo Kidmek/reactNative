@@ -6,14 +6,14 @@ import {
   ScrollView,
   Image,
 } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useLayoutEffect } from 'react'
 
 import styles from '../../common/styles/warehouse.style'
 import innerStyles from '../../common/styles/withImages.style'
 import { COLORS, SIZES } from '../../../constants'
 import { store as reduxStore } from '../../../store'
 import { useToast } from 'react-native-toast-notifications'
-import MapView, { Marker } from 'react-native-maps'
+// import MapView, { Marker } from 'react-native-maps'
 import {
   selectIsAdmin,
   selectIsFetching,
@@ -21,9 +21,9 @@ import {
 import { useSelector } from 'react-redux'
 import Animated, { SlideInDown } from 'react-native-reanimated'
 import { defaultStyles } from '../../../components/common/styles/Styles'
-import { currencyFormat } from '../../../components/common/utils'
 import CardDetail from '../../common/detail/CardDetail'
 import { getProductDetails } from '../../../api/product/product'
+import { useNavigation } from 'expo-router'
 
 const SingleProduct = ({ params }) => {
   const dispatch = reduxStore.dispatch
@@ -31,18 +31,27 @@ const SingleProduct = ({ params }) => {
   const isAdmin = useSelector(selectIsAdmin)
   const toast = useToast()
   const [product, setProduct] = useState()
-  const [store, setStore] = useState()
+  // const [store, setStore] = useState()
+  const navigation = useNavigation()
 
   useEffect(() => {
-    getProductDetails(params.id, dispatch, setProduct, toast)
+    if (!product) getProductDetails(params.id, dispatch, setProduct, toast)
   }, [])
 
-  useEffect(() => {
-    const found = product?.ProductsStored?.filter(
-      (stored) => stored?.product === product?.id
-    )
-    if (found?.length) {
-      setStore(found[0])
+  // useEffect(() => {
+  //   const found = product?.ProductsStored?.filter(
+  //     (stored) => stored?.product === product?.id
+  //   )
+  //   if (found?.length) {
+  //     setStore(found[0])
+  //   }
+  // }, [product])
+
+  useLayoutEffect(() => {
+    if (product) {
+      navigation.setOptions({
+        headerTitle: product?.product_name,
+      })
     }
   }, [product])
 
@@ -55,72 +64,165 @@ const SingleProduct = ({ params }) => {
   ) : (
     <View style={innerStyles.container}>
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
-        scrollEventThrottle={16}
+        contentContainerStyle={{
+          paddingBottom: isAdmin ? SIZES.mediumPicture : SIZES.medium,
+        }}
+        // scrollEventThrottle={16}
       >
-        <View style={innerStyles.infoContainer}>
-          <Text style={innerStyles.name}>
-            {product?.product_name}{' '}
-            <Text style={innerStyles.location}>Product Information</Text>
-          </Text>
-          <Image
-            source={{
-              uri: product?.qr_code,
+        <View
+          style={{
+            ...innerStyles.infoContainer,
+            padding: SIZES.small,
+            gap: SIZES.medium,
+          }}
+        >
+          <View
+            style={{
+              ...styles.onlyTextContainer,
+              padding: SIZES.small,
             }}
-            style={{ width: 100, height: 100 }}
-          />
-          <View style={innerStyles.divider} />
-          <CardDetail label={'Created At'} value={product?.created_at} />
-          <CardDetail label={'Expire Date'} value={product?.expire_date} />
-          <CardDetail
-            label={'Product Type'}
-            value={product?.ProductTypeDetail?.product_type_name}
-          />
-          <CardDetail
-            label={'Category'}
-            value={product?.catagorydetail?.category_name}
-          />
-          <CardDetail
-            label={'Dimensions'}
-            value={`Height : ${product?.height}\nLength : ${product?.length}\n Width : ${product?.width}`}
-          />
-          <CardDetail
-            label={'Total Weight'}
-            value={product?.weight + ' ' + product?.weightingUnit}
-          />
-          <CardDetail
-            label={'Available Weight'}
-            value={product?.available_weight + ' ' + product?.weightingUnit}
-          />
-          <CardDetail label={'Weight Per Unit'} value={product?.weight_unit} />
-          <CardDetail
-            label={'Performa Invoice'}
-            value={product?.performa}
-            download
-          />
-          <CardDetail label={'Total Quantity'} value={product?.quantity} />
-          <CardDetail label={'Available Quantity'} value={product?.available} />
-          <CardDetail
-            label={'Price Per Unit'}
-            value={product?.price_unit}
-            isPrice
-          />
-          <CardDetail label={'Total Price'} value={product?.price} isPrice />
-          <CardDetail label={'Status'} value={product?.status} />
-          <CardDetail label={'SKU'} value={product?.sku} isSpace />
-          <CardDetail label={'Bill Of Laiding'} value={product?.bol} download />
+          >
+            <CardDetail
+              label={'Product Type'}
+              value={product?.ProductTypeDetail?.product_type_name}
+              underline
+            />
+            <CardDetail
+              label={'Category'}
+              value={product?.catagorydetail?.category_name}
+              underline
+            />
+            <CardDetail label={'Status'} value={product?.status} underline />
+            <CardDetail
+              label={'Created At'}
+              value={product?.created_at}
+              underline
+            />
+            <CardDetail
+              label={'Expire Date'}
+              value={product?.expire_date}
+              underline
+            />
+          </View>
 
-          <View style={innerStyles.divider} />
+          <View
+            style={{
+              ...styles.onlyTextContainer,
+              padding: SIZES.small,
+            }}
+          >
+            <CardDetail
+              label={'Dimensions'}
+              value={`Height : ${product?.height}\nLength : ${product?.length}\n Width : ${product?.width}`}
+              underline
+            />
+            <CardDetail
+              label={'Total Weight'}
+              value={product?.weight + ' ' + product?.weightingUnit}
+              underline
+            />
+            <CardDetail
+              label={'Available Weight'}
+              value={product?.available_weight + ' ' + product?.weightingUnit}
+              underline
+            />
+            <CardDetail
+              label={'Weight Per Unit'}
+              value={product?.weight_unit + ' ' + product?.weightingUnit}
+              underline
+            />
+            <CardDetail
+              label={'Total Quantity'}
+              value={product?.quantity}
+              underline
+            />
+            <CardDetail
+              label={'Available Quantity'}
+              value={product?.available}
+              underline
+            />
+            <CardDetail
+              label={'Price Per Unit'}
+              value={product?.price_unit}
+              isPrice
+              underline
+            />
+            <CardDetail
+              label={'Total Price'}
+              value={product?.price}
+              isPrice
+              underline
+            />
 
-          <Text style={{ ...innerStyles.name, marginBottom: SIZES.medium }}>
+            <CardDetail label={'SKU'} value={product?.sku} isSpace underline />
+          </View>
+
+          {(product?.clearance ||
+            product?.bol ||
+            product?.insurance ||
+            product?.performa) && (
+            <View
+              style={{
+                ...styles.onlyTextContainer,
+                padding: SIZES.small,
+              }}
+            >
+              {product?.bol && (
+                <CardDetail
+                  label={'Bill Of Laiding'}
+                  value={product.bol}
+                  download
+                />
+              )}
+              {product?.clearance && (
+                <CardDetail
+                  label={'Performa Clearance'}
+                  value={product.clearance}
+                  download
+                />
+              )}
+              {produc?.insurance && (
+                <CardDetail
+                  label={'Performa Insurance'}
+                  value={product.insurance}
+                  download
+                />
+              )}
+              {product?.performa && (
+                <CardDetail
+                  label={'Performa Invoice'}
+                  value={product.performa}
+                  download
+                />
+              )}
+            </View>
+          )}
+          <View
+            style={{
+              ...styles.onlyTextContainer,
+              width: 200,
+              alignSelf: 'center',
+            }}
+          >
+            <Image
+              source={{
+                uri: product?.qr_code,
+              }}
+              style={{ width: 200, height: 200 }}
+            />
+          </View>
+
+          {/* <View style={innerStyles.divider} /> */}
+
+          {/* <Text style={{ ...innerStyles.name, marginBottom: SIZES.medium }}>
             Product Storing Layout And Location
-          </Text>
-          <CardDetail
+          </Text> */}
+          {/* <CardDetail
             label={'Product Warehouse'}
             value={store?.warehouseDetail?.warehouse_name}
             vertical
-          />
-          <CardDetail
+          /> */}
+          {/* <CardDetail
             label={'Storage Type'}
             value={store?.storageDetail?.storagetypedetail?.storage_name}
             vertical
@@ -129,8 +231,8 @@ const SingleProduct = ({ params }) => {
             label={`Storage ${store?.storageDetail?.storagetypedetail?.storage_name} Available Space`}
             value={store?.storageDetail?.available_space}
             vertical
-          />
-          <CardDetail
+          /> */}
+          {/* <CardDetail
             label={'Total Stored Quantity Weight'}
             value={store?.storedweight + ' ' + product?.weightingUnit}
             vertical
@@ -144,9 +246,9 @@ const SingleProduct = ({ params }) => {
             label={'Arrival Date'}
             value={store?.arrivaldate}
             vertical
-          />
+          /> */}
 
-          {store?.warehouseDetail?.lat && store?.warehouseDetail?.lng && (
+          {/* {store?.warehouseDetail?.lat && store?.warehouseDetail?.lng && (
             <MapView
               style={styles.map}
               initialRegion={{
@@ -165,7 +267,7 @@ const SingleProduct = ({ params }) => {
                 }}
               />
             </MapView>
-          )}
+          )} */}
         </View>
       </ScrollView>
 

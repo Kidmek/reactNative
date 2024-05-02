@@ -1,11 +1,10 @@
-import { View, Text, Image, Pressable } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React, { useState } from 'react'
 import messageStyles from './message.style'
 import moment from 'moment'
 import { FONT, SIZES } from '../../constants'
 import { MSG_API } from '../../constants/strings'
 import ImageView from 'react-native-image-viewing'
-import { TouchableOpacity } from 'react-native-gesture-handler'
 
 const SingleMessage = ({ message, isOwn }) => {
   const [visible, setIsVisible] = useState(false)
