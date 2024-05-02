@@ -1,6 +1,3 @@
-import { Middleware } from '@reduxjs/toolkit'
-import { RootState } from './rootReducer'
-
 const customMiddleware = (store) => (next) => (action) => {
   // You can access dispatch and selectors here
   const dispatch = store.dispatch

@@ -1,4 +1,4 @@
-import React, { useState, createRef, useEffect } from 'react'
+import React, { useState, createRef, useEffect, useLayoutEffect } from 'react'
 import {
   TextInput,
   View,
@@ -16,9 +16,13 @@ import { API, emailRegEx } from '../../../constants/strings'
 import axios from 'axios'
 import { store } from '../../../store'
 import { setLoading, setUser } from '../../../features/data/dataSlice'
-import { useLocalSearchParams, useNavigation } from 'expo-router'
+import { useNavigation } from 'expo-router'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { getUser, isLoggedIn } from '../../../api/apiConfig'
+import { Ionicons } from '@expo/vector-icons'
+import FlashScreen from './FlashScreen'
+import UpdateScreen from './UpdateScreen'
+import { COLORS, SIZES } from '../../../constants'
 
 const Login = ({ setIsLogin }) => {
   const dispatch = store.dispatch
@@ -26,21 +30,91 @@ const Login = ({ setIsLogin }) => {
   const [userEmail, setUserEmail] = useState('')
   const [userPassword, setUserPassword] = useState('')
   const [errortext, setErrortext] = useState('')
+  const [updateLoading, setUpdateLoading] = useState(true)
+  const [hasUpdate, setHasUpdate] = useState({
+    status: false,
+    force: true,
+  })
   const emailInputRef = createRef()
   const passwordInputRef = createRef()
   const toast = useToast()
-  const params = useLocalSearchParams()
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: hasUpdate.status && !updateLoading,
+      headerTransparent: true,
+      headerTitle: '',
+      headerRight: () => {
+        if (hasUpdate.force) {
+          return <></>
+        }
+        return (
+          <TouchableOpacity
+            onPress={() => {
+              if (handleClose) {
+                handleClose()
+              }
+            }}
+          >
+            <Ionicons
+              name='close-circle-outline'
+              size={SIZES.xxLarge * 1.5}
+              color={COLORS.black}
+            />
+          </TouchableOpacity>
+        )
+      },
+    })
+  }, [hasUpdate, updateLoading])
 
   useEffect(() => {
+    setUpdateLoading(true)
+
     isLoggedIn().then((res) => {
       if (res) {
         getUser().then((user) => {
           dispatch(setUser(user))
         })
-        navigation.navigate('home')
+        checkUpdate(true)
+      } else {
+        setUpdateLoading(false)
       }
     })
   }, [])
+
+  const checkUpdate = (loggedIn) => {
+    setTimeout(() => {
+      setHasUpdate({
+        status: false,
+        force: false,
+      })
+      if (loggedIn) {
+        navigation.navigate('home')
+      }
+      setUpdateLoading(false)
+    }, 1)
+    return
+    axios
+      .post(API + '/check-update', {})
+      .then((responseJson) => {
+        if (responseJson?.data?.token) {
+          navigation.navigate('home')
+        } else {
+          setErrortext('Network Error')
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+        let msg = 'Network Error'
+        toast.show(msg, {
+          type: 'danger',
+        })
+      })
+  }
+
+  const handleClose = () => {
+    setHasUpdate({ ...hasUpdate, status: false })
+  }
 
   const handleSubmitPress = () => {
     toast.hideAll()
@@ -123,7 +197,11 @@ const Login = ({ setIsLogin }) => {
     }
   }, [userEmail])
 
-  return (
+  return updateLoading ? (
+    <FlashScreen />
+  ) : hasUpdate.status ? (
+    <UpdateScreen force={hasUpdate.force} handleClose={handleClose} />
+  ) : (
     <View style={styles.mainBody}>
       <ScrollView
         keyboardShouldPersistTaps='handled'

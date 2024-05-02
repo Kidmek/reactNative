@@ -62,6 +62,7 @@ export default function DrawerLayout() {
         options={{
           title: 'Profile',
           headerShown: true,
+          headerTitleAlign: 'center',
         }}
       />
       <Drawer.Screen

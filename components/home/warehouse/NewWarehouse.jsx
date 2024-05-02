@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  Button,
-  Image,
-  Dimensions,
-  Pressable,
-  TextInput,
-} from 'react-native'
+import { View, Text, Button, Image, Dimensions, Pressable } from 'react-native'
 import React, { useRef, useState } from 'react'
 
 import * as ImagePicker from 'expo-image-picker'
@@ -15,8 +7,7 @@ import { ScrollView } from 'react-native'
 import { TouchableOpacity } from 'react-native'
 import { AntDesign, Feather } from '@expo/vector-icons'
 import { COLORS, SIZES } from '../../../constants'
-import { Dropdown } from 'react-native-element-dropdown'
-import { useLocalSearchParams, useNavigation } from 'expo-router'
+import { useNavigation } from 'expo-router'
 import { useEffect } from 'react'
 import {
   addWarehouse,

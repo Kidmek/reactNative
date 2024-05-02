@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { API } from '../../constants/strings'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { setFetching } from '../../features/data/dataSlice'
 
 export const loginApi = (
   dataToSend,
@@ -79,6 +80,7 @@ export const signUpApi = (
 }
 
 export const getCurrentUser = (dispatchFalse, toast, setData) => {
+  dispatchFalse(setFetching(true))
   AsyncStorage.getItem('token').then((token) => {
     if (token) {
       axios
@@ -89,7 +91,8 @@ export const getCurrentUser = (dispatchFalse, toast, setData) => {
         })
         .then((responseJson) => {
           //Hide Loader
-          dispatchFalse()
+          dispatchFalse(setFetching(false))
+
           // If server response message same as Data Matched
           if (responseJson.data?.id) {
             setData(responseJson.data)
@@ -103,7 +106,8 @@ export const getCurrentUser = (dispatchFalse, toast, setData) => {
         })
         .catch((error) => {
           //Hide Loader
-          dispatchFalse()
+          dispatchFalse(setFetching(false))
+
           console.log(error)
           if (toast.show) {
             toast.show('Unable To Get User Data', {

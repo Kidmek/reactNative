@@ -327,7 +327,6 @@ export const logout = async () => {
 }
 
 const convertUrl = (url) => {
-  console.log('URL:', url)
   return url
 
   try {

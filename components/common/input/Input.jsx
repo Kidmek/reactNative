@@ -8,7 +8,13 @@ import {
 import React from 'react'
 import styles from './input.style'
 import { FontAwesome5 } from '@expo/vector-icons'
-import { DATE, DIMENSION, MULTI, NUMBER } from '../../../constants/strings'
+import {
+  DATE,
+  DIMENSION,
+  MULTI,
+  NUMBER,
+  PASSWORD,
+} from '../../../constants/strings'
 import { COLORS, FONT } from '../../../constants'
 
 const Input = ({
@@ -34,6 +40,7 @@ const Input = ({
           value={state}
           editable={false}
           placeholder={placeholder}
+          secureTextEntry={type == PASSWORD}
         />
         <TouchableOpacity
           style={styles.dateIcon}

@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { COLORS, SIZES, SHADOWS, FONT } from '../../constants'
+import { COLORS, SIZES, FONT } from '../../constants'
 
 const notificationStyles = StyleSheet.create({
   notificationWrapper: (seen) => {

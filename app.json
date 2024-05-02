@@ -13,6 +13,9 @@
         "googleMapsApiKey": "AIzaSyDonCBNomqhPAW1y06dY4fICo5YvqiLUwA"
       }
     },
+    "splash": {
+      "image": "./assets/images/logo.jpg"
+    },
     "android": {
       "package": "com.example.ims",
       "config": {

@@ -26,8 +26,9 @@ const HumanResource = ({
               key={item?.id}
               onClick={() => {
                 if (setChecked) {
+                  const price = { id: item?.group, price: item?.group }
                   if (!checked?.includes(item?.group)) {
-                    setChecked([...checked, item?.group])
+                    setChecked([...checked, item?.group], price)
                   } else {
                     setChecked(checked?.filter((c) => c != item?.group))
                   }
@@ -44,9 +45,10 @@ const HumanResource = ({
                     color={COLORS.primary}
                     value={checked?.includes(item?.group)}
                     onValueChange={(value) => {
+                      const price = { id: item?.group, price: item?.group }
                       if (setChecked) {
                         if (value) {
-                          setChecked([...checked, item?.group])
+                          setChecked([...checked, item?.group], price)
                         } else {
                           setChecked(checked?.filter((c) => c != item?.group))
                         }

@@ -28,6 +28,7 @@ export const shipmentTypes = [
   'Shipment Type',
   'Shipment Method',
 ]
+export const PASSWORD = 'password'
 export const NUMBER = 'number'
 export const DIMENSION = 'dimension'
 export const DATE = 'date'

@@ -1,13 +1,24 @@
 import ScreenHeader from './ScreenHeader'
-import {
-  AntDesign,
-  FontAwesome5,
-  MaterialCommunityIcons,
-} from '@expo/vector-icons'
+import { MaterialCommunityIcons } from '@expo/vector-icons'
 import { TouchableOpacity, View } from 'react-native'
-import { COLORS, FONT, SIZES, icons, images } from '../../../constants'
+import { COLORS, icons } from '../../../constants'
+import { useSelector } from 'react-redux'
+import { selectUser } from '../../../features/data/dataSlice'
+import { API, BACKEND_DOMAIN } from '../../../constants/strings'
 
 export const HeaderOptions = (navigation, notification) => {
+  //  {
+  //    user.ProfilePicture ? (
+  //      <Image
+  //        source={{ uri: API + '/' + user.ProfilePicture }}
+  //        style={styles.btnImg(dimension)}
+  //      />
+  //    ) : (
+  //      <Text>{user?.first_name?.charAt(0)?.toUpperCase()}</Text>
+  //    )
+  //  }
+  const user = useSelector(selectUser)
+
   return {
     headerTitle: '',
     headerLeft: () => (
@@ -38,7 +49,18 @@ export const HeaderOptions = (navigation, notification) => {
             />
           )}
         </TouchableOpacity>
-        <ScreenHeader iconUrl={images.profile} dimension={'100%'} />
+        <ScreenHeader
+          iconUrl={
+            user?.ProfilePicture
+              ? { uri: `${BACKEND_DOMAIN}/media/${user.ProfilePicture}` }
+              : null
+          }
+          dimension={'100%'}
+          placeholder={user?.first_name}
+          handlePress={() => {
+            navigation.navigate('profile')
+          }}
+        />
       </View>
     ),
   }

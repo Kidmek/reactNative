@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
   mainBody: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: COLORS.lightWhite,
+    backgroundColor: COLORS.pureWhite,
     alignContent: 'center',
   },
   SectionStyle: {
@@ -132,6 +132,10 @@ const styles = StyleSheet.create({
   focusCell: {
     borderColor: '#000',
   },
+
+  //
+
+  //
 })
 
 export default styles

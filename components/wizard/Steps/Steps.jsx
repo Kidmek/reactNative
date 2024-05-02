@@ -92,6 +92,7 @@ const Steps = ({ params }) => {
   const [HRids, setHRids] = useState({
     ids: [],
     values: {},
+    prices: {},
   })
   const [portid, setPortid] = useState()
   const [agentId, setAgentId] = useState()
@@ -346,34 +347,17 @@ const Steps = ({ params }) => {
                 checked={HRids?.ids}
                 groups={groups}
                 values={HRids?.values}
-                setChecked={(data) => {
-                  // if (data && orderData?.startDate && orderData?.endDate) {
-                  //   let total = 0
-                  //   const diff = getDayDifference(
-                  //     orderData?.startDate,
-                  //     orderData?.endDate
-                  //   )
-                  //   warehouse?.HumanResources?.map((item) => {
-                  //     if (data?.includes(item?.id)) {
-                  //       total += item?.officeDetail?.price
-                  //     }
-                  //   })
-                  //   total = total * diff + price[page.current - 2]
-                  //   const prev = price
-                  //   prev[page.current - 1] = total
-                  //   setPrice([...prev])
-                  // }
-
-                  if (
-                    data?.filter((single) => !(HRids.values[single] > 0))
-                      ?.length
-                  ) {
+                setChecked={(data, price) => {
+                  if (data?.filter((single) => !(data[single] > 0))?.length) {
                     setPageError('Enter a Quantity for selected HRs', 'warning')
                   } else {
                     setPageError(null, null)
                   }
-
-                  setHRids({ ...HRids, ids: data })
+                  const prev = HRids.prices ?? {}
+                  if (price?.id && price.price) {
+                    prev[price.id] = price.price
+                  }
+                  setHRids({ ...HRids, ids: data, prices: prev })
                 }}
                 setValues={(data) => {
                   if (
@@ -381,8 +365,27 @@ const Steps = ({ params }) => {
                   ) {
                     setPageError('Enter a Quantity for selected HRs', 'warning')
                   } else {
+                    if (data && orderData?.startDate && orderData?.endDate) {
+                      let total = 0
+                      const diff = getDayDifference(
+                        orderData?.startDate,
+                        orderData?.endDate
+                      )
+                      HRids?.ids?.forEach((item) => {
+                        const amount = HRids.values?.[item]
+                        const price = HRids.prices?.[item]
+                        if (amount && price) {
+                          total += price * amount
+                        }
+                      })
+                      total = total * diff + price[page.current - 2]
+                      const prev = price
+                      prev[page.current - 1] = total
+                      setPrice([...prev])
+                    }
                     setPageError(null, null)
                   }
+
                   setHRids({ ...HRids, values: data })
                 }}
                 checkedMulti
