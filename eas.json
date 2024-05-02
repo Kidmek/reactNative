@@ -1,0 +1,24 @@
+{
+  "cli": {
+    "version": ">= 7.6.2"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal"
+    },
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "ANDROID_HOME": "C:/Users/kidus/AppData/Local/Android/Sdk"
+      }
+    },
+    "production": {}
+  },
+  "submit": {
+    "production": {}
+  }
+}

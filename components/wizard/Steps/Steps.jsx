@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-  View,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  SafeAreaView,
-} from 'react-native'
+import { View, StyleSheet, Text, SafeAreaView, ScrollView } from 'react-native'
 import common from '../../common/styles/common.style'
 import StepHeader from './StepsHeader'
 import StepFooter from './StepFooter'
@@ -14,14 +8,12 @@ import Products from '../../products/all/All'
 import commonStyles from '../../common/styles/common.style'
 import CheckQuestion from '../../common/checkQuestion/CheckQuestion'
 import All from '../../ports/All/All'
-import { ScrollView } from 'react-native-gesture-handler'
 import { COLORS, SIZES } from '../../../constants'
 import Agent from '../../transits/Agent/Agent'
 import OrderTypes from '../../orders/orderTypes/OrderTypes'
 import {
   ALL,
   CUSTOMS,
-  INITIALIZED,
   SHIPMNET,
   SPACE,
   STORAGE,
@@ -33,10 +25,7 @@ import { useSelector } from 'react-redux'
 import { selectIsFetching } from '../../../features/data/dataSlice'
 import { store } from '../../../store'
 import { getMappedStorages, getStorages } from '../../../api/storage/storage'
-import {
-  getStorageSpaces,
-  getWarehouses,
-} from '../../../api/warehouse/warehouse'
+import { getWarehouses } from '../../../api/warehouse/warehouse'
 import { useToast } from 'react-native-toast-notifications'
 import { getOrderTypes } from '../../../api/order/order'
 import NewOrder from '../../orders/New/NewOrder'
@@ -53,10 +42,9 @@ import { useRouter } from 'expo-router'
 import SingleWarehouse from '../../home/warehouse/SingleWarehouse'
 import OfficeWithEquipments from '../../home/office/OfficeWithEquipments'
 import HumanResource from '../../home/office/HumanResource'
-import WantStorage from '../../home/storageTypes/WantStorage'
 import SingleStorageType from '../../home/storageTypes/SingleStorageType'
 import { getAllProducts, getProductDetails } from '../../../api/product/product'
-import { addServiceOrders, addWizOrder } from '../../../api/dashboard/wizard'
+import { addWizOrder } from '../../../api/dashboard/wizard'
 import * as FileSystem from 'expo-file-system'
 import { getDayDifference } from '../../common/utils'
 import { getAllGroups } from '../../../api/users'
@@ -106,7 +94,6 @@ const Steps = ({ params }) => {
     values: {},
   })
   const [portid, setPortid] = useState()
-  const [portName, setPortName] = useState()
   const [agentId, setAgentId] = useState()
   const [type, setType] = useState()
   const [shipmentType, setShipmentType] = useState()
@@ -124,181 +111,6 @@ const Steps = ({ params }) => {
   const [selectedStorage, setSelectedStorage] = useState([])
   const [agree, setAgree] = useState(false)
   const [error, setError] = useState([])
-  // All Services
-  const allServices = [
-    // 1
-    {
-      component: () => (
-        <NewProduct wizard product={product} setProduct={setProduct} />
-      ),
-    },
-    // 2
-    {
-      component: () => (
-        <View>
-          <CheckQuestion
-            title={`Would You Like To Transit Product (${
-              product?.name ?? ''
-            })?`}
-            state={transitQns}
-            setState={(value) => setTransitQns(value)}
-          />
-
-          {transitQns && (
-            <View>
-              <View style={common.divider} />
-
-              <All
-                wizard
-                checked={portid}
-                setChecked={(value) => setPortid(value)}
-                setPortName={setPortName}
-              />
-            </View>
-          )}
-          {transitQns && portid && (
-            <View>
-              <View style={common.divider} />
-
-              <Agent
-                portId={portid}
-                wizard
-                checked={agentId}
-                setChecked={(value) => setAgentId(value)}
-              />
-            </View>
-          )}
-        </View>
-      ),
-    },
-    // 3
-    {
-      component: () => (
-        <View>
-          <CheckQuestion
-            title={'Would You Like To Rent Space For Your Product?'}
-            state={rentQns}
-            setState={(value) => setRentQns(value)}
-          />
-          {rentQns && (
-            <View>
-              <View style={common.divider} />
-              <OrderTypes
-                wizard
-                checked={type}
-                setChecked={(value) => {
-                  setType(value)
-                  setWarehouseId(null)
-                  setStorageId(null)
-                }}
-                data={orderTypes}
-              />
-            </View>
-          )}
-
-          {type?.name && rentQns && (
-            <View>
-              <View style={common.divider} />
-              {type?.name?.toLowerCase() === WAREHOUSE ? (
-                <Warehouse
-                  fetching={fetching}
-                  wizard
-                  checked={warehouseId}
-                  setChecked={setWarehouseId}
-                  data={warehouses}
-                />
-              ) : (
-                <StorageType
-                  fetching={fetching}
-                  wizard
-                  checked={storageId}
-                  setChecked={setStorageId}
-                  data={storageTypes}
-                />
-              )}
-            </View>
-          )}
-
-          {(warehouseId || storageId) && type?.name && rentQns && (
-            <View>
-              <View style={common.divider} />
-              <NewOrder
-                order={orderData}
-                setOrder={setOrderData}
-                wizard
-                params={{
-                  id:
-                    type?.name?.toLowerCase() === WAREHOUSE
-                      ? warehouseId
-                      : storageId,
-                  type:
-                    type?.name?.toLowerCase() === WAREHOUSE
-                      ? WAREHOUSE
-                      : STORAGE,
-                }}
-              />
-            </View>
-          )}
-        </View>
-      ),
-    },
-    // 4
-    {
-      component: () => (
-        <View>
-          <CheckQuestion
-            title={'Would You Like To Ship Your Product?'}
-            state={shipQns}
-            setState={(value) => setShipQns(value)}
-          />
-          {shipQns && (
-            <View>
-              <View style={common.divider} />
-
-              <ShipmentType
-                wizard
-                checked={shipmentType}
-                setChecked={(value) => {
-                  setShipmentType(value)
-                }}
-                data={shipmentTypes}
-              />
-            </View>
-          )}
-          {shipmentType?.type && shipQns && (
-            <View>
-              <View style={common.divider} />
-
-              <NewShipment
-                wizProduct={product}
-                shipment={shipmentData}
-                setShipment={setShipmentData}
-                params={shipmentType}
-                wizard
-              />
-            </View>
-          )}
-        </View>
-      ),
-    },
-    // 5
-    {
-      component: () => (
-        <View>
-          <Info
-            state={agree}
-            setState={setAgree}
-            title={'This Is A Success Alert'}
-            text={
-              "You've completed your steps now you can finish your order once you agreed to our terms and conditions."
-            }
-            success
-          />
-        </View>
-      ),
-    },
-  ]
-  //
 
   // Space Management
 
@@ -1449,7 +1261,7 @@ const Steps = ({ params }) => {
           contentContainerStyle={{
             paddingBottom: SIZES.mediumPicture,
           }}
-          keyboardShouldPersistTaps='always'
+          // keyboardShouldPersistTaps='always'
           style={{
             ...common.container,
             marginTop: 0,

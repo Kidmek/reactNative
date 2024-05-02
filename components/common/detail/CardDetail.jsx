@@ -20,6 +20,7 @@ const CardDetail = ({
   status,
   CardChild,
   onlyPreview,
+  underline,
 }) => {
   const toast = useToast()
   const onDownload = async () => {
@@ -35,10 +36,10 @@ const CardDetail = ({
   return (
     <View
       style={{
-        ...styles.cardDetailWrapper(vertical),
+        ...styles.cardDetailWrapper(vertical, underline),
       }}
     >
-      <Text style={styles.cardDetailLabel}>{label}</Text>
+      <Text style={styles.cardDetailLabel(underline)}>{label}</Text>
       {download ? (
         <View
           style={{
