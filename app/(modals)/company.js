@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 import { BlurView } from 'expo-blur'
-import Animated, { SlideInDown } from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
 import { defaultStyles } from '../../components/common/styles/Styles'
 import Input from '../../components/common/input/Input'
 import DocumentPicker from '../../components/common/input/DocumentPicker'
@@ -11,7 +11,7 @@ import { store } from '../../store'
 import { useToast } from 'react-native-toast-notifications'
 import { addTransCompany } from '../../api/shipment/shipment'
 import * as FileSystem from 'expo-file-system'
-import { selectData } from '../../features/data/dataSlice'
+import { selectUser } from '../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import { router } from 'expo-router'
 const Company = () => {
@@ -23,7 +23,7 @@ const Company = () => {
   const [companyname, setCompanyname] = useState()
   const [licenceFile, setLicenceFile] = useState()
   //
-  const user = useSelector(selectData)
+  const user = useSelector(selectUser)
   const onAdd = async () => {
     const files = licenceFile?.map(async (file) => {
       const base64 = await FileSystem.readAsStringAsync(file?.uri, {

@@ -143,7 +143,6 @@ export const putSkeleton = (
         .catch((error) => {
           //Hide Loader
           if (dispatchFalse && setLoading) {
-            console.log('Loading False')
             dispatchFalse(setLoading(false))
           }
           if (setPosting) {

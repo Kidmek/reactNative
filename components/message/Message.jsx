@@ -37,7 +37,7 @@ const Message = () => {
   const fetching = useSelector(selectIsFetching)
   const [refresh, setRefresh] = useState(true)
   const [myId, setMyId] = useState()
-  const data = useSelector(selectData)
+  const data = useSelector(selectUser)
   const toast = useToast()
 
   const [users, setUsers] = useState()

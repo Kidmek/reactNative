@@ -46,11 +46,14 @@ const styles = StyleSheet.create({
   acceptBtn: {
     backgroundColor: COLORS.green,
   },
+  neutralBtn: {
+    backgroundColor: COLORS.gray,
+  },
   btn: {
     flex: 1,
     paddingHorizontal: SIZES.xSmall,
     paddingVertical: SIZES.xSmall,
-    borderRadius: SIZES.large,
+    borderRadius: SIZES.small,
   },
   driverBtn: {
     paddingHorizontal: SIZES.large,
@@ -75,6 +78,23 @@ const styles = StyleSheet.create({
   info: {
     paddingHorizontal: SIZES.small,
     marginBottom: SIZES.xxLarge,
+  },
+  // Logout
+
+  textContainer: {
+    gap: SIZES.large,
+  },
+  modalHeader: {
+    fontFamily: FONT.bold,
+    fontSize: SIZES.large,
+  },
+  logoutText: {
+    fontFamily: FONT.regular,
+    fontSize: SIZES.medium,
+  },
+  logoutContainer: {
+    alignItems: 'flex-start',
+    gap: SIZES.xxLarge,
   },
 })
 

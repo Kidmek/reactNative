@@ -37,6 +37,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     gap: SIZES.small,
   },
+  inputError: {
+    color: COLORS.red,
+    fontSize: SIZES.small,
+    fontFamily: FONT.regular,
+  },
 })
 
 export default styles

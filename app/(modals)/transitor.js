@@ -10,7 +10,7 @@ import { store } from '../../store'
 import { useToast } from 'react-native-toast-notifications'
 import { getPorts, registerTransitor } from '../../api/shipment/shipment'
 import * as FileSystem from 'expo-file-system'
-import { selectData } from '../../features/data/dataSlice'
+import { selectUser } from '../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import CustomDropdown from '../../components/common/dropdown/CustomDropdown'
 import { router } from 'expo-router'
@@ -22,7 +22,7 @@ const Transitor = () => {
   //
   const [licenceFile, setLicenceFile] = useState()
   //
-  const user = useSelector(selectData)
+  const user = useSelector(selectUser)
   const [ports, setPorts] = useState()
   const [port, setPort] = useState()
   const onAdd = async () => {

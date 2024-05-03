@@ -1,9 +1,8 @@
-import { useNavigation, withLayoutContext } from 'expo-router'
+import { useNavigation } from 'expo-router'
 import { Drawer } from 'expo-router/drawer'
-import { createDrawerNavigator } from '@react-navigation/drawer'
 import CustomDrawer from '../../components/customDrawer/CustomDrawer'
 import { useState } from 'react'
-import { selectData, selectIsAdmin } from '../../features/data/dataSlice'
+import { selectUser, selectIsAdmin } from '../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import PortWelcome from '../../components/ports/welcome/PortWelcome'
 import StaffWelcome from '../../components/staffs/welcome/StaffWelcome'
@@ -32,7 +31,7 @@ export default function DrawerLayout() {
   const navigation = useNavigation()
   const [notification, setNotification] = useState(1)
   const isAdmin = useSelector(selectIsAdmin)
-  const user = useSelector(selectData)
+  const user = useSelector(selectUser)
 
   return (
     <Drawer

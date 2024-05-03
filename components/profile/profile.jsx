@@ -13,7 +13,7 @@ import profileStyles from './profile.style'
 import { useNavigation } from 'expo-router'
 import { COLORS, SIZES } from '../../constants'
 import { Ionicons } from '@expo/vector-icons'
-import { getCurrentUser } from '../../api/auth/auth'
+import { getCurrentUser, updateCurrentUser } from '../../api/auth/auth'
 import { store } from '../../store'
 import { useToast } from 'react-native-toast-notifications'
 import { useSelector } from 'react-redux'
@@ -23,11 +23,12 @@ import MapView from 'react-native-maps'
 import Input from '../common/input/Input'
 import * as ImagePicker from 'expo-image-picker'
 import { PASSWORD } from '../../constants/strings'
+import { changeToBas64 } from '../common/utils'
 
 export default function Profile() {
   const [user, setUser] = useState()
+  const [error, setError] = useState()
   const [temp, setTemp] = useState({
-    image: '',
     first_name: '',
     last_name: '',
     email: '',
@@ -37,12 +38,75 @@ export default function Profile() {
     confirmPassword: '',
   })
   const [edit, setEdit] = useState(false)
-  const [initialZoom, setInitialZoom] = useState(false)
   const dispatch = store.dispatch
   const navigation = useNavigation()
   const toast = useToast()
   const fetching = useSelector(selectIsFetching)
   const mapRef = useRef()
+
+  const onSubmit = async () => {
+    if (
+      !error &&
+      temp.email?.length &&
+      temp.last_name?.length &&
+      temp.first_name?.length &&
+      temp.password?.length &&
+      temp.confirmPassword?.length
+    ) {
+      // let password = null
+
+      // if (temp.password?.length) {
+      //   if (temp.confirmPassword?.length) {
+      //     password = temp.password
+      //   } else {
+      //     setError("Passwords don't match")
+      //     return toast.show('All fields required', {
+      //       type: 'danger',
+      //     })
+      //   }
+      // }
+      let pic = await changeToBas64(temp.ProfilePicture)
+      const { password, confirmPassword, ProfilePicture, ...rest } = temp
+      updateCurrentUser(
+        user?.id,
+        {
+          ...user,
+          ...rest,
+          ProfilePicture: temp.ProfilePicture ? pic : user.ProfilePicture,
+          password,
+          password_confirmation: confirmPassword,
+          profile_url: temp.ProfilePicture ? pic : user.ProfilePicture,
+        },
+        dispatch,
+        toast,
+        (data) => {
+          setUser(data)
+          setEdit(false)
+          toast.show('Successfully updated', {
+            type: 'success',
+          })
+        }
+      )
+    } else {
+      toast.show('All fields required', {
+        type: 'danger',
+      })
+    }
+  }
+
+  const checkPasswords = (value) => {
+    const password = value?.password ?? temp.password
+    const confirmPassword = value?.confirmPassword ?? temp?.confirmPassword
+    if (
+      password?.length &&
+      confirmPassword?.length &&
+      password != confirmPassword
+    ) {
+      setError("Passwords don't match")
+    } else {
+      setError(undefined)
+    }
+  }
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -50,7 +114,6 @@ export default function Profile() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
       quality: 1,
-      allowsMultipleSelection: true,
       selectionLimit: 6,
     })
     if (!result.canceled && result.assets.length) {
@@ -93,7 +156,11 @@ export default function Profile() {
           <TouchableOpacity
             style={profileStyles.editContainer}
             onPress={() => {
-              setEdit(!edit)
+              if (!edit) {
+                setEdit(true)
+              } else {
+                onSubmit()
+              }
             }}
           >
             <Text style={profileStyles.headerEdit}>
@@ -108,11 +175,12 @@ export default function Profile() {
         )
       },
     })
-  }, [edit])
+  }, [edit, temp])
 
   useEffect(() => {
     getCurrentUser(dispatch, toast, setUser)
   }, [])
+
   useEffect(() => {
     if (user) {
       const { first_name, last_name, email, phone } = user
@@ -168,7 +236,11 @@ export default function Profile() {
           {(!user?.ProfilePicture || edit) && (
             <TouchableOpacity
               style={profileStyles.profileEditContainer}
-              onPress={pickImage}
+              onPress={() => {
+                if (user?.ProfilePicture || edit) {
+                  pickImage()
+                }
+              }}
             >
               <Text
                 style={{
@@ -183,11 +255,13 @@ export default function Profile() {
                   ? ' No Profile Picture'
                   : 'Change Picture'}
               </Text>
-              <Ionicons
-                name={'image-outline'}
-                size={SIZES.large}
-                color={COLORS.primary}
-              />
+              {(user?.ProfilePicture || edit) && (
+                <Ionicons
+                  name={'image-outline'}
+                  size={SIZES.large}
+                  color={COLORS.primary}
+                />
+              )}
             </TouchableOpacity>
           )}
         </View>
@@ -275,6 +349,7 @@ export default function Profile() {
             state={temp.password}
             setState={(v) => {
               setTemp({ ...temp, password: v })
+              checkPasswords({ password: v })
             }}
             label='Password'
             type={PASSWORD}
@@ -283,9 +358,11 @@ export default function Profile() {
             state={temp.confirmPassword}
             setState={(v) => {
               setTemp({ ...temp, confirmPassword: v })
+              checkPasswords({ confirmPassword: v })
             }}
             label='Confirm Password'
             type={PASSWORD}
+            error={error}
           />
         </View>
       )}
@@ -309,17 +386,18 @@ export default function Profile() {
               ref={mapRef}
               showsUserLocation={true}
               followsUserLocation
-              onUserLocationChange={(coord) => {
+              onUserLocationChange={async (coord) => {
                 if (mapRef.current) {
+                  const dest = {
+                    latitude: coord.nativeEvent.coordinate.latitude,
+                    longitude: coord.nativeEvent.coordinate.longitude,
+                  }
+                  const camera = await mapRef.current.getCamera()
                   mapRef.current.animateCamera({
-                    center: {
-                      latitude: coord.nativeEvent.coordinate.latitude,
-                      longitude: coord.nativeEvent.coordinate.longitude,
-                    },
-                    zoom: initialZoom ? undefined : 10,
+                    center: dest,
+                    zoom: camera.zoom > 2 ? undefined : 10,
                     duration: 1,
                   })
-                  setInitialZoom(true)
                 }
               }}
             ></MapView>

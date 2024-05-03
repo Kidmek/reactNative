@@ -94,3 +94,12 @@ export async function saveFile(uri, filename, mimetype, toast, data) {
     console.log('Error At Saving File', err)
   }
 }
+
+export const changeToBas64 = async (image) => {
+  const base64 = await FileSystem.readAsStringAsync(image?.uri, {
+    encoding: 'base64',
+  })
+  const type =
+    image?.mimeType ?? `${image?.type}/${image?.uri?.split('.').at(-1)}`
+  return 'data:' + type + ';base64,' + base64
+}

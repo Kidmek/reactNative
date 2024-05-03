@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { API } from '../../constants/strings'
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { setFetching } from '../../features/data/dataSlice'
+import { setFetching, setLoading, setUser } from '../../features/data/dataSlice'
 
 export const loginApi = (
   dataToSend,
@@ -95,8 +95,14 @@ export const getCurrentUser = (dispatchFalse, toast, setData) => {
 
           // If server response message same as Data Matched
           if (responseJson.data?.id) {
-            setData(responseJson.data)
+            if (setData) {
+              setData(responseJson.data)
+            }
+            console.log('Updating user redux')
+            dispatchFalse(setUser(responseJson.data))
           } else {
+            console.log('Error At get User ')
+            console.log(error)
             if (toast.show) {
               toast.show('Unable To Get User Data', {
                 type: 'danger',
@@ -107,7 +113,7 @@ export const getCurrentUser = (dispatchFalse, toast, setData) => {
         .catch((error) => {
           //Hide Loader
           dispatchFalse(setFetching(false))
-
+          console.log('Error At get User out ')
           console.log(error)
           if (toast.show) {
             toast.show('Unable To Get User Data', {
@@ -116,7 +122,85 @@ export const getCurrentUser = (dispatchFalse, toast, setData) => {
           }
         })
     } else {
-      dispatchFalse()
+      dispatchFalse(setFetching(false))
+      if (toast.show) {
+        toast.show('Unauthorized', {
+          type: 'danger',
+        })
+      }
+    }
+  })
+}
+
+export const updateCurrentUser = (id, data, dispatchFalse, toast, setData) => {
+  dispatchFalse(setLoading(true))
+  AsyncStorage.getItem('token').then((token) => {
+    if (token) {
+      axios
+        .put(
+          API + '/currentuser/' + id + '/',
+          {
+            ...data,
+          },
+          {
+            headers: {
+              Authorization: 'Bearer ' + token,
+            },
+          }
+        )
+        .then((responseJson) => {
+          //Hide Loader
+          dispatchFalse(setLoading(false))
+
+          // If server response message same as Data Matched
+          if (responseJson.data?.id) {
+            if (setData) {
+              setData(responseJson.data)
+            }
+            console.log('Updating user redux')
+            dispatchFalse(setUser(responseJson.data))
+          } else {
+            console.log('Error At Put User ')
+            console.log(error)
+            if (toast.show) {
+              toast.show('Unable To Update User Data', {
+                type: 'danger',
+              })
+            }
+          }
+        })
+        .catch((error) => {
+          //Hide Loader
+          dispatchFalse(setLoading(false))
+          console.log('Error At Put User Out')
+          console.log(error)
+          console.log(data)
+
+          const err =
+            error?.response?.data?.length < 100 && error?.response?.data
+          if (
+            err &&
+            Object.keys(err).length > 0 &&
+            Object.keys(err).length < 6
+          ) {
+            Object.entries(err).map(([k, v]) => {
+              toast.show(`${k} : ${v}`, {
+                type: 'danger',
+              })
+            })
+          } else if (toast.show) {
+            toast.show('Unable To Update User Data', {
+              type: 'danger',
+            })
+          }
+        })
+    } else {
+      dispatchFalse(setLoading(false))
+      if (toast.show) {
+        toast.show('Unauthorized', {
+          type: 'danger',
+        })
+      }
     }
   })
 }

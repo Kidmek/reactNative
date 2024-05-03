@@ -10,7 +10,7 @@ import { store } from '../../store'
 import { useToast } from 'react-native-toast-notifications'
 import { addBusinessLicense } from '../../api/shipment/shipment'
 import * as FileSystem from 'expo-file-system'
-import { selectData } from '../../features/data/dataSlice'
+import { selectUser } from '../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import { router } from 'expo-router'
 const Agent = () => {
@@ -21,7 +21,7 @@ const Agent = () => {
   //
   const [licenceFile, setLicenceFile] = useState()
   //
-  const user = useSelector(selectData)
+  const user = useSelector(selectUser)
   const onAdd = async () => {
     const files = licenceFile?.map(async (file) => {
       const base64 = await FileSystem.readAsStringAsync(file?.uri, {

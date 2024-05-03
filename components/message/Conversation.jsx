@@ -23,7 +23,7 @@ import { store } from '../../store'
 import { useToast } from 'react-native-toast-notifications'
 import SingleMessage from './SingleMessage'
 import messageStyles from './message.style'
-import { selectData } from '../../features/data/dataSlice'
+import { selectUser } from '../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import socket from '../common/utils'
 import * as DocumentPickerApi from 'expo-document-picker'
@@ -37,7 +37,7 @@ const Conversation = ({ params }) => {
   const navigation = useNavigation()
   const [messages, setMessages] = useState()
   const [text, setText] = useState()
-  const data = useSelector(selectData)
+  const data = useSelector(selectUser)
   const [conversation, setConversation] = useState(params?.conversation)
   const [files, setFiles] = useState()
 

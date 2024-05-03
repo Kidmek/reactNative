@@ -13,7 +13,7 @@ import CardDetail from '../../common/detail/CardDetail'
 import AddNew from '../../common/header/AddNew'
 import SingleCard from '../../common/cards/single/SingleCard'
 import { useSelector } from 'react-redux'
-import { selectData } from '../../../features/data/dataSlice'
+import { selectUser } from '../../../features/data/dataSlice'
 import Footer from '../../common/footer/Footer'
 import { ACCEPTED, DRIVERS, INITIALIZED } from '../../../constants/strings'
 import * as Location from 'expo-location'
@@ -33,7 +33,7 @@ const Started = ({ fetching, type, refresh, cantAdd }) => {
   ]
   const dispatch = store.dispatch
   const toast = useToast()
-  const user = useSelector(selectData)
+  const user = useSelector(selectUser)
   const [reason, setReason] = useState()
   const [shipments, setShipments] = useState()
   const [shipment, setShipment] = useState()

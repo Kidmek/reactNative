@@ -34,7 +34,7 @@ const NewProduct = ({ wizard, product, setProduct }) => {
   const toast = useToast()
   const navigate = useNavigation()
   const isAdmin = useSelector(selectIsAdmin)
-  const data = useSelector(selectData)
+  const data = useSelector(selectUser)
 
   const [types, setTypes] = useState([])
   const [categories, setCategories] = useState([])

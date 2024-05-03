@@ -23,7 +23,7 @@ import Checkbox from 'expo-checkbox'
 import { AntDesign } from '@expo/vector-icons'
 import { useNavigation } from 'expo-router'
 import { useSelector } from 'react-redux'
-import { selectData } from '../../../features/data/dataSlice'
+import { selectUser } from '../../../features/data/dataSlice'
 
 const Warehouse = ({
   choose,
@@ -38,7 +38,7 @@ const Warehouse = ({
   const dispatch = store.dispatch
   const toast = useToast()
   const navigate = useNavigation()
-  const user = useSelector(selectData)
+  const user = useSelector(selectUser)
   const [warehouses, setWarehouses] = useState()
   useEffect(() => {
     if (!wizard) {

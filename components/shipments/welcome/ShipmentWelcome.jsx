@@ -27,7 +27,7 @@ const ShipmentWelcome = () => {
   const [activeType, setActiveType] = useState(shipmentTypes[0])
   const fetching = useSelector(selectIsFetching)
   const isAdmin = useSelector(selectIsAdmin)
-  const user = useSelector(selectData)
+  const user = useSelector(selectUser)
   const [refresh, setRefresh] = useState(false)
 
   const body = () => {

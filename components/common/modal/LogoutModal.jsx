@@ -7,7 +7,6 @@ import { router, useNavigation } from 'expo-router'
 import { logOut } from '../../../features/data/dataSlice'
 
 const LogoutModal = ({ onSuccess }) => {
-  const navigate = useNavigation()
   const showModal = useSelector(selectView)
   const dispatch = useDispatch()
   return (
@@ -20,17 +19,28 @@ const LogoutModal = ({ onSuccess }) => {
       }}
     >
       <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalText}>{'Are You Sure?'}</Text>
+        <View style={{ ...styles.modalView, ...styles.logoutContainer }}>
+          <View style={styles.textContainer}>
+            {/* <Ionicons
+              name='close-circle-outline'
+              size={SIZES.xxLarge * 1.5}
+              color={COLORS.black}
+            /> */}
+            <Text style={styles.modalHeader}>Logout</Text>
+
+            <Text style={styles.logoutText}>
+              {'Are you sure you want to log out?'}
+            </Text>
+          </View>
 
           <View style={styles.btnContainer}>
             <TouchableOpacity
               onPress={() => {
                 dispatch(toggleModal())
               }}
-              style={[styles.declineBtn, styles.btn]}
+              style={[styles.neutralBtn, styles.btn]}
             >
-              <Text style={styles.textStyle}>No</Text>
+              <Text style={styles.textStyle}>Cancel</Text>
             </TouchableOpacity>
             <TouchableOpacity
               onPress={() => {
@@ -39,9 +49,9 @@ const LogoutModal = ({ onSuccess }) => {
                 dispatch(toggleModal())
                 onSuccess()
               }}
-              style={[styles.acceptBtn, styles.btn]}
+              style={[styles.declineBtn, styles.btn]}
             >
-              <Text style={styles.textStyle}>Yes</Text>
+              <Text style={styles.textStyle}>Logout</Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -5,7 +5,7 @@ const initialState = {
   isLoading: false,
   isFetching: false,
   isError: false,
-  data: null,
+  // data: null,
   user: null,
 }
 
@@ -22,9 +22,9 @@ const dataSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload
     },
-    setData: (state, action) => {
-      state.data = action.payload
-    },
+    // setData: (state, action) => {
+    //   state.data = action.payload
+    // },
     logOut: (state, action) => {
       state.user = null
       state.data = null
@@ -33,15 +33,14 @@ const dataSlice = createSlice({
   },
 })
 
-export const { setLoading, setFetching, setUser, logOut, setData } =
-  dataSlice.actions
+export const { setLoading, setFetching, setUser, logOut } = dataSlice.actions
 
 export default dataSlice.reducer
 
 export const selectIsFetching = (state) => state.data.isFetching
 export const selectIsLoading = (state) => state.data.isLoading
 export const selectIsError = (state) => state.data.isError
-export const selectData = (state) => state.data.data
+// export const selectData = (state) => state.data.data
 export const selectUser = (state) => state.data.user
 export const selectIsAdmin = (state) => {
   if (state.data.user && state.data.user.is_superuser) {

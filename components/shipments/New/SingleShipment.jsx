@@ -53,7 +53,7 @@ const SingleShipment = ({ params }) => {
   const [fields, setFields] = useState([])
 
   const [location, setLocation] = useState()
-  const user = useSelector(selectData)
+  const user = useSelector(selectUser)
 
   const fetchCurrentLocation = async () => {
     let { status } = await Location.requestForegroundPermissionsAsync()

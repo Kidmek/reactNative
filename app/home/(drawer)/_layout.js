@@ -5,7 +5,7 @@ import { useState } from 'react'
 import { show } from '../../../features/modal/modalSlice'
 import { store } from '../../../store'
 import { HeaderOptions } from '../../../components/common/header/HeaderOptions'
-import { selectData } from '../../../features/data/dataSlice'
+import { selectUser } from '../../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import {
   AGENT,
@@ -32,7 +32,7 @@ export default function TabLayout() {
   const navigation = useNavigation()
   const [notification, setNotification] = useState(1)
   const dispatch = store.dispatch
-  const user = useSelector(selectData)
+  const user = useSelector(selectUser)
 
   return (
     <Tabs

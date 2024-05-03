@@ -19,7 +19,7 @@ import {
 } from '../../api/shipment/shipment'
 import * as Location from 'expo-location'
 import * as FileSystem from 'expo-file-system'
-import { selectData } from '../../features/data/dataSlice'
+import { selectUser } from '../../features/data/dataSlice'
 import { useSelector } from 'react-redux'
 import { NUMBER } from '../../constants/strings'
 const Driver = () => {
@@ -41,7 +41,7 @@ const Driver = () => {
   const [licenceFile, setLicenceFile] = useState()
   const [location, setLocation] = useState(null)
   //
-  const user = useSelector(selectData)
+  const user = useSelector(selectUser)
   const [step, setStep] = useState(1)
   const onAdd = async () => {
     setStep(2)

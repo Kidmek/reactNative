@@ -4,7 +4,7 @@ import { TouchableOpacity, View } from 'react-native'
 import { COLORS, icons } from '../../../constants'
 import { useSelector } from 'react-redux'
 import { selectUser } from '../../../features/data/dataSlice'
-import { API, BACKEND_DOMAIN } from '../../../constants/strings'
+import { BACKEND_DOMAIN } from '../../../constants/strings'
 
 export const HeaderOptions = (navigation, notification) => {
   //  {
@@ -18,7 +18,7 @@ export const HeaderOptions = (navigation, notification) => {
   //    )
   //  }
   const user = useSelector(selectUser)
-
+  console.log('Header Options Profile Pic ', user?.ProfilePicture)
   return {
     headerTitle: '',
     headerLeft: () => (
@@ -52,7 +52,11 @@ export const HeaderOptions = (navigation, notification) => {
         <ScreenHeader
           iconUrl={
             user?.ProfilePicture
-              ? { uri: `${BACKEND_DOMAIN}/media/${user.ProfilePicture}` }
+              ? {
+                  uri: user.ProfilePicture?.includes('https://e2ethreepl.com')
+                    ? user.ProfilePicture
+                    : `${BACKEND_DOMAIN}/media/${user.ProfilePicture}`,
+                }
               : null
           }
           dimension={'100%'}

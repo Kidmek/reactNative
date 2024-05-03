@@ -2,12 +2,7 @@ import React, { useEffect } from 'react'
 
 import Welcome from '../../../../components/home/welcome/Welcome'
 import { useSelector } from 'react-redux'
-import {
-  selectData,
-  selectUser,
-  setData,
-  setLoading,
-} from '../../../../features/data/dataSlice'
+import { selectUser, setLoading } from '../../../../features/data/dataSlice'
 import { getCurrentUser } from '../../../../api/auth/auth'
 import { store } from '../../../../store'
 import { useToast } from 'react-native-toast-notifications'
@@ -27,18 +22,12 @@ const index = () => {
   const toast = useToast()
   const navigate = useNavigation()
 
-  const user = useSelector(selectData)
+  const user = useSelector(selectUser)
   const login = useSelector(selectUser)
   useEffect(() => {
     dispatch(setLoading(true))
 
-    getCurrentUser(
-      () => dispatch(setLoading(false)),
-      toast,
-      (data) => {
-        dispatch(setData(data))
-      }
-    )
+    getCurrentUser(() => dispatch(setLoading(false)), toast)
   }, [])
 
   useEffect(() => {

@@ -40,7 +40,6 @@ const Input = ({
           value={state}
           editable={false}
           placeholder={placeholder}
-          secureTextEntry={type == PASSWORD}
         />
         <TouchableOpacity
           style={styles.dateIcon}
@@ -113,7 +112,9 @@ const Input = ({
         onChangeText={(e) => {
           setState(e)
         }}
+        secureTextEntry={type == PASSWORD}
       />
+      {error && <Text style={styles.inputError}>{error}</Text>}
     </View>
   )
 }
